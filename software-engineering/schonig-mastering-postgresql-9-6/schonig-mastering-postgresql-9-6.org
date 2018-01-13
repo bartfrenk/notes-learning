@@ -1,0 +1,307 @@
+#+TITLE: Notes on Mastering PostgreSQL 9.6
+AUTHOR: Bart Frenk
+
+
+* Meta
+  Description: Notes on Schonig - Mastering PostgreSQL 9.6 (2017)
+* Contents
+  :PROPERTIES:
+  :engine:   postgresql
+  :cmdline: "-U bart"
+  :exports: both
+  :END:
+
+** 1. PostgreSQL overview
+** 2. Understanding transactions and locking
+** 3. Making use of indexes
+** STARTED 4. Handling advanced SQL
+*** Hypothetical aggregates
+
+    #+BEGIN_SRC sql :exports code
+    SELECT region,
+           rank(9000) WITHIN GROUP (ORDER BY production DESC NULLS LAST)
+    FROM t_oil
+    GROUP BY ROLLUP (1);
+    #+END_SRC
+
+    #+RESULTS:
+    | region        | rank |
+    |---------------+------|
+    | Middle East   |   21 |
+    | North America |   27 |
+    |               |   47 |
+
+*** Windowing queries
+
+**** Partitioning data    
+     - the number of rows returned doesn't change (unlike with GROUP BY)
+     - ordering within a partition matters for aggregation
+
+    #+BEGIN_SRC sql :exports code
+    SELECT country,
+           year,
+           production,
+           consumption,
+           avg(production) OVER (PARTITION BY country)
+    FROM t_oil
+    LIMIT 10;
+    #+END_SRC
+
+    #+RESULTS:
+    | country | year | production | consumption |                   avg |
+    |---------+------+------------+-------------+-----------------------|
+    | Canada  | 1965 |        920 |        1108 | 2123.2173913043478261 |
+    | Canada  | 2010 |       3332 |        2316 | 2123.2173913043478261 |
+    | Canada  | 2009 |       3202 |        2190 | 2123.2173913043478261 |
+    | Canada  | 2008 |       3207 |        2315 | 2123.2173913043478261 |
+    | Canada  | 2007 |       3290 |        2361 | 2123.2173913043478261 |
+    | Canada  | 2006 |       3208 |        2295 | 2123.2173913043478261 |
+    | Canada  | 2005 |       3040 |        2288 | 2123.2173913043478261 |
+    | Canada  | 2004 |       3079 |        2309 | 2123.2173913043478261 |
+    | Canada  | 2003 |       3003 |        2228 | 2123.2173913043478261 |
+    | Canada  | 2002 |       2858 |        2172 | 2123.2173913043478261 |
+
+    #+BEGIN_SRC sql :exports code
+    SELECT country,
+           year,
+           production,
+           min(production) OVER (),
+           min(production) OVER (ORDER BY year)
+    FROM t_oil
+    WHERE year BETWEEN 1978 AND 1983
+          AND country = 'Iran';
+    #+END_SRC
+
+**** Using sliding windows
+
+     This is a clear query to show the results of sliding windows.
+
+     #+BEGIN_SRC sql :exports code
+     SELECT *,
+            array_agg(id) OVER (ORDER BY id ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+     FROM generate_series(1, 5) as id;
+     #+END_SRC
+
+     #+RESULTS:
+     | id | array_agg |
+     |----+-----------|
+     |  1 | {1,2}     |
+     |  2 | {1,2,3}   |
+     |  3 | {2,3,4}   |
+     |  4 | {3,4,5}   |
+     |  5 | {4,5}     |
+
+     - Can be unbounded on both sides by UNBOUNDED FOLLOWING, or UNBOUNDED PRECEDING
+
+**** Abstracting window clauses
+
+     #+BEGIN_SRC sql
+     SELECT country,
+            year,
+            production,
+            min(production) OVER (w),
+            max(production) OVER (w)
+     FROM t_oil
+     WHERE country = 'Canada' AND year BETWEEN 1980 AND 1985
+     WINDOW w AS (ORDER BY year)
+     #+END_SRC
+
+     #+RESULTS:
+     | country | year | production |  min |  max |
+     |---------+------+------------+------+------|
+     | Canada  | 1980 |       1764 | 1764 | 1764 |
+     | Canada  | 1981 |       1610 | 1610 | 1764 |
+     | Canada  | 1982 |       1590 | 1590 | 1764 |
+     | Canada  | 1983 |       1661 | 1590 | 1764 |
+     | Canada  | 1984 |       1775 | 1590 | 1775 |
+     | Canada  | 1985 |       1812 | 1590 | 1812 |
+
+**** Various functions
+     - rank
+     - dense_rank
+     - ntile
+     - lead
+     - lag
+     - first_value
+     - nth_value
+     - last_value
+     - row_number
+       
+*** Writing your own aggregates
+
+    #+BEGIN_SRC sql :exports code
+    CREATE FUNCTION taxi_per_line (numeric, numeric)
+    RETURN numeric AS
+    $$
+    BEGIN
+    RAISE NOTICE 'intermediate: %, per row: %', $1, $2;
+    RETURN $1 + $2 * 2.2;
+    END;
+    $$ LANGUAGE 'plpgsql';
+    #+END_SRC
+
+    #+RESULTS:
+
+    #+BEGIN_SRC sql :exports code
+    CREATE AGGREGATE taxi_price (numeric)
+    (
+        INITCOND = 2.5,
+        SFUNC = taxi_per_line,
+        STYPE = numeric
+    );
+    #+END_SRC
+
+    #+RESULTS:
+
+
+** 5. Log files and system statistics
+** DONE 6. Optimizing queries for good performance
+   CLOSED: [2018-01-02 Tue 15:15]
+*** Optimization strategies
+    - constant folding
+    - view inlining
+    - join reordering
+    - flattening subselects
+    - join pruning
+    - applying equality constraints
+    - function inlining
+    - distribute over set operations (UNION [ALL], etc.)
+    
+    It is not difficult to make the process fail (e.g. by specifying OFFSET =
+    0). Always run explain on a query.
+*** Preliminaries
+    Taken from [1].
+
+*** Relevant system catalogs
+    pg_class catalogs tables and most everything else that has columns or is
+      otherwise similar to a table.
+    - pg_stats is a view on top of pg_statistics
+    - pg_statistics stores statistical data about the contents of the database
+    - pg_stat_user_tables contains one row for each table in the current database,
+      showing statistics about accesses to that specific table
+
+*** Node types in a query plan
+**** Scans
+***** Index-Only Scan
+      - Only needs to fetch index pages
+      - Requires data to be fetched to be available from the index
+      - MVCC visibility information is not stored in the index, but the table's
+        visibility map has a flag for each heap page that indicates when an
+        entire page is old enough to be visible to all current and future
+        transactions. (see [2], Chapter 11.11 Index-Only Scans)
+***** Index Scan
+      - Rows are fetched in index order from the index, and then separately
+        retrieved from the heap
+***** Seq Scan
+      - Entire table is scanned
+***** Bitmap Heap Scan
+      - Used after a Bitmap Index Scan, retrieves the pages selected by the Bitmap Index Scan
+      - Needs to apply the filter condition again, since rows in the heap page
+        fetched might not satisfy it.
+***** Bitmap Index Scan
+      - Gathers the pages of the rows to retrieved from the index
+***** Function Scan
+**** Joins
+***** Hash Join
+      - The rows of one of the tables are collected in a hash table (which one is indicated by Hash)
+      - These rows are then looked up from the row set of the other table
+***** Merge Join
+      - Requires the tables to be sorted on fields in the join condition
+      - Merging then takes time proportional to the number sum of the rows of
+        the tables to merge.
+***** Nested Loop
+      - A nested loop takes time proportional to the products of the number of
+        rows to merge.
+**** Miscellaneous
+***** Append
+      - Appends to result sets
+***** Unique
+      - Filter out duplicates
+      - Can be expensive (see [0], p. 163)
+***** Sort
+      - Sort the result set
+****** external sort Disk
+****** quicksort Memory
+****** top-N heapsort Memory
+       - To only provide top-n rows
+***** Limit
+      - Limits the result set
+***** Subquery Scan
+
+**** Aggregates
+***** HashAggregate
+      - Aggregate by building an in-memory hash table
+***** GroupAggregate
+      - Requires sorted data
+      - Takes linear time, but can emit partial results
+
+*** Understanding execution plans: Spotting problems
+    - Start where the query times jump
+    - Inspect estimates
+      - Maybe row sizes are over- or under-estimated due to wrong statistics
+      - Maybe cross-column correlations make the estimates off (statistics in
+        PostgreSQL 9.6 are univariate).
+    - Inspect buffer usage
+
+*** Miscellaneous notes
+
+**** CLUSTER clauses
+     - Rewrite the table in the same order as a (B-tree) index ([0],
+       p. 170). Requires a table lock.
+
+**** Inner joins may be reordered
+     - Outer joins cannot always be reordered
+     - This is probably a restatement of the algebraic properties of both of
+       these types of joins in the relational algebra.
+
+**** GROUP BY 1
+     - It is possible to specify only the indices of the column to group or
+       order by.
+
+*** Partitioning data
+
+**** Modifying inherited structure
+     - Adding and removing columns propagates to the child tables
+     - Adding indexes *does not*
+     - It is also simple to change the parent of the child table. Maybe for
+       moving data from active to history.
+
+*** Adjusting parameters
+
+**** work_mem
+     - Query plans obviously depend on working memory.
+
+**** maintenance_work_mem
+     - Memory available for maintenance work (creating indices, etc.). Not so
+       useful, maybe for creating indices on the fly.
+    
+** DONE 7. Writing stored procedures
+   CLOSED: [2018-01-02 Tue 15:15]
+*** Takeaways
+    - Probably better to use the jv8 extension that allows for using JavaScript
+      in PostgreSQL as a trusted language. Also pglpsql seems quite simple.
+**** Triggers are useful and flexible
+     - They run in alphabetical order!
+**** Types of functions
+     - volatile: no assumptions on return value
+     - stable: referentially transparent within a transaction
+     - immutable: referentially transparent
+**** PL/pgSQL is simple and takes care of more things
+     - For example, caching execution plans (see [0], p.228).
+**** Can create your own operators, type casts, and even collations
+     - Collation is combining data, but I think refers mostly to sort orders in
+       this context.
+*** JavaScript is also available as trusted language
+    See [3] and [4] for the full matrix of available programming languages.
+** 8. Managing PostreSQL security
+** 9. Handling backup and recovery
+** 10. Making sense of backups and replication
+** 11. Deciding on useful extensions
+** 12. Troubleshooting PostgreSQL
+** 13. Migrating to PostgreSQL
+* References
+[0] Schonig - Mastering PostgreSQL 9.6
+[1] https://www.postgresql.org/docs/9.6/static/using-explain.html
+[2] https://www.postgresql.org/docs/9.6/
+[3] https://github.com/plv8/plv8
+[4] https://wiki.postgresql.org/wiki/PL_Matrix

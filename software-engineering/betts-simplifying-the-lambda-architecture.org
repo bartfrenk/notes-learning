@@ -1,0 +1,17 @@
+#+TITLE: Notes on Simplifying the Lambda architecture
+#+AUTHOR: Bart Frenk
+
+* Notes
+https://www.youtube.com/watch?v=qbJ_ewCu2C4
+
+
+ZKSC stack
+ZooKeeper, Kafka, Storm, Cassandra
+
+Crazy Flexible, Crazy Complex
+
+Storm build a directed acyclic graph of computations
+
+How do I store data
+How do I parse data and map it to a language
+How do isolate users

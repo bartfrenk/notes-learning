@@ -1,0 +1,199 @@
+#+TITLE: Notes on The Internals of PostgreSQL
+#+AUTHOR: Bart Frenk
+
+
+#+begin_src sh
+docker run -d --name postgresql \
+       -p 15433:5432 \
+       -e POSTGRES_USER=docker \
+       -e POSTGRES_PASSWORD=docker \
+       -e POSTGRES_DB=docker \
+       postgres:latest
+#+end_src
+
+
+* Preamble
+Reference: http://www.interdb.jp/pg/index.html
+* 1. Database cluster, databases and tables
+** 1.3. Internal layout of a heap table file
+   - divided into pages (or blocks) of fixed length, with default 8192 bytes (8 KB)
+   - pages within each file are numbered sequentially from 0, and such numbers are called *block numbers*
+   
+   A page within a table contains three kinds of data:
+   - heap tuples: record data itself, stacked from the bottom of the page
+   - line pointers: each 4 bytes long, holds a pointer to each heap tuple
+   - header data:
+     - pd_lsn (see Chapter 9)
+     - pd_checksum: checksum value of the page
+     - pd_lower: points to the end of the line pointers
+     - pd_upper: points to the beginning of the newest heap tuple
+     - pd_special: for indexes
+   Empty space between the end of the line pointers and the beginning of the
+   newest tuple is referred to as the *free space*, or *hole*.
+   
+   To identify tuple within the table a *tuple identifier (TID)* is used
+   internally. It is a pair of values: the /block number/ of the page, and the
+   /offset number/ of the line pointer that points to the tuple.
+
+   In addition, heap tuples whose size is bigger than 2 KB is stored using a
+   method called *TOAST* (The Oversized-Attribute Storage Technique).
+
+** 1.4. Reading and writing tuples
+   
+   *Writing*
+
+   Stack new tuple at the location of pd_upper and new line pointer at
+   pd_lower. The new line pointer points to the new tuple. Update header fields
+   accordingly.
+
+   *Reading*
+
+   - *Sequential scan* Scan line pointers in sequential order.
+     
+   - *B-tree index scan* Index file contains index tuples, composed of an index
+     key and a TID value.
+
+* 2. Process and memory architecture
+** 2.1. Process architecture
+
+   Collection of multiple processes managing a databases cluster is referred to
+   as a *PostgreSQL server* and it contains the following types of processes:
+   - a postgres server process: parent
+   - backend process for each connected client
+   - background processes (e.g. VACUUM and CHECKPOINT) for database management
+   - replication associated processes streaming replication
+   - background worker process to perform any processing implemented by users
+   Communicate via shared memory
+
+  If many clients such as WEB applications frequently repeat the connection and
+  disconnection with a PostgreSQL server, it increases both costs of
+  establishing connections and of creating backend processes because PostgreSQL
+  has not implemented a native connection pooling feature. Such circumstance has
+  a negative effect on the performance of database server. To deal with such a
+  case, a pooling middleware (either pgbouncer or pgpool-II) is usually used.
+  (from Section 2.1.2)
+
+*** 2.1.3. Background processes
+    
+    - background writer
+    - checkpointer
+    - autovacuum launcher
+    - WAL writer
+    - statistics collector
+    - archiver
+
+* 5. Concurrency control
+  There are two broad concurrency control techniques:
+  1. mult-version concurrency control (MVCC)
+  2. strict two-phase locking (S2PL)
+ 
+  PostgreSQL uses a variant of MVCC called snapshot isolation (SI).
+
+** Anamolies (see ANSI-SQL-92)
+*** Dirty read
+    Transaction T1 modifies a row. Then transaction T2 reads that row before T1
+    is commited. If T1 then performs a rollback, T2 will have read a row that
+    was never committed.
+*** Non-repeatable read
+    Transaction T1 reads a row. Transaction T2 then modifies or deletes that row
+    and performs a commit. If T1 then attempts to reread the row, it may receive
+    the modified value, or discover that the row has been deleted.
+*** Phantom read
+    Transaction T1 reads a set of rows N that satisfy some search
+    condition. Transaction T2 then executes statements that generate one or more
+    rows that satisfy the search condition. If T1 then repeats the initial read
+    with the same search condition, a different set of rows is returned.
+
+** 5.1 Transaction ID
+
+   Transaction ID is a 32-bit unsigned integer. To get current transaction ID,
+   execute *txid_current()*.
+   
+   PostgreSQL treats the txid space as a circle. The previous 2.1 billion txids
+   are in the past, the next 2.1 billion txids are in the future.
+
+   Special txid values: 0 ~ invalid, 1 ~ bootstrap (only used in initialization of cluster),
+   2 ~ frozen (described later)
+     
+** 5.2 Tuple structure
+   
+   Heap tuples are either usual data tuples, or TOAST tuples. Here the former
+   are described.
+   
+   A heap tuple consists of three parts:
+   1. HeapTupleHeaderData
+   2. NULL bitmap
+   3. user data
+
+   HeapTupleHeaderData has seven fields, of which four are required:
+   1. t_xmin: the txid of the transaction that inserted the tuple
+   2. t_xmax: the txid of the transaction that deleted (or updated) this
+      tuple. If the tuple has not been deleted or updated, t_xmax is set to 0, which means INVALID.
+   3. t_cid: how many commands were executed in the transaction that inserted
+      this tuple, before the command that inserted the tuple.
+   4. t_ctid: the tuple identifier of the update, or the tuple identifier of
+      itself if there is none.
+
+   To see HeapTupleHeaderData enable an extension by
+
+   #+begin_src sql
+   CREATE EXTENSION pageinspect;
+   CREATE TABLE tbl (data text);
+   INSERT INTO tbl VALUES('A');
+   SELECT lp as tuple, t_xmin, t_xmax, t_field3 as t_cid, t_ctid 
+          FROM heap_page_items(get_raw_page('tbl', 0));
+   #+end_src
+
+** 5.3 Inserting, deleting and updating tuples
+
+   Contains some examples of update and delete transactions, and their effect on the HeapTupleHeaderData.
+
+   When inserting a heap of index tuple, PostgreSQL uses the FSM of the
+   corresponding table or index to select the page.
+
+   There is an extension to show the free space map (FSM) called *pg_freespacemap*. Use as follows:
+
+   #+begin_src sql
+   CREATE EXTENSION pg_freespacemap;
+   SELECT *, round(100 * avail/8192, 2) as "free space ratio"
+   FROM pg_freespace('tbl');
+   #+end_src
+
+** 5.4 Commit log (clog)
+   *Continue from here.*
+   
+* 6. Vacuum processing
+* 8. Buffer manager
+  - *Concurent vacuum* removes dead tuples for each page of the table file
+  - *Full vacuum* removes dead tuples and defragments live tuples, other
+    transactions cannot access tables while full vacuum is running.
+
+** Concurrent vacuum
+   - remove dead tuples
+   - freezing old txids
+     
+ maintenance_work_mem
+* 9. Write ahead log
+** 9.1 Overview
+*** 9.1.1 Insertion operations without WAL
+*** 9.1.2 Insertion operations and database recovery
+*** 9.1.3 Full-page writes
+** 9.2 Transaction log and WAL segment files
+** 9.3 Internal layout of WAL segment
+** 9.4 Internal layout of XLOG record
+** 9.4.1 Header portion of XLOG record
+** 9.4.2 Data portion of XLOG record (version 9.4 or earlier)
+** 9.4.2 Data portion of XLOG record (version 9.5 or later)
+** 9.5 Writing of XLOG record
+** 9.6 WAL writer process
+** 9.7 Checkpoint process in PostgreSQL 
+*** 9.7.1 Outline of the checkpoint processing
+*** 9.7.2 pg_control file
+** 9.8 Database recovery in PostgreSQL
+** 9.9 WAL segment files management
+*** 9.9.1 WAL segment switches
+*** 9.9.2 WAL segment management in version 9.5 or later
+*** 9.9.3 WAL segment management in version 9.4 or earlier
+** 9.10 Continuous archiving and archive logs
+* 10. Base backup and point-in-time recovery
+* 11. Streaming replication

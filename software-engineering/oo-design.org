@@ -1,0 +1,293 @@
+#+STARTUP: overview
+* Resources
+[1] Robert C. Martin - The Robert C. Martin Clean Code Collection
+[2] Eric Freeman e.a. - Head First: Design Patterns
+[3] Erich: Gamma e.a. - Design Patterns
+[4] Beck, Fowler - Refactoring
+[5] Bloch - Effective Java
+[6] Martin - The dependency inversion principle
+
+* Notes
+** Patterns
+*** Creational patterns
+**** Factory Method
+Defines an interface for creating an object, but lets subclasses
+decide which class to instantiate. Factory Method lets a class defer
+instantiation to subclasses. Specializes *Template Method*.
+**** Simple Factory
+**** Builder
+Static inner class that functions as a factory
+*** Structural patterns
+**** Composite
+Allows you to compose objects into tree structures to represent
+part-whole hierarchies. Composite lets clients treat individual objects and
+compositions of objects uniformly.
+**** Proxy
+Provides a surrogate or placeholder for another object to control
+access to it. (*this chapter is fairly complicated*)
+***** RMI nomenclature
+*Client* calls the *Client Helper*, which in turn calls the *Service
+Helper*, which calls the actual *Service*, which does the actual
+computation.  The result of the computations is communicated to
+the *Client* by following the previous way in reverse order. The gap
+is between the *Client Helper* and the *Service Helper*
+
+The client helper is called the *stub*, while the service helper is
+called the *skeleton* in the Java RMI framework.
+***** Types
+****** remote proxy
+control access to network service,
+****** virtual proxy
+acts as a representative for an object that may be expensive to create,
+****** caching proxy
+as virtual proxy, but caches result,
+****** protection proxy
+controls access,
+****** firewall proxy
+controls access to a set of network resources, protecting the subject
+from malicious clients.
+****** smart reference proxy
+provides additional actions whenever a subject is referenced, such as
+counting the number of references to an object.
+****** synchronization proxy
+provides safe access to an object from multiple threads.
+****** complexity hiding proxy
+hides the complexity of and controls access to a complex set of
+classes. This is sometimes called the Facade Proxy for obvious
+reasons. The Complexity Hiding Proxy differs from the Facade in that
+the proxy controls access, while the Facade patterns just provides an
+alternative interface.
+****** copy-on-write proxy
+controls the copying of an object by deferring the
+copying of an object until it is required by a client. This is a variant
+of the Virtual Proxy.
+***** Java has dynamic proxy's that allow for creating proxy's on the fly.
+***** Wraps another object to control access to it.
+**** Facade
+Wraps a bunch of objects to simplify their interface.
+**** Flyweight
+**** Bridge
+**** Decorator
+Wraps another objects and provides additional behaviour for it.
+**** Adapter
+***** Class
+Wraps another object and provides a different interface to it.
+***** Object
+
+*** Behavioral patterns
+**** Chain of Responsibility
+**** Command
+Command classes usually have *execute* and *undo* methods
+**** Interpreter
+**** Iterator
+Provides a way to access the elements of an aggregate object
+sequentially without exposing its underlying implementation.
+**** Mediator
+**** Memento
+**** Observer
+**** Strategy
+**** Template Method
+Defines the skeleton of an algorithm in an operation deferring some
+steps to subclasses. Template Method lets subclasses redefine certain
+steps of an algorithm without changing the algorithm's structure.
+***** Hooks
+Primitive method with an emtpy, minimal or trivial implementation.
+***** Abstract method
+Unimplemented primitive method.
+***** Concrete method
+Implemented primitive method.
+***** Template method
+The method that defines the skeleton of the algorithm.
+**** Visitor
+**** Null object
+**** State
+Allows an object to alter its behaviour when its state changes. The
+object will appear to change it's class.
+
+*** Compound patterns
+A compound pattern combines two or more patterns into a solution that solves a
+recurring or general problem.
+*** Concurrency patterns
+**** Broker: or more of a pattern language, see POSA2
+**** Activator
+**** Proxy
+** Guidelines and principles
+*** SOLID
+**** Single responsibility
+A class should have only one responsibiilty, or equivalently, a class
+should have only one reason to change.
+**** Open-closed
+**** Liskov's substitution principle
+**** Interface segregation
+**** Dependency inversion
+*** Principes in /Head First - Design Patterns/
+**** Encapsulate what varies
+**** Favor composition over inheritance
+**** Program to interfaces, not implementations
+**** Principle of least knowledge - talk only to your immediate friends
+**** Strive for loosely coupled designs between objects that interact
+**** Classes should be open for extension, but closed for modifications
+**** Depend on abstractions, do not depend on concretions
+**** Only talk to your friends
+***** TODO clarify
+**** Don't call us, we'll call you
+**** A class should have only one reason to change
+*** General
+**** Don't refactor and add functionality at the same time
+Either refactor or add functionality, but do not do both at the same time.
+Also, be aware of which 'hat' you are wearing at any moment.
+**** Principle of least surprise (or least astonishment)
+Mentioned in Robert C. Martin - Clean Code, there refers to Wikipedia.
+** Refactoring
+*** Why refactor
+**** Refactoring improves the design of software
+**** Refactoring makes software easier to understand
+**** Refactoring helps you find bugs
+**** Refactoring helps you program faster
+*** When to refactor
+The first time you need to do something, you just do it. The second time you do
+something similar, you wince at the duplication, but you do the duplicate thing
+anyway. The third time you do something similar, you refactor.
+**** Refactor when you add a function
+**** Refactor when you need to fix a bug
+**** Refactor as you do a code review
+** Code smells
+List from *Robert C. Martin - Clean Code*
+*** Comments
+**** C1: Inappropriate information
+**** C2: Obsolete comment
+**** C3: Redundant comment
+**** C4: Poorly written comment
+**** C5: Commented out code
+*** Environment
+**** E1: Build requires more than one step
+**** E2: Tests require more than one step
+*** Functions
+**** F1: Too many arguments
+More than three is very questionable and should be avoided with prejudice
+**** F2: Output arguments
+*Question*: How to deal with passing in target array's for resource efficiency?
+**** F3: Flag arguments
+Boolean arguments that loudly declare that the function does more than one thing
+**** F4: Dead function
+*** General
+**** G1: Multiple languages in one source file
+**** G2: Obvious behaviour is unimplemented
+**** G3: Incorrect behaviour at the boundaries
+**** G4: Overriden safeties
+**** G5: Duplication
+*Quote*: This is one of the most important rules in this book, and you
+should take it very seriously.
+***** Clumps of identitical code: replace with simple methods
+***** Switch/case or if/else chain: Replace with polymorphism
+***** Similar algorithms, but no similar lines of code
+Template Method, or Strategy pattern
+**** G6: Code at the wrong level of abstraction
+*Quote*: Good software design requires that we seperate concepts at
+different levels and place them in different containers.', 'The point
+is you cannot lie of fake your way out of a misplaced
+abstraction. Isolating abstractions is one of the hardest things that
+software developers do, and there is no quick fix when you get it
+wrong.
+**** G7: Base classes depending on their derivatives
+**** G8: Too much information
+Help keep coupling low by limiting information
+**** G9: Dead code
+**** G10: Vertical seperation
+Variables and functions should be defined close to where they are used
+**** G11: Inconsistency
+**** G12: Clutter
+**** G13: Artificial coupling
+***** TODO clarify
+**** G14: Feature envy
+The methods of a class should only be interested in the variables and
+functions of the class they belong to, and not the variables and
+functions of the other classes
+**** G15: Selector arguments
+**** G16: Obscured intent
+We want code to be as expressive as possible
+**** G17: Misplaced responsibility
+***** TODO clarify
+**** G18: Inappropriate static
+In general you should prefer non-static methods to static
+methods. When in doubt, make the function static
+**** G19: *Use explanatory variables*
+More explanatory variables are generally better than fewer
+**** G20: *Function names should say what they do*
+**** G21: Understand the algorithm
+**** G22: Make logical dependencies physical
+**** G23: Prefer polymorphism to if/else or switch/case
+*Rule of thumb*: not applicable if functions or more volatile than
+types, i.e. when adding a function is more likely than adding a type)
+**** G24: Follow standard conventions
+Every team should follow a coding standard based on on common industry norms
+**** G25: Replace magic numbers with named constants
+**** G26: Be precise
+Expecting the first match to a query to be the *only* match to a query
+is probably naive. Using floating point numbers to represent currency
+is almost criminal. Avoiding locks and/or transaction management
+because you don't think concurrent update is likely is lazy at
+best. Declaring a variable to be an ArrayList when a List will due is
+overly constraining. Making all variables protected by default is not
+constraining enough."
+
+Ambiguities and imprecision in code are either a result of
+disagreements or laziness. In either case they should be eliminated.
+**** G27: Structure over convention
+**** G28: Encapsulate conditionals
+if (shouldBeDeleted(timer)) is preferable to if (timer.hasExpired() &&
+!timer.isRecurrent())
+**** G29: Avoid negative conditionals
+**** G30: Functions should do one thing
+**** G31: Hidden temporal couplings
+Create a bucket brigade (or chain of function compositions)
+**** G32: Don't be arbitrary.
+The convention is to make classes that are not utility classes for
+some other class public at the package's top level.
+**** G33: Encapsulate boundary conditions
+**** G34: Functions should descend only one level of abstraction
+Seperating levels of abstraction is one of the most important functions of
+refactoring, and it's one of the hardest to do well.
+**** G35: Keep configurable data at high levels
+**** G36: Avoid transitive navigation
+The law of Demeter, or Writing Shy Code): e.g. don't write
+A.getB().getC() if it is not necessary for A to know about C.
+*** Java
+**** J1: Avoid long lists of imports by using wildcards
+**** J2: Don't inherit constants
+**** J3: Use enums over constants when possible
+*** Names
+**** N1: Choose descriptive names
+**** N2: Choose names at the appropriate level of abstraction
+**** N3: Use standard names whenever possible
+Name after well-known patterns, use an *ubiquitous language* ('Teams
+will often invent their own sstandard system of names for a particular
+project').
+**** N4: Unambiguous names
+**** N5: Use long names for long scope
+**** N6: Avoid encodings ('Keep your names free of Hungarian pollution')
+**** N7: Names should describe side-effects
+*** Testing
+**** T1: Insufficient tests
+**** T2: Use a coverage tool
+**** T3: Don't skip trivial tests
+**** T4: An ignored test is a question about an ambiguity
+**** T5: Test boundary conditions
+**** T6: Exhaustive test near bugs
+**** T7: Patterns of failure are revealing
+**** T8: Test coverage patterns are revealing
+**** T9: Tests should be fast
+
+** Testing guidelines
+*** FIRST
+**** Fast
+**** Independent
+**** Repeatable
+**** Self-validating
+**** Timely
+*** Build-operate-check (Given, when, then)
+*** Four-stage testing
+***** Setup
+***** Exercise
+***** Verify
+***** Teardown

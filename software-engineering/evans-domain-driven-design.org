@@ -1,0 +1,311 @@
+#+TITLE: Notes on Domain Driven Design
+#+AUTHOR: Bart Frenk
+
+* Questions and answers
+** What is domain driven design?
+** What is strategic design?
+
+* Eric Evans - Domain Driven Design
+Notes on the book  'Domain Driven Design' by Eric Evans.
+Start with introduction to Part I, as well as Chapter 1.
+Core of the book is chapters 2, 3, 9 and 14.
+** Sections
+*** Putting the domain model to work
+*** The building-blocks of a model driven design
+** The utility of a model in domain driven design
+*** The model and the heart of the design shape each other
+*** The model is the backbone of a language used by all team members
+*** The model is distilled knowledge
+** Phrases
+
+Closing the feedback loop with domain experts.
+
+Always remember that the model is not the diagram. (p. 22)
+
+A document shouldn't try to do what the code already does well. The code already supplies the
+detail. It is an exact specification of program behavior. (p. 23)
+
+Good programming style keeps this connection as direct as possible, but it is still an exercise in
+self-discipline.  It takes fastidiousness to write code that doesn't just do the right thing but
+also says the right thing. (p. 24)
+
+** Chapters
+*** Part I. Putting the domain model to work
+**** 1. Crunching knowledge
+**** 2. Communication and the use of language
+     But the next time you attend a requirements or design discussion, really
+     listen. You'll hear descriptions of features in *business jargon* or
+     layman's versions of the jargon. You'll hear talk about *technical
+     artifacts* and concrete functionality. Sure, you'll hear terms from the
+     domain model; obvious nouns in the common language from the business jargon
+     will typically be coded as objects, and so those terms will tend to be
+     mentioned. But do you hear phrases that could even remotely be described in
+     terms of relationships and interactions in your current domain model?
+     (p. 19)
+**** 3. Binding model and implementation
+MODEL-DRIVEN DESIGN calls for working with only one model (within any single
+context, as will be discussed in Chapter 14). Most of the advice and examples go
+to the problems of having separate analysis models and design models, but here
+we have a problem arising from a different pair of models: the user model and
+the design/implementation model.
+
+Of course, an unadorned view of the domain model would definitely not be
+convenient for the user in most cases. But trying to create in the UI an
+illusion of a model other than the domain model will cause confusion unless the
+illusion is perfect. (p. 35)
+*** Part II. The building blocks of a model-driven design
+**** 4. Isolating the domain
+*The domain model is a set of concepts.* The “domain layer” is the manifestation
+of that model and all directly related design elements. The design and
+implementation of business logic constitute the domain layer. In a MODEL-DRIVEN
+DESIGN , the software constructs of the domain layer mirror the model
+concepts. (p. 44)
+**** 5. A model expressed in software
+For every traversable association in the model, there is a mechanism in the
+software with the same properties. (p. 49)
+
+Like everything else in a domain-driven design, MODULES are a communications
+mechanism . The meaning of the objects being partitioned needs to drive the
+choice of MODULES. When you place some classes together in a MODULE , you are
+telling the next developer who looks at your design to think about them
+together. If your model is telling a story, the MODULES are chapters. The name
+of the MODULE conveys its meaning. These names enter the UBIQUITOUS LANGUAGE
+. “Now let's talk about the 'customer' module,” (p. 67)
+
+Looking at conceptual relationships is not an alternative to technical
+measures. They are different levels of the same issue, and both have to be
+accomplished. But model-focused thinking produces a deeper solution, rather than
+an incidental one. And when there has to be a trade-off, it is best to go with
+the conceptual clarity, even if it means more references between MODULES or
+occasional ripple effects when changes are made to a MODULE . Developers can
+handle these problems if they understand the story the model is telling
+them. (p. 67)
+**** 6. The life cycle of a domain object
+***** Aggregate
+      First we need an abstraction for encapsulating references within the
+      model. An AGGREGATE is a cluster of associated objects that we treat as a
+      unit for the purpose of data changes. Each AGGREGATE has a root and a
+      boundary. The boundary defines what is inside the AGGREGATE. The root is a
+      single, specific ENTITY contained in the AGGREGATE . The root is the only
+      member of the AGGREGATE that outside objects are allowed to hold
+      references to, although objects within the boundary may hold references to
+      each other. ENTITIES other than the root have local identity, but that
+      identity needs to be distinguishable only within the AGGREGATE , because
+      no outside object can ever see it out of the context of the root ENTITY.
+
+      ...
+
+      Now, to translate that conceptual AGGREGATE into the implementation, we
+      need a set of rules to apply to all transactions.
+      - The root ENTITY has global identity and is ultimately responsible for
+        checking invariants.
+      - Root ENTITIES have global identity. ENTITIES inside the boundary have
+        local identity, unique only within the AGGREGATE.
+      - Nothing outside the AGGREGATE boundary can hold a reference to anything
+        inside, except to the root ENTITY . The root ENTITY can hand references
+        to the internal ENTITIES to other objects, but those objects can use
+        them only transiently, and they may not hold on to the reference.  The
+        root may hand a copy of a VALUE OBJECT to another object, and it doesn't
+        matter what happens to it, because it's just a VALUE and no longer will
+        have any association with the AGGREGATE.
+      - As a corollary to the previous rule, only AGGREGATE roots can be
+        obtained directly with database queries. All other objects must be found
+        by traversal of associations.
+      - Objects within the AGGREGATE can hold references to other AGGREGATE
+        roots.
+      - A delete operation must remove everything within the AGGREGATE
+        boundary at once. (With garbage collection, this is easy. Because there
+        are no outside references to anything but the root, delete the root and
+        everything else will be collected.)
+      - When a change to any object within the AGGREGATE boundary is committed,
+        all invariants of the whole AGGREGATE must be satisfied.
+
+***** Factory
+***** Repository
+      *The goal of domain-driven design* is to create better software by focusing on a
+      model of the domain rather than the technology.
+
+      A REPOSITORY represents all objects of a certain type as a conceptual set
+      (usually emulated). It acts like a collection, except with more elaborate
+      querying capability. Objects of the appropriate type are added and
+      removed, and the machinery behind the REPOSITORY inserts them or deletes
+      them from the database. This definition gathers a cohesive set of
+      responsibilities for providing access to the roots of AGGREGATES from
+      early life cycle through the end. (p. 92) **** 7. An extended example:
+      using the language
+*** Part III. Refactoring towards deeper insight
+**** 8. Breakthrough
+**** 9. Making implicit concepts explicit
+**** 10. Supple design
+The twin fundamentals of high cohesion and low coupling play a role in design at
+all scales, from individual methods up through classes and MODULES to
+large-scale structures (see Chapter 16).  These two principles apply to concepts
+as much as to code. To avoid slipping into a mechanistic view of them, temper
+your technical thinking by frequently touching base with your intuition for the
+domain. With each decision, ask yourself, “Is this an expedient based on a
+particular set of relationships in the current model and code, or does it echo
+some contour of the underlying domain?” (p. 166)
+
+INTENTION-REVEALING INTERFACES allow clients to present objects as units of
+meaning rather than just mechanisms. SIDE-EFFECT-FREE FUNCTIONS and ASSERTIONS
+make it safe to use those units and make complex combinations. The emergence of
+CONCEPTUAL CONTOURS sta- bilizes parts of the model and also makes the units
+more intuitive to use and combine. (p. 170)
+
+Find the conceptually meaningful unit of functionality, and the resulting design will be both flexible
+and understandable. For example, if an “addition” of two objects has a coherent meaning in the
+domain, then implement methods at that level. Don't break the add() into two steps. Don't proceed
+to the next step within the same operation. On a slightly larger scale, each object should be a single
+complete concept, a “ WHOLE VALUE .” (p. 170)
+
+Even within a MODULE, the difficulty of interpreting a design increases wildly
+as dependencies are added. This adds to mental overload, limiting the design
+complexity a developer can handle. Implicit concepts contribute to this load
+even more than explicit references. (p. 170)
+***** Terms
+- intention revealing interfaces
+- side-effect free functions
+- assertions
+- conceptual contours
+- standalone classes
+- closure of operations
+***** Notes
+Cookbook rules don't work (p.166)
+
+With each decision, ask yourself, “Is this an expedient based on a particular
+set of relationships in the current model and code, or does it echo some
+contour of the underlying domain?” (p.166)
+
+Decompose design elements (operations, interfaces, classes, and AGGREGATES) into
+cohesive units, taking into consideration your intuition of the important
+divisions in the domain. Observe the axes of change and stability through
+successive refactorings and look for the underlying CONCEP- TUAL CONTOURS that
+explain these shearing patterns. Align the model with the consistent aspects of
+the domain that make it a viable area of knowledge in the first place. (p.167)
+**** 11. Applying analysis patterns
+**** 12. Relating design patterns to the model
+**** 13. Refactoring towards deeper insight
+Continuous refactoring has come to be considered a “best practice,” but most
+project teams are still too cautious about it. They see the risk of changing
+code and the cost of developer time to make a change; but what's harder to see
+is the risk of keeping an awkward design and the cost of working around that
+design. Developers who want to refactor are often asked to justify the
+decision. Although this seems reasonable, it makes an already difficult thing
+impossibly difficult, and tends to squelch refactoring (or drive it
+underground). Software development is not such a predictable process that the
+benefits of a change or the costs of not making a change can be accurately
+calculated. (p. 210)
+***** Notes
+Seeking insight into the domain creates a broader context for the process of
+refactoring.
+*** Part IV. Strategic design
+**** 14. Maintaining model integrity
+***** Terms
+- bounded context
+- continuous integration
+- context map
+- shared kernel
+- customer/supplier development teams
+- conformist
+- anti-corruption layer
+- separate ways
+- open host service
+- published language
+**** 15. Distillation
+Boil the model down. Find the CORE DOMAIN and provide a means of easily
+distinguishing it from the mass of supporting model and code. Bring the most
+valuable and specialized concepts into sharp relief. Make the CORE small. (249)
+A system that is hard to understand is hard to change. The effect of a change is
+hard to foresee. A developer who wanders outside his or her own area of
+familiarity gets lost. (This is particularly true when bringing new people into
+a team, but even an established member of the team will struggle unless code is
+very expressive and organized.) This forces people to specialize. When
+developers confine their work to specific modules, it further reduces knowledge
+transfer. With the compart- mentalization of work, smooth integration of the
+system suffers, and flexibility in assigning work is lost. Duplication crops up
+when a developer does not realize that a behavior already exists else- where,
+and so the system becomes even more complex. (p. 258)
+
+The harsh reality is that not all parts of the design are going to be equally
+refined. Priorities must be set. To make the domain model an asset, the model's
+critical core has to be sleek and fully leveraged to create application
+functionality. But scarce, highly skilled developers tend to gravitate to
+technical infrastructure or neatly definable domain problems that can be
+understood without specialized do- main knowledge. (p. 258)
+
+The specialized core, that part of the model that really differentiates the
+application and makes it a business asset, typically ends up being put together
+by less skilled developers who work with DBAs to create a data schema and then
+code *feature-by-feature without drawing on any conceptual power in the model*
+at all. (p. 258)
+
+***** Core domain
+Those parts of the model distinctive and central to the purposes of the intended
+applications make up the CORE DOMAIN . The CORE DOMAIN is where the most value
+should be added in your system. (p. 258)
+
+Boil the model down. Find the CORE DOMAIN and provide a means of easily
+distinguishing it from the mass of supporting model and code. Bring the most
+valuable and specialized concepts into sharp relief. Make the CORE
+small. (p. 258)
+***** Terms
+- core domain
+- generic subdomains
+- domain vision statement
+- highlighted core
+- cohesive mechanisms
+- segregated core
+- abstract core
+**** 16. Large-scale structure
+***** Terms
+- responsability layers
+
+  The structure can also give shortcuts to design decisions that could in
+  principle, be found by working on the individual object level, but would, in
+  practice, take too long and have inconsistent results. (p. 445)
+
+  A large-scale structure generally needs to be applicable across bounded
+  contexts. ... It has to leave freedom for development teams in distinct
+  contexts to vary the model in ways that address their local needs. (p. 446)
+
+  A system metaphor is a loose, easily understood, large-scale structure that is
+  harmonious with the object paradigm. Because the system metaphor is only an
+  analogy to the domain anyway, different models can map to it in an approximate
+  way, which allows it to be applied in multiple bounded contexts, helping to
+  coordinate work between them. (p. 447)
+
+  Responsibility layers, responsibility-driven design.
+
+  Storytelling: The layers should communicate the basic realities or priorities
+  of the domain. Choosing a large-scale structure is less a technical decision
+  than a business modeling decision. The layers should bring out the priorities
+  of the business.
+
+  Conceptual dependency: The concepts in the "upper" layers should have meaning
+  against the backdrop of the "lower" layers, while the lower layer concepts
+  should be meaningful standing alone.
+
+  Conceptual contours: If the objects of the layers should have different rates
+  of change or different sources of change, the layer accomodates the shearing
+  between them.
+
+  Clearing development logjams with working prototypes (p. 240)
+  
+  The ultimate purpose of software is to serve users. But first, that same
+  software has to serve developers. (p. 243)
+
+
+**** 17. Bringing the strategy together
+***** Six essentials for strategic design decision making
+      - decisions must reach the entire team
+      - the decision process must absorb feedback
+      - the plan must allow for evolution
+      - architecture teams must not siphon off all the best and brightest
+      - strategic design requires minimalism and humility
+
+* Greg Young - What is a domain event?
+See this [[http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/][blog post]].
+
+It is imperative that events always be verbs in the past tense as they are part
+of the Ubiquitous Language.
+

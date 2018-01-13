@@ -1,0 +1,18 @@
+
+* Useful commands
+
+git -a -m <message>
+
+Add tracked files to staging and commit with message.
+
+git rm --cached <path>
+
+Remove file from staging area.
+
+git log -p
+
+See changes made in each commit.
+
+git log --stat
+
+See stats for each commit

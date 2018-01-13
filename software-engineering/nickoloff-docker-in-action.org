@@ -1,0 +1,11 @@
+#+TITLE: Notes on Docker in Action
+#+AUTHOR: Bart Frenk
+
+* Meta
+  Description: Notes on Docker in Action by Jeff Nickoloff
+  Year: 2016
+  Tags: docker, devops
+* Contents
+** Part 1. Keeping a Tidy Computer
+** Part 2. Packaging Software for Distribution
+** Part 3. Multi-Container and Multi-Host Environments

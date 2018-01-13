@@ -1,0 +1,74 @@
+#+STARTUP: overview
+* Book
+** Title
+   Object-Oriented Analysis and Design with Applications Third Edition
+** Authors
+   Grady Booch
+   Robert A. Maksimchuck
+   Micheal W. Engle
+   Bobbi J. Young
+   Jim Conallen
+   Kelli A. Houston
+* Notes
+** 3.6. On building quality classes and objects
+*** Measuring the quality of an abstraction
+**** Coupling
+**** Cohesion
+**** Sufficiency
+The class should capture enough characteristics of the abstraction of
+the abstraction to permit meaningful and efficient interaction.
+**** Completeness
+The interface should capture all of the meaningful characteristics of
+the abstraction.
+**** Primitiveness
+On operation is primitive if we can implement it only through access
+to the underlying representation.
+** Classification
+*** Approaches
+**** Classical categorization
+As James suggests, “No one scheme of classification, more than any
+other, represents the real structure or order of nature. Nature
+indifferently submits to any and all divisions which we wish to make
+among existing things. Some clas- sifications may be more significant
+than others, but only by reference to our inter- ests, not because
+they represent reality more accurately or adequately”
+**** Conceptual clustering
+That practice is use case analysis, first formalized by
+Jacobson. Jacobson et al. define a use case as “A behaviourally
+related sequence of transactions performed by an actor in a dialogue
+with the system to provide some measurable value to the actor”
+**** Prototype theory
+As Lakoff explains the problem, “Wittgenstein pointed out that a
+category like game does not fit the classical mold, since there are no
+common properties shared by all games.... Though there is no single
+collection of properties that all games share, the category of games
+is united by what Wittgenstein calls *family
+resemblances*.... Wittgenstein also observed that there was no fixed
+boundary to the category game. The category could be extended and new
+kinds of games introduced, provided that they resembled previous games
+in appropriate ways”
+*** Practical
+Key abstractions
+** UML
+*** Essential class relationships
+**** Generalization
+inheritance, is-a
+denoted by closed arrow
+**** Aggregation
+the parts have seperate existence outside of the whole
+denoted by open diamond
+**** Composition
+physical containment, the parts have no seperate existence outside of the whole
+denoted by closed diamond
+*** General notation rules
+**** General associations are denoted by lines
+**** Directionality is indicated by an open arrow
+*** Visibility specifiers
+**** Public
+denoted +
+**** Protected
+denoted #
+**** Private
+denoted -
+**** Package
+denoted ~

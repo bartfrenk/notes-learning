@@ -1,0 +1,84 @@
+#+TITLE: Notes on Building API's you won't hate
+#+AUTHOR: Bart Frenk
+
+* Meta
+  Summary of /Building API's you won't hate/ by /Phil Sturgeon/. The book was
+  recommended to me by Dennis Abrazhevich.
+
+  :Categories: REST
+
+* Guidelines
+** Structure of content
+   From *Input and Output Theory. Content Structure*. For a more complicated
+   schema, see http://jsonapi.org/.
+
+   Namespace the single items
+
+    #+NAME: Return format of single items 
+    #+BEGIN_SRC javascript
+    {
+    "data": {
+        "name": "Phil Sturgeon",
+        "id": 511501255
+    }
+    }
+    #+END_SRC
+
+   Namespace lists of items
+
+    #+NAME: Return format of lists of items
+    #+BEGIN_SRC javascript
+    {
+    "data": [
+        {
+        "name": "Hulk Hogan",
+        "id": "1000002"
+        },
+        {
+        "name": "Mick Foley",
+        "id": "1000003"
+        }
+    ]
+    }
+    #+END_SRC
+
+   This is the simplest approach that allows for metadata, and works well with
+   nested resources, e.g.,
+
+    #+NAME: Nested resources
+    #+BEGIN_SRC javascript
+    {
+    "data": {
+        "name": "Phil Sturgeon",
+        "id": "511501255"
+        "comments": {
+        "data": [
+            {
+            "id": 123423
+            "text": "MongoDB is web-scale!"
+            }
+        ]
+        }
+    }
+    }
+    #+END_SRC
+
+** Structure of errors
+   From *Status Codes, Errors and Messages*.
+
+   Include a type, and put error inside namespace `error`, e.g.
+
+    #+BEGIN_SRC javascript
+    {
+    "error": {
+        "type": "OAuthException",
+        "code": "ERR-01234",
+        "message": "Session has expired at unix time 1385243766."
+        "documentation_url": "http://example.com/docs/errors/#ERR-01234"
+    }
+    }
+    #+END_SRC
+
+** Endpoint testing
+
+   Behaviour driven development.

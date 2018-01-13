@@ -1,0 +1,17 @@
+
+* Resources
+[1] Achison - Architecting for scale
+[2] Nygard - Release it!
+
+* Monitoring
+
+To monitor your EC2 servers completely, you need two additional things:
+- A server/operating-system monitor that monitors the OS and the server from
+  within the server. This provides information such as memory utilization,
+  swapping, and filesystem usage.
+- An application performance monitoring solution that monitors your application
+  from within the application. This will provide information about how the
+  application is performing, how users are using the application, and
+  information on errors and problems that occur within the software.  Only with
+  all three of these monitoring capabilities (the previous two and CloudWatch)
+  can you consider an EC2 server completely monitored. [1] (p. 169)

@@ -1,0 +1,70 @@
+#+TITLE: Notes on Release It!
+#+AUTHOR: Bart Frenk
+#+STARTUP: showall
+
+* Bibtex
+
+@book { release-it,
+  author = "Micheal T. Nygard",
+  title = "Release It!",
+  publisher = "Pragmatic Bookshelf",
+  year = 2007
+}
+
+* Quotes
+
+The main theme of this book, however, is that every system will even-
+tually end up operating outside of spec; therefore, it’s vital to test the
+local system’s behavior when the remote system goes wonky. (p.137)
+
+* Notes
+
+** Chapter 4. Stability anti-patterns
+- integration points
+- chain reactions : load-related failure mode
+- cascading failures
+- users
+- blocked threads
+- attacks of self-denial
+- scaling effects
+- unbalanced capacities
+- slow responses
+- SLA inversion
+- unbounded result sets
+
+** Chapter 17. Transparency
+
+*** Lessons
+Understand the relation between system metrics and business level metrics. This
+helps in technical planning.
+
+Anything logged at level ERROR or SEVERE should require immediate action (on the
+part of operations).
+
+Consider using message codes that identify log messages.
+
+Messages should include an identifier that can be used to trace the steps of a
+transaction.
+
+*** Perspectives
+
+- historical trending - operations database (Prometheus could serve as this)
+- predictive forecasting - what is our capacity?
+- present status - combination of events and parameters
+- instantaneous behavior
+
+*** Designing for transparency
+
+*** Enabling technologies
+
+*** Logging
+
+*** Monitoring systems
+
+*** Standards, de jure and de facto
+
+*** Operations database
+
+*** Supporting processes
+
+

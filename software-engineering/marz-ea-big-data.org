@@ -1,0 +1,9 @@
+
+#+TITLE: Notes on 'Big Data' 
+#+AUTHOR: Bart Frenk
+
+* Terminology
+In the Lambda Architecture, the *batch layer* precomputes the *master dataset* into
+*batch views* so that queries can be resolved with low latency.
+
+*recomputation algorithms* versus *incremental algorithms*.

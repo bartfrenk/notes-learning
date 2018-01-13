@@ -1,0 +1,107 @@
+#+STARTUP: content
+
+* Morphology
+
+** Run-length encoded images
+
+*** References
+
+**** Ji, Piper, Tang (1989)
+Erosion and dilation of binary images by arbitrary structuring
+elements using interval coding.
+
+**** Kim, Kim, Kim (August 16, 2005)
+Fast algorithms for binary dilation and erosion using run-length
+encoding
+
+Their algorithm does the following.
+1. Expand the Minkowski sum of two union of runs into a large union of
+   possibly overlapping runs
+2. Combine overlapping runs
+
+**** Ehrensperger, Ostermann, Schwitzer (April 7, 2015)
+Fast algorithms for morphological operation using run-length encoded
+images
+
+- Theorem 1 :: center the structuring element
+- Theorem 2 :: remove runs in the image shorter than the shortest run
+               in the structuring element
+- Erosion transform :: speed up by skipping (Theorem 4) or
+     automatically including pixels (Theorem 8)
+
+Erosion transform:
+
+Iterated erosion of $X$ by $K$ gives a rise to a descending filtration
+$(X_i)$, with $X_0 = S$, $X_1 = X$ and $X_{i + 1} = X_i \erode
+A$. Define $T_{X, K}: S \rightarrow \nats$ by
+\[
+T_{X, K}(p) = \max \{ i \mid p \in X_i \}.
+\]
+We refer to $T_{X, A}$ as the erosion transform of $X$ by $A$.
+
+Skeleton of $X$ with respect to $Y$ is the set of all points $p \in X$
+such that for all $y in -Y$,
+\[
+T_{X, Y}(p + y) \leq t_{X, Y}(p)
+\]
+
+Idea of the algorithm is:
+
+Translate K such that the origin is contained in the longest run
+Compute 
+
+** Decomposition of structuring elements
+
+*** Core idea
+Let + denote Minkowski sum, and - erosion. Then,
+\[
+A + (B + C) = (A + B) + C, \mbox{, }
+A - (B + C) = (A - B) - C
+\]
+
+*** References
+
+**** Hashimoto ea - A combinatorial optimization technique for the sequential decomposition of erosions and dilations
+
+Decomposition of structuring elements using dynamic programming.
+
+**** Vanrell ea - Optimal 3x3 decomposable disks for morphological transformations
+
+Contains near spherical structuring elements that decompose (I believe
+not all /near-spherical/ elements decompose).
+
+* Segmentation
+
+** References
+
+*** Szeliski, /Computer vision: algorithms and applications/
+**** Snakes
+**** Split and merge
+**** Mean shift and mode finding
+**** Normalized cuts
+**** Graph cuts and energy based methods
+
+*** Felzenswab, Huttenlocher, /Efficient graph-based image segmentation/
+**** Graph-based methods
+**** Region merging techniques
+**** Mapping image pixels to a feature space
+Includes histogram methods and tresholding
+**** Graph cuts
+**** Spectral methods
+
+*** Snyder, Qi, /Machine vision/
+
+/Segmentation/ of a picture is a partitioning into connected regions,
+where each region is homogeneous in some sense, and is identified by a
+unique label.
+
+**** Tresholding
+***** Global tresholding
+Usually not sufficient
+***** Local tresholding
+****** Block tresholding
+**** Edge-based techniques
+**** Region-based techniques
+Split and merge
+**** Hybrid methods
+Watershed

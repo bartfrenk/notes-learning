@@ -1,0 +1,34 @@
+#+TITLE: Notes on What type of thing is a type?
+#+AUTHOR: Bart Frenk
+
+* Meta
+  Description: Notes on a talk by Ron Garcia [1].
+  Tags: type systems, functional programming
+* Contents
+  Talk gives a theoretician's view on type systems.
+** Two perspectives on type discipline
+   - being disciplined by a type checker
+   - discipline to direct your programming
+** Chronology of papers that influenced Ron Garcia
+   - James H. Morris - Types are not sets (1973)
+   - Robin Milner - A theory of type polymorphism in programming (1978)
+   - John Reynolds - Types, abstraction and parametric polymorphism (1983)
+   - Robin Milner and Mads Tofte - Co-induction in relational semantics (1990)
+   - Bruce Duba ea - Typing first-class continuations in ML (1991)
+   - Andrew Wright and Matthias Felleisen - A syntactic approach to type soundness (1994)
+   - Amal Ahmed - Semantics of types for mutable state (2004)
+** Themes
+*** Syntax
+*** Semantics
+*** Pragmatics
+** A theory of type polymorphism in programming
+   The Hindley-Milner type inference paper.
+   A conceptual blueprint for analyzing types.
+
+*** Syntax
+    Just a data type.
+*** Semantics
+    Interpreter of this data type.
+
+* Footnotes
+[1] https://www.youtube.com/watch?v=jVyz3lWH2bA&t=106s&list=WL&index=75

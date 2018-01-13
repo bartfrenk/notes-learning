@@ -1,0 +1,18 @@
+
+* Benefits of event sourcing
+
+** Audit trail
+** Debugging
+** Historic state
+** Variant schemas
+** Distribution support
+** In-memory processing
+** Alternative histories
+
+* Problems and subtleties
+  
+** Unfamiliarity
+** Asynchrony (I don't completely get this)
+** External systems
+** Event schema
+** Identifiers

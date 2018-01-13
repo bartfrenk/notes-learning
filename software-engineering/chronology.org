@@ -1,0 +1,29 @@
+|       Date | Event                                                                                  | Type         | Concepts               |
+|------------+----------------------------------------------------------------------------------------+--------------+------------------------|
+| April 1936 | Church, An unsolvable problem in elementary number theory                              | publication  | lambda calculus        |
+|       1937 | Aiken presents concept of 'Mark I' to IBM                                              |              |                        |
+|       1946 | ENIAC announced                                                                        |              |                        |
+|       1946 | Mauchly and Presper Eckert formed EMCC                                                 |              |                        |
+|       1951 | UNIVAC I predicting the outcome of the presidential election                           |              |                        |
+|       1954 | Draft specification 'The IBM mathematical formula translating system'                  | PL           | Fortran                |
+|       1956 | Chomsky, Three models for the description of language                                  | publication  | Chomsky hierarhcy      |
+|       1957 | First FORTRAN compiler delivered                                                       | PL           |                        |
+|       1960 | McCarthy, Recursive functions of symbolic expressions and their computation by machine | publication  | garbage collection     |
+|       1961 | McCarthy, A basis for a mathematical theory of computation                             |              |                        |
+|       1967 | Floyd, Assigning meaning to programs                                                   | publication  |                        |
+|       1968 | NATO conference on software engineering                                                | conference   |                        |
+|       1969 | Hoare, An axiomatic basis for computer programming                                     | publication  |                        |
+|  1969-1973 | C programming language developed by Dennis Ritchie at AT&T Bell labs                   | PL           |                        |
+|       1970 | Xerox PARC founded                                                                     |              |                        |
+|       1971 | Scott, Strachey, Toward a mathematical semantics for computer languages                | publication  | denotational semantics |
+|       1971 | McCarthy wins Turing award                                                             | Turing award |                        |
+|       1972 | Dijkstra, Notes on structured programming                                              | publication  | structured programming |
+|       1977 | Backus, Can programming be liberated from the von Neumann style?                       | Turing award |                        |
+|       1978 | 8086 introduced by Intel                                                               |              |                        |
+|       1983 | Term ACID introduced by Härder and Reuter                                              | publication  | databases              |
+|       1984 | Hughes, Why functional programming matters                                             | publication  |                        |
+|       1990 | First version of Haskel (1.0) defined                                                  | PL           |                        |
+|       1998 | Brin, Page, The anatomy of a search engine                                             | publication  | PageRank               |
+
+* List of abbreviations
+** PL: programming language

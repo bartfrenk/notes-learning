@@ -1,0 +1,93 @@
+#+TITLE: Notes on Site Reliability Engineering
+#+AUTHOR: Bart Frenk
+
+* Scratch
+
+* By chapter
+** Introduction
+*** Sysadmin approach
+
+SRE team is responsible for:
+- latency,
+- performance,
+- efficiency,
+- change management,
+- monitoring,
+- emergency response,
+- capacity planning
+of their service.
+
+Postmortems should be written for all significant events. (p. 8)
+Blame-free postmortem culture.
+
+Reliability target
+
+The use of an error budget resolves the structural conflict of incentives between
+development and SRE. SRE’s goal is no longer “zero outages”; rather, SREs and prod‐
+uct developers aim to spend the error budget getting maximum feature velocity. This
+change makes all the difference. An outage is no longer a “bad” thing—it is an
+expected part of the process of innovation, and an occurrence that both development
+and SRE teams manage rather than fear.
+
+*Valid monitoring output*
+
+Alerts
+Signify that a human needs to take action immediately in response to something
+that is either happening or about to happen, in order to improve the situation.
+Tickets
+Signify that a human needs to take action, but not immediately. The system can‐
+not automatically handle the situation, but if a human takes action in a few days,
+no damage will result.
+Logging
+No one needs to look at this information, but it is recorded for diagnostic or for‐
+ensic purposes. The expectation is that no one reads logs unless something else
+prompts them to do so. (p. 10)
+
+*** Capacity planning
+Several steps are mandatory for capacity planning:
+
+- An accurate organic demand forecast, which extends beyond the lead time
+  required for acquiring capacity
+- An accurate incorporation of inorganic demand sources into the demand forecast
+- Regular load testing of the system to correlate raw capacity (servers, disks,
+  and so on) to service capacity
+
+**
+
+A *machine* is a piece of hardware (or perhaps a VM), a *server* is a piece of
+software that implements a service.
+
+** Principles
+
+** Practices
+
+** Management
+
+** Conclusions
+** Appendices
+*** A collection of best practices for production services
+**** Fail sanely
+Sanitize and validate configuration inputs, and respond to implausible inputs by
+both continuing to operate in the previous state and alerting to the receipt of
+bad input.
+**** Progressive rollouts
+If unexpected behavior is detected, roll back first and diagnose afterward in
+order to minimize Mean Time to Recovery.
+**** Define SLOs like a user
+Measure availability and performance in terms that matter to an end user. See
+Chap‐ ter 4 for more discussion.
+**** Monitoring
+Monitoring may have only three outputs
+- pages: requires immediate action
+- tickets: important enough for a human to be bothered, but no immediate action
+  required.
+- logging
+**** Postmortems
+Postmortems (see Chapter 15) should be blameless and focus on process and
+technology, not people. Assume the people involved in an incident are
+intelligent, are well intentioned, and were making the best choices they could
+given the information they had available at the time.
+**** Capacity planning
+**** Overloads and failure
+**** SRE teams
+

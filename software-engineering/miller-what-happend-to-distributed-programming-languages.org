@@ -1,0 +1,166 @@
+
+* Meta
+[1] https://pwlconf.org/2017/heather-miller/
+* Notes
+  On distributed programming languages.
+** Argus
+   Distribution gives rise to some problems that do not exist in a centralized
+   system or that exist in a less complex form. For example, a centralized
+   system is either running or crashed, but a distributed system may be partly
+   running and partly crashed. (quote by Barbara Liskov, from the 80s).
+   
+   Nodes and network may fail. Yet data must remain consistent.
+
+   Liskov introduced this idea in the context of a programming language.
+
+   Liskov introduces Argus to support programs like a banking system. She
+   introduces two concepts:
+   - *guardian*: a special object that runs procedures and responds to remote
+     requests. Belong to the world of object oriented programming. Purpose is to
+     encapsulate a resource or resources. Isolated.
+     - guardians encapsulates state. Contains dynamic collection of objects.
+       - guardian's data accessible only via calls to that guardian's hander.
+     - guardians are like an abstraction over a node. Can be moved.
+     - a guardian can create other guardians dynamically.  
+     - a guardian permits its resources to be accessed by means of special
+       procedures called /handlers/.
+     - handler calls location independent! Can affect a guardian somewhere else.
+   - *atomic transactions*: computations organized as atomic transactions
+*** So how is partial failure addressed by guardians
+    Argus allows computations to run as atomic transactions (actions for short).
+**** Actions are
+    - *serializable* Achieved via locking. Argus provides atomic (synchronized)
+      data types like arrays, records, integers, etc.
+    - *total* An action either completes entirely or has no visible
+      effect. Recovery is achieved via versioning.
+    Communication between remote guardians is via RPC.
+    Promises came from Argus. See
+** Emerald (1987)
+   While distributed systems are now commonplace, the programming of distributed
+   systems is still somewhat of a black art. We believe that the complexity of
+   distributed applications is heightened by the lack of programming language
+   support for distribution.
+   
+   *Goal*: Language support for distribution.
+
+   *Precursor*: Eden language. Extension of concurrent language Euclid for
+    distribution. Unify the object system for concurrent usage.
+    
+    With Emerals, we intend to go beyond simple syntactic support for message
+    send and receive, and address some of the fundamental semantic problems of
+    distribution. (quote from the Emerald paper)
+
+*** Overview of Emerald
+    - Objects
+    - Types Could be used in open systems. Where objects may be added to a
+      running system. Allowed old code to invoke new objects.
+    - Distribution support
+      - Objects located on specific nodes
+      - Programmers can ignore/exploit object location
+      - Applications are free to control the placement of objects.
+      - Gets messy
+*** How was Emerald implemented?
+    - Compiler very closely coupled to kernel.
+    - Only Emerald is allowed on the kernel.
+*** Quote at the end
+    Monotonicity, datalog is great, disorderly.
+* Erlang (1990s)
+  Very quick summary, since everyone is assumed to be familiar with it.
+* LINDA (1994)
+  - Tuple spaces.
+  - Introduces as an alternative to message passing.
+    - Message passing is a coordination model that arises directly from the
+      architecture of networks. [2]
+   - The use of distributed data structures in a logically-shared memory is a
+     natural, readily-understood approach to parallel programming. [2]
+   - The "principal argument" against distributed shared memory is that
+     efficient implementations do not scale.
+
+     Claims by the authors of [2]:
+     
+     - *Claim*: message passing was developed as a consequence of this
+       complaint, in order to "cater to non-shared memory architectures".
+     - *Claim*: Scalable efficient implementations of shared memory are
+       possible.
+
+*** Big idea: Tuple spaces
+    - virtual
+    - associative (content-addressable)
+    - logically shared memory
+    - contain tuples: collection of ordered sequences of data called tuples.
+    - tuplespace is associative memory. Tuples have no addresses. Tuples read
+      via patterns, e.g. rd(A, ?x, ?y, ?y, ?z).
+
+*** Linda offers
+    - Intentionally loose coupling among processes (considered a win by Linda
+      designers)
+    - Message passing requires messages to be addressed to explicit receivers in
+      point-to-point systems (considered a win by Linda designers)
+    - Producers don't have to coexist with consumers.
+* Scala actors (2005)
+  Based on Erlang, but JVM has a heavy-weight thread model.
+* Cloud Haskell (2011)
+** Quotes by Simon Peyton Jones:
+   I think there are really quite a lot of different paradigms for parallel
+   programming in practice. And they differ mainly in their cost model. I'm not
+   a believer in the one size fits all story about parallelism. I think we
+   cannot escape the idea that we need to write parallel programs using multiple
+   different paradigms.
+
+   I would like to build a language or language ecosystem where you can use lots
+   of different kinds of parallelism in the same single application even. Where
+   you have maybe bits of task parallelism, bits of data parallelism, and bits
+   of message-passing all in the same application.
+* Bloom (2011)
+  A declarative language that came from the system community with emphasis on
+  data consistency.
+  
+  Uses program analysis techniques, which enable both static analysis and
+  runtime annotations on consistency.
+
+  Using the CALM principle:
+  - tight relationship between Consistency and Logical Monotonicity.
+
+** Monotonicity
+   - monotonic programs guarantee eventual consistency under any interleaving of
+     delivery and computation.
+   - by contrast, non-monotonicity--the property that adding an element to an
+     input set may revoke a previously valid element of an output set--requires
+     coordination schemes that "wait" until input can be guaranteed to be complete.
+
+** Overview
+   - no ordering
+   - programs are declarative statements about collection of tuples.
+   - statements defined wrt timesteps
+   - no mutable state. side-effect free.
+
+** Implemented
+   Bloom is implemented is Ruby. A Bloom program is a Ruby class definition.
+
+* Lasp (2015)
+** Why Lasp
+   - mobile games (online/offline)
+   - mobile apps (online/offline)
+   - internet of things
+   - ad counters (everyone's favorite)
+   - synchronization is a ridiculous idea when one app has to make calls to 3
+     dozen services during usage.
+   - also, state *has* to be replicated sometimes.
+** CRDTs
+   - Makes it easier to think about replicated state in an app.
+   - Basic idea: data type can be replicated, and can deal with temporary
+     divergence at each replica. Eventually consistent.
+** Implementations
+   - An Erlang library built on top of Riak
+** Quote at the end
+   *Consistency* is important, but so is *composability*.
+* Where did all the distributed languages go?
+  All these are all embedded DSLs now.
+
+* Footnotes
+[1] Barbara Liskov. Linguistic support for efficient asycnchronous procedure
+calls in distributed systems.
+[2] Carriero ea. The Linda alternative to message passing systems (1993)
+[3] Alvaro, Conway, Hellerstein, Marczak. Consistency analysis in bloom. A CALM
+and collected approach (2011)
+

@@ -1,0 +1,17 @@
+
+* Meta
+  Notes on Go Concurrency Patterns [1]
+* Contents
+** Patterns
+*** Generator
+    Function that returns a (receive-only) channel
+*** Multiplexing (fan-in)
+    Can also use select.
+*** Restoring sequencing
+    Send a channel over a channel on which the sender can block.
+** Systems software
+    Go was designed for writing systems software
+* References
+[1] https://www.youtube.com/watch?v=f6kdp27TYZs
+* Quotes
+Concurrency is a model for software construction

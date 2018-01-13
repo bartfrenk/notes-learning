@@ -1,0 +1,454 @@
+#+TITLE: Notes on 'RESTful web services cookbook'
+#+AUTHOR: Bart Frenk
+#+TAGS: LemonPI useful reference consider
+
+* Meta
+  TAGS: REST
+
+* Overview
+  The selection of topics (indicated by level 3 subheaders) is by perceived
+  usefulness. Not every topic in the book has a topic in this summary.
+** 1. Using the uniform interface
+   Most items in this chapter are trivial.
+*** How to use POST for asynchronous tasks
+*** How to use DELETE for asynchronous deletion
+** 2. Identifying resources
+   Useful chapters especially regarding creating resources for things that are
+   not naturally resources, such as functions or controllers.
+*** How to choose resource granularity
+    Depends on
+    - network efficiency
+    - size of representations
+    - client convenience
+    Factors that may influence resource granularity
+    - cacheability
+    - frequency of change
+    - mutability
+*** How to organize resources into collections
+    A collection does not necessarily imply hierarchical containment: a given
+    resource may be part of more than one collection resource. For example, a
+    user resource may be part of several collections: 'users', 'friends', ...
+*** When to combine resources into composites                :LemonPI:useful:
+    Depending on how the backend is used by the client, can reduce the number of
+    client-server round-trips, without messing up the API design too much. This
+    reduces latency and makes the code at the client easier.
+
+    For the customer snapshot page, you can design a “customer snapshot”
+    composite resource that combines all the information needed for the client
+    to render the page.  Assign a URI with path
+    ~/resource/<resource-id>/snapshot~. Maybe ~summary~ would be better instead
+    of ~snapshot~.
+
+    *Cons*
+    - reduce the visibility of the uniform interface
+
+    Sometimes latency for the client is better decreased by a caching proxy. Of
+    course, creating special-purpose composites for every client is not a
+    pragmatic solution.
+*** How to support computing/processing functions
+    Represent deterministic functions as resources. The input of the function is
+    specified in the query parameter and the representation is the value of the
+    function. Use GET to retrieve the value (good for caching since the function
+    is deterministic)
+*** When and how to use controllers to operate on resources          :useful:
+    A *controller* is a resource that can atomically make changes to multiple
+    resources.
+
+    In the discount example, the server identifies the current discount value as
+    a resource so that clients can use PUT to update it. Similarly, the server
+    identifies 30-day free electronic book offers as a collection and lets
+    clients use POST to add a new book to this collection. But when it comes to
+    combining these two tasks into a single request, a direct mapping to any
+    HTTP method is not obvious. Controllers are most appropriate in such cases.
+
+    Using the /book resource to add it to the 30 day free category and set the
+    15% percent discount price leads to *tunneling*.
+
+    Tunneling reduces protocol-level visibility because the visible parts of
+    requests such as the request URI, the HTTP method used, headers, and media
+    types do not unambiguously describe the operation.
+** 3. Designing representations
+*** How to use entity headers to annotate representations
+    A representation is much more than just data serialized in a format. It is a
+    sequence of bytes and metadata that describes those bytes.
+    
+    Use the following headers to annotate representations that contain message
+    bodies.
+    - Content-Type: type of the representation
+    - Content-Length: specify the size in bytes of the body
+    - Content-Language: if representation localized, specify the language
+    - Content-MD5: MD5 digest of the body (however, TCP)
+    - Content-Encoding: When body encoded using gzip, compress, or deflate
+    - Last-Modified: last time the server modified the resource
+*** 3.2 - 3.7 are not very informative
+    They might be useful as references, not sure.
+*** How to keep collection homogeneous
+*** How to use portable data formats in representations           :reference:
+    Lists portable formats for
+    - numbers (W3C)
+    - ISO 3166 (countries and dependent territories)
+    - ISO 4217 (currency)
+    - RFC 3339 (dates, times, and date-time values)
+    - BCP 47 (language tags)
+    - Olson Time Zone Database (time zones)
+*** When to use entity identifiers                                 :consider:
+    Consider using identifiers of the form ~urn:lemonpi:creative:153~, where
+    ~urn~ is explained by the following Wikipedia snippet (from 'Uniform
+    Resource Name'):
+
+    The term "URN" continues now as one of more than a hundred URI "schemes",
+    urn:, paralleling http:, ftp:, and so forth. URIs of the urn: scheme are not
+    locators, are not required to be associated with a particular protocol or
+    access method, and need not be resolvable. They should be assigned by a
+    procedure which provides some assurance that they will remain unique and
+    identify the same resource persistently over a prolonged period.
+*** How to encode binary data in representations                     :useful:
+*** How to return errors                                     :LemonPI:useful:
+    If information to correct or debug the error is available as a separate
+    human-readable document, include a link to that document via a Link header
+    or a link in the body.
+
+    If you are logging errors on the server side for later tracking or analysis,
+    *provide an identifier or a link that can be used to refer to that specific
+    error*. For instance, clients can report the error code to the server’s team
+    while reporting problems.
+    
+    Provides a list of HTTP status codes indicating errors (400-417, 500-505)
+    and when to use them.
+
+*** How to treat errors in clients
+    How should clients deal with each HTTP error status code. Contains a list
+    of suggestions, one per status code.
+** 4. Designing URIs
+*** How to design URIs
+    RFC 3986 defines URIs as case senitive except for the scheme and host
+    parts. *Could not find explicit mentioning of this in the RFC*.
+*** How to treat URIs as opaque identifiers
+*** How to let client treat URIs as opaque identifiers
+*** How to keep URIs cool
+    Use rewrite rules on the server to shield clients from implementation-level
+    changes, otherwise use permanent redirects (301)
+** 5. Web linking
+*** How to use links in XML representations
+    Use atom:link element
+*** How to use links in JSON representations
+    Gives a number of ways to mimic the atom:link element.
+*** When and how to use link headers
+    They are format independent (JSON, XML) and visible at the protocol
+    level. Does not seem to be so useful.
+*** How to assign link relation types
+    Contains a small table of common link relation types: self, alternate, edit,
+    related, previous, next, first, last
+*** How to use links to manage application flow              :LemonPI:useful:
+    Provide the client with contextual links, i.e. for setting up the content
+    rules when a template set is booked into a campaign, by using a "link" field
+    in the resource, like so
+
+    #+begin_src json
+    # Response containing a link to post reference checks
+    HTTP/1.1 201 Created
+    Location: http://www.example.org/hires/099
+    Content-Location: http://www.example.org/hires/099
+    Content-Type: application/json
+    {
+      "name": "Joe Prospect",
+      "id": "urn:example:hr:hiring:099",
+      ...
+        "link" : {
+          "rel" : "http://www.example.org/rels/hiring/post-ref-result",
+          "href" : "http://www.example.org/hires/099/refs"
+        }
+    }
+    #+end_src
+    
+    This way the client does not have to know the application flow in detail.
+*** How to deal with ephemeral URIs
+    Include them as links in a response and note in the rel attribute that the
+    link is ephemeral, and specify the TTL.
+*** When and how to use URI templates
+    URI templates have placeholder values that the client can fill in; they are semi-opaque.
+*** How to use links in clients
+    Make flow decisions based on the presence of absence of links.
+
+** 6. Atom and AtomPub
+   Consider this: https://trends.builtwith.com/feeds. Only 5% of feeds are Atom
+   feeds.
+*** How to model resources using atom
+    The key advantage is interoperability. For paging, see this RFC
+    https://tools.ietf.org/html/rfc5005
+*** When to use atom
+    For non-HTML data that is targeted at machine clients, Atom format is less
+    useful, and it is often simpler to design a more compact XML representation
+    of the resource
+*** How to use AtomPub service and category documents
+    Grouping collections.
+*** How to use AtomPub for feed and entry resources
+    Allow an Atom entry element in the body of a POST request. Make use of HTTP.
+
+    However, the word *slug* for human-readable identifiers is useful. See [5]
+    for usage and etymology of this word. It is used in the AtomPub
+    specicification.
+*** How to use media resources
+    Again, use the edit relation.
+** 7. Content negotiation
+** 8. Queries
+*** How to design URIs for queries                                   :useful:
+    In
+
+    http://www.example.org/book/978-0374292881/reviews?after=2009-08-15&view=summary
+
+    the view parameter is a predefined query, that includes the projection, the
+    rating and a link for each review.
+
+    - *Consider using predefined queries for commonly used queries.*
+    - *Avoid ad hoc queries that use general-purpose query languages such as SQL
+      of XPath*
+    - *Avoid range requests for implementing queries*
+*** Hot to design query responses
+    As a representation of a collection resource
+*** How to support query requests with large inputs
+    Use POST, but reduces visibility and caching (and hence performance). Can
+    also store queries on the server.
+*** How to store queries
+    Stores queries compensate for some of the limitations of using POST for
+    queries. The downside is having to permanently store queries as resources.
+** 9. Web caching
+*** How to set expiration caching headers                            :useful:
+    Look this up when you need to. Comes down to: For HTTP 1.1, set
+    Cache-Control's max-age value, for HTTP 1.0 also include and Expires header,
+    and a Date header. The Date header holds the date-time of the server's response.
+
+    Consider making use of the 'private' value in the Cache-Control header. The
+    'must-revalidate' directive might also be useful. It requires cache to check
+    the origin server before serving stale representations.
+
+    Contains a list of directives to use in the Cache-Control header.
+*** When to set expiration caching headers
+    For GET and HEAD requests. Although POST is cacheable, caches consider this
+    method as noncacheable.
+
+    Also, use *negative caching*, i.e., set cache headers on error responses
+    (3xx and 4xx).
+*** When and how to use expiration headers in clients
+    Avoid programmatic caching, even if your client library supports such
+    an approach. Instead, delegate all caching activities to a forward proxy.
+*** How to support caching for composite resources
+    Base caching decisions on the part of the data that has the strongest
+    freshness requirements.
+*** How to keep caches fresh and warm
+    Outside of the scope of HTTP. Straightforward suggestions.
+** 10. Conditional requests
+*** How to generate Last-Modified and ETag Headers
+    Clients use the following request headers to make requests conditional:
+    - If-Unmodified-Since
+    - If-None-Match
+    - If-Unmodified-Since
+    - If-Match
+*** How to implement conditional GET requests in servers
+*** How to submit conditional GET and HEAD requests from clients
+*** How to implement conditional DELETE requests in servers
+*** How to make unconditional GET requests from clients
+*** How to make POST requests conditional
+    Let clients use a one-time URI supplied by the server
+*** How to generate one-time URIs
+** 11. Miscellaneous writes
+*** How to copy a resource                                           :useful:
+    Use a controller resource, possibly include a token to make the request
+    conditional.
+*** How to merge resources                                           :useful:
+    Design an application-specific controller resource to merge resources. The
+    protocol is as follows:
+    1. client submits a GET request to this URI with identifiers of the
+       resources to be merged.
+    2. server returns a Last-Modified and an ETag header along with a summary of
+       the resources.
+    3. the client verifies the summary
+    4. the client makes a POST request supplying If-Unmodified-Since and
+       If-Match the the same URI.
+    5. After merging, the server stores the If-Match header value in a
+       transaction log and returns response code 201 (Created).
+*** How to move a resource
+    Use a controller resource. Possibly include a link or link template in the
+    representation.
+*** When to use WebDAV methods
+    WebDAV is an extension of HTTP to support collaborative authoring. Do not
+    use it for anything else.
+*** How to support operations accross servers
+    Make servers coordinate with each other to decouple the client's
+    implementation from that of the server, including concurrency control,
+    atomicity, differences in data formats.
+*** How to take snapshots of resources
+    Thake snapshots of resources before each update. For cases when the client
+    expects to be able to go back in time and browse through the history of changes.
+    
+    In the representation of the updated resource, include a link to the snapshot.
+*** How to undo resource updates
+    Provide a controller resource for undo. Then restores the state of the
+    resource from the latest snapshot. Requires snapshots. In the representation
+    of the resource, include a link to perform an undo.
+    
+    The book uses <url>/undo;t=<token> as the undo controller resource URL.
+*** How to refine resources for partial updates
+    Expose part of the resource as a new resource
+*** How to use PATCH method
+    Use status code 422 Unprocessable Entity if the change would leave the
+    resource in an invalid state. The OPTIONS method should return an
+    Accept-Patch header, specifying valid mime-types for the patch.
+*** How to process similar resources in bulk
+    Submit POST or PUT requests to a collection. In the case of a POST return
+    the URLs of the created resources.
+*** How to trigger bulk operations
+    Use a controller resource.
+*** When to tunnel multiple requests using POST
+    The author recommends to avoid tunneling.
+*** How to support batch requests
+    Backtrack to analyze the use case that prompted such an approach. Design an
+    application-specific controller resource that can support the same use case
+    without generalizing the problem into one of tunneling multiple requests via
+    POST.
+*** How to support transactions
+    Provide a resource that can make atomic changes to the data. Not completely
+    clear from the explanation. Use application state encoded in URLs. See Recipe 1.3.
+** 12. Security
+   This is not a useful chapter.
+*** How to use basic authentication
+    Basic
+*** How to use digest authentication
+    1. client sends request without credentials
+    2. server sends response containing a realm, a nonce and a qop directive;
+       the qop directive has value auth, or auth-int, in the WWW-Authenticate
+       header
+    3. the client sends MD5(<A1>:<nonce>:<A2>, where)
+       - <A1> = MD5(<identifier>:<realm>:<secret>)
+       - <A2> = MD5(<method>:<URI>)
+*** Hot to use three-legged OAuth
+    A protocol that allows a user to give a client access to his resources on a
+    server.
+*** How to use two-legged OAuth
+    This is essentially a challenge-response protocol with a MAC in which the
+    shared secret is generated out-of-band by the server
+*** How to deal with sensitive information
+    This section is dangerous and to be ignored. It recommends DES (in 2010)
+*** How to maintain confidentiality
+    This says, use TLS.
+** 13. Extensibility and versioning
+   Not so useful, fairly straightforward.
+** 14. Enabling discovery
+*** How to document RESTful web services
+    Fully describe the following in human-readable documentation
+    - All resources and methods supported for each resource
+    - Media types and representation formats for resources in requests and responses
+    - Each link relation used
+    - All fixed URIs that are not supplied via links
+    - Query parameters used for all fixed URIs
+    - URI templates and token substitution rules
+    - Authentication and security credentials for accessing resources
+*** How to use OPTIONS
+    Not so useful
+* Designing RESTful web services
+** Designing the resource model
+   - identification of resources
+   - choice of media types and formats
+   - application the uniform (HTTP) interface
+** Considerations
+*** Client-server roundtrips (network chattiness)
+
+* Interesting
+Also avoid using the text/xml media type for XML-formatted representations. The
+default charset for text/xml is us-ascii, whereas application/xml uses
+UTF-8. (p.52)
+* Extras
+** What is a resource
+*** Sources
+    - [1] 
+*** Content
+    Remember that a resource is anything *interesting enough* to be the *target*
+    of a *hypertext link*. Anything that might be refered to by name ought to
+    have a name. Web services commonly expose three kinds of resources:
+    1. Predefined one-off resources for especially important aspects of the application
+    2. A resource for every object exposed through the server
+    3. Resources representing the results of algorithms applied to the data set.
+       Example, 'www.google.com?q=jellyfish' identifies a single resource, as
+       does 'www.google.com?q=chocolate'. ([1] p. 112)
+** The six constraints of REST
+*** Sources
+    - [2]
+    - [3] Roy Fielding's thesis
+*** Content
+    1. uniform interface
+       - resource-based
+       - manipulation of resources through representations
+       - self-descriptive messages
+       - hypermedia as the engine of applicatin state
+
+       By applying the software engineering principle of generality to the
+       component interface, the overall system architecture is simplified and
+       the visibility of interactions is improved. Implementations are decoupled
+       from the services they provide, which encourages independent
+       evolvability. The trade-off, though, is that a uniform interface degrades
+       efficiency, since information is transferred in a standardized form
+       rather than one which is specific to an application's needs. The REST
+       interface is designed to be efficient for *large-grain hypermedia data*
+       transfer, *optimizing for the common case of the Web*, but resulting in an
+       interface that is *not optimal for other forms* of architectural
+       interaction. (from Section 5.1.5. of [3], emphasis is mine)
+
+    2. stateless
+    3. cacheable
+    4. client-server
+    5. layered system
+    6. code on demand (optional)
+    
+    On representations (from [3], Section 5.2.1.2)
+
+    A representation consists of data, metadata describing the data, and, on
+    occasion, metadata to describe the metadata (usually for the purpose of
+    verifying message integrity). Metadata is in the form of name-value pairs, where
+    the name corresponds to a standard that defines the value's structure and
+    semantics. Response messages may include both representation metadata and
+    resource metadata: information about the resource that is not specific to the
+    supplied representation.
+
+    Control data defines the purpose of a message between components, such as the
+    action being requested or the meaning of a response. It is also used to
+    parameterize requests and override the default behavior of some connecting
+    elements. For example, cache behavior can be modified by control data included
+    in the request or response message.
+
+    Depending on the message control data, a given representation may indicate the
+    current state of the requested resource, the desired state for the requested
+    resource, or the value of some other resource, such as a representation of the
+    input data within a client's query form, or a representation of some error
+    condition for a response. For example, remote authoring of a resource requires
+    that the author send a representation to the server, thus establishing a value
+    for that resource that can be retrieved by later requests. If the value set of a
+    resource at a given time consists of multiple representations, content
+    negotiation may be used to select the best representation for inclusion in a
+    given message.
+** Charactertistic of REST according to Roy Fielding
+*** Sources
+    A blog post by Roy Fielding [4].
+*** Content
+    REST is an architectural style, not a protocol, and thus announcing it as a
+    protocol binding is absurdly ignorant behavior for a group of technology
+    companies.
+** Richardson maturity model
+*** Sources
+    A blog post by Martin Fowler [6].
+*** Content
+    A maturity model for REST devised by Leonard Richardson, and very simple. It
+    has four levels:
+    0. the swamp of plain old XML (POX)
+    1. resources
+    2. HTTP verbs
+    3. hypermedia controls (i.e., hypermedia as the engine of application state,
+       or HATEOAS).
+* Footnotes
+
+[1] Richardson ea - RESTful web services
+[2] http://www.restapitutorial.com/lessons/whatisrest.html
+[3] http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm (from 2000)
+[4] http://roy.gbiv.com/untangled/tag/atompub
+[5] https://blog.cdivilly.com/2016/03/01/slug-http-header/
+[6] https://martinfowler.com/articles/richardsonMaturityModel.html
+  

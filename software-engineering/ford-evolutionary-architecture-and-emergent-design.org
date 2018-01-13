@@ -1,0 +1,69 @@
+#+TITLE: Notes on evolutionary architecture and emergent design
+#+AUTHOR: Bart Frenk
+
+* Preamble
+
+Notes on the webseries Evolutionary architecture and emergent design, by Neal
+Ford.
+
+See http://www.ibm.com/developerworks/java/library/j-eaed11/index.html for the
+first installment.
+
+* Notes
+
+** Leveraging reusable code, Part 1
+
+- idiomatic patterns
+
+- the last responsible moment (from the lean movement)
+
+- single level of abstraction (SLAP) principle
+
+** Environmental considerations for design
+
+I've been making the argument throughout this series that in software you can't
+divorce design from coding. The complete source code is the only truly accurate
+design artifact, which suggests that working on a software project with a group
+of people is a collaborative design exercise.
+
+Collective code ownership.
+
+Layers make design decisions harder. I'm not suggesting that you do away with
+layered architectures (even ones that cut across logical domain tiers). Rather,
+I'm suggesting that the benefits that layered architectures provide come at a
+cost, and you should assess the cost before adding an architectural element such
+as a service layer. Which brings up another issue: when should you add an
+architectural element that may have an impact on your design?
+
+Architecture is the stuff that's hard to change later.
+
+- unknown unknowns
+  
+Architecture versus design
+
+** Composed method and SLAP
+
+[1] http://www.ibm.com/developerworks/java/library/j-eaed4/index.html
+
+This article talks about two decades-old patterns that help you refactor your
+code to find reusable assets: composed method and the single level of
+abstraction (SLAP) principle.
+
+BOOK: Kent Beck - Smalltalk Best Practice Patterns
+
+*** Composed method
+
+- Divide your programs into methods that perform one identifiable task.
+- Keep all the operations in a method at the same level of abstraction.
+- This will naturally result in programs with many small methods, each a few
+  lines long.
+
+*** Olio methods
+
+Olio is defined as "a miscellaneous collection of things," and it's used
+colloquially as another word for "leftovers." (It shows up in crossword puzzles
+a lot.) Olio methods are giant methods with a large collection of miscellaneous
+stuff in them, jumping all over the problem domain. The methods in your code
+base that hit the 300-line mark are by definition olio methods. How can such a
+method possibly be cohesive if it's that large? Olio is one of major inhibitors
+for refactoring, testing, and emergent design.

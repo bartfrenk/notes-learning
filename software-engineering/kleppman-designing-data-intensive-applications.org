@@ -1,0 +1,107 @@
+i#+TITLE: Notes on Designing data intensive applications
+#+AUTHOR: Bart Frenk
+
+* Meta
+  Book: Kleppmann - Designing data intensive applications
+  Tags: Distributed systems
+* Notes
+** Part I. Foundations of data systems
+*** Chapter 1. Reliable, scalable and maintainable applications
+*** Chapter 2. Data models and query languages
+*** Chapter 3. Storage and retrieval
+**** Hash indexes
+     *Data structure*: An ordered list of segments, where each segment consists of
+     an in-memory hash-table and a file of key-value pairs on disk. The
+     in-memory hash table maps keys to the offset of that key in the file.
+
+     The file format is binary length-value.
+     
+     *Writes*: A new key-value pair is appended to the end of the file of the
+     last segment, and the in-memory hash-table is updated accordingly. When the
+     segment file reaches a certain size, a new segment is added to the list.
+
+     *Reads*: Starting from the end of the list, a key is looked up in the
+     hash-map. The first hit returns an offset in a segment file, and the value
+     is returned.
+
+     *Deletes*: Write a key with a special value, called a /tombstone/.
+
+     *Concurrency*: Single writer is a common choice.
+
+     *Merging and compaction*:
+
+**** SSTables and LSM-trees
+     *Data structure*: 
+     1. An ordered list of segments, where each segment consists of an key-ordered
+        file on disk containing each key at most once, and an in-memory
+        index. The in-memory index is sparse in that it only contains the
+        offsets for some keys.
+     2. An in-memory /memtable/, which is a data structure satisfying the map
+        interface that allows for quick inserts and updates, and quick
+        serialization to an key-ordered stream.
+
+     *Writes*: Merge a new key-value pair into the memtable, if the memtable
+     reaches a certain size transform it into a segment and append that to the
+     segment list.
+
+     *Reads*: Look up the key in the memtable, then in the ordered list of
+     segments, starting from the last. A lookup in the segment proceeds by
+     determining adjacent keys from the index; and scanning through that key
+     range on disk. It is generally a good optimization to compress such disk
+     ranges.
+
+     *Merging and compaction*:
+
+     *Deletes*: Write a tombstone.
+
+     *Crashes*: Keep a separate write-log for the active memtable. Truncate it
+     when the memtable is transformed to a segment.
+
+     *Optimization*: Lookups are maximally slow when the key is not in the
+     database. To mitigate, use a Bloom filter. (accurately answers the
+     question: element definitely not in set)
+
+
+
+     
+
+
+
+
+
+*** Chapter 4. Encoding and evolution
+** Part II. Distributed data
+*** Chapter 5. Replication
+*** Chapter 6. Partitioning
+*** Chapter 7. Transactions
+*** Chapter 8. The trouble with distributed systems
+*** Chapter 9. Consistency and consensus
+** Part III. Heterogeneous systems
+*** Chapter 10. Batch processing
+* Extras
+** Linearizability versus serializability
+*** Sources
+    - [1]
+*** Content
+    Granted, serializability is (more or less) the most general means of maintaining
+    database correctness. In what’s becoming one of my favorite “underground” (i.e.,
+    relatively poorly-cited) references, H.T. Kung and Christos Papadimitriou
+    dropped a paper in SIGMOD 1979 on “An Optimality Theory of Concurrency Control
+    for Databases.” In it, they essentially show that, if all you have are
+    transactions’ syntactic modifications to database state (e.g., read and write)
+    and no information about application logic, serializability is, in some sense,
+    “optimal”: in effect, a schedule that is not serializable might modify the
+    database state in a way that produces inconsistency for some (arbitrary) notion
+    of correctness that is not known to the database.
+
+    However, if do you know more about your user’s notions of correctness (say,
+    you are the user!), you can often do a lot more in terms of concurrency
+    control and can circumvent many of the fundamental overheads imposed by
+    serializability. Recognizing when you don’t need serializability (and
+    subsequently exploiting this fact) is the best way I know to “beat CAP.”
+    (footnote from [1])
+
+* Footnotes
+[1] http://www.bailis.org/blog/linearizability-versus-serializability/
+  Succinct blog post on the difference between serializability and linearizability.
+

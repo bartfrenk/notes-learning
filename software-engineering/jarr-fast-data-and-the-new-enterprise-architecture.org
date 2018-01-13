@@ -1,0 +1,27 @@
+#+TITLE: Notes on Fast Data and the New Enterprise Architecture
+#+AUTHOR: Bart Frenk
+
+* Chapter 2. The Enterprise Data Architecture
+
+** Data age ~ fast data
+- interactive: milliseconds
+- realtime analytics: hundredths of seconds
+- record lookup: second(s)
+- historical analytics: minutes
+- exploratory analytics: hours
+
+** Chapter 3. Components of the Enterprise Data Architecture
+
+- data lake (HDFS?)
+
+*** Data segments
+- fast data -> fast in-memory database component
+- big data
+
+data fusion: merging streaming and static data
+
+** Chapter 8. Getting there: making the right fast data technology choices
+
+- Fast OLAP systems
+- Stream processing systems
+- Operational database systems

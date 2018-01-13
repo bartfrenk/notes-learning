@@ -1,0 +1,13 @@
+
+* Reference
+Richardson - Microservice patterns (MEAP)
+
+* Notes
+** Chapter 1. Escaping monolithic hell
+Adrian Cockcroft, formerly of Netflix, defines a microservices architecture as a
+service-oriented architecture composed of loosely coupled elements that have
+bounded contexts. (p. 7)
+
+There is a discussion on microservice pattern languages that might be useful.
+
+

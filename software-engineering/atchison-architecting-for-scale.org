@@ -1,0 +1,11 @@
+#+TITLE: Notes on Architecting for Scale
+#+AUTHOR: Bart Frenk
+
+* Lee Atchison - Architecting for Scale
+
+** Chapters
+*** Part I. Availability
+*** Part II. Risk management
+*** Part IV. Scaling applications
+*** Part V. Cloud services
+*** Part VI. Conclusion

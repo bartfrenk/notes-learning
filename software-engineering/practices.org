@@ -1,0 +1,53 @@
+* Principles
+
+
+** Interfaces
+Next three from https://stripe.com/blog/idempotency
+
+*** Make sure that failures are handled consistently.
+Have clients retry operations against remote services. Not doing so could leave
+data in an inconsistent state that will lead to problems down the road.
+*** Make sure that failures are handled safely.
+Use idempotency and idempotency keys to allow clients to pass a unique value and
+retry requests as needed.
+*** Make sure that failures are handled responsibly.
+Use techniques like exponential backoff and random jitter. Be considerate of
+servers that may be stuck in a degraded state.
+
+
+** Service Architecture
+*** Assign service tier labels to each service.
+See Atchison, architecting for scale.
+
+** Code Quality
+*** Single level of abstraction
+
+* Practices
+
+** API design
+*** Idempotency for endpoints
+See https://stripe.com/blog/idempotency
+
+One could use idempotency keys to make non-idempotent requests (such as POST
+requests) idempotent.
+
+** API clients
+
+*** Use retries with some backoff mechanism
+
+** Miscellaneous
+
+*** Respond predictably (also to errors)
+As much as possible, even if your dependencies fail or act unpredictably, it is
+important that you do not propagate that unpredictability upward to those who
+depend on you.
+
+A predictable response really means a planned response. Don’t think “Well, if a
+dependency fails, I can’t do anything so I might just as well fail, too.” If
+everything else is failing, you should instead, proactively figure out what a
+reasonable response would be to the situation. Then detect the situation and
+perform the expected response.
+
+Atchison, Architecting for Scale (p. 88)
+
+*** Use correlation IDs

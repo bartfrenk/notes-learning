@@ -1,0 +1,108 @@
+#+TITLE: Notes on Distributed System
+#+AUTHOR: Bart Frenk
+#+TAGS: useful reference consider
+
+* Meta
+  TAGS: distributed systems, REST
+* Overview
+** 1. Introduction (52 pages)
+   A distributed system is collection of autonomous computing elements that
+   appear to its users as a single coherent system. (p. 2)
+*** 1.2 Design goals
+    - supporting resource sharing (p. 7)
+    - making distribution transparent (p. 8)
+    - being open (p. 12)
+    - being scalable (p. 15)
+      - *size scalability*
+      - *geographical scalability*
+      - *administrative scalability*
+      Techniques:
+      - hiding communication latencies (asynchrony)
+      - partitioning and distribution (sharding)
+      - replication
+    Pitfalls of distributed systems:
+    - the network is reliable
+    - the network is secure
+    - the network is homogeneous
+    - the topology does not change
+    - latency is zero
+    - bandwidth is infinite
+    - transport cost is zero
+    - there is one administrator
+** 2. Architectures (47 pages)
+*** 2.1 Architectural styles
+**** Layered architectures
+**** Object-based and service oriented architectures
+**** Resource-based architectures
+     *RESTful architectures*
+     1. Resources are identified through a single naming scheme
+     2. All services offer the same interface, consisting of at most four
+        operations: PUT, GET, DELETE, POST (_what happened to PATCH?_)
+     3. messages sent to of from a service are fully self-described
+     4. after executing an operation at a service, that component forgets
+        everything about the caller
+**** Publish-subscribe architectures
+     Taxonomy of coordination models:
+     
+      |                         | Temporally coupled | Temporally decoupled |
+      |-------------------------+--------------------+----------------------|
+      | Referentially coupled   | Direct             | Mailbox              |
+      | Referentially decoupled | Event-based        | Shared data space    |
+
+*** 2.2 Middleware organization
+**** Wrappers
+**** Interceptors
+*** 2.3 System architecture
+**** Edge-server systems
+     *I don't understand this*. One could look at the survey [Yi ea. 2015]
+**** Collaborative distributed systems
+*** 2.4 Example architectures
+**** Network File System (NFS)
+**** The Web
+** 3. Processes (58 pages)
+   _Skipped for now_
+*** 3.1 Threads
+*** 3.2 Virtualization
+*** 3.3 Clients
+*** 3.4 Servers
+*** 3.5 Code migration
+** 4. Communication
+** 5. Naming
+** 6. Coordination
+** 7. Consistency and replication
+** 8. Fault tolerance
+** 9. Security
+
+* Extras
+** On the REST architectural style
+*** Sources
+    - [1]
+    - [2]
+*** Overview
+**** REST constraints
+***** Uniform interface
+***** Stateless
+***** Cacheable
+***** Client-Server
+***** Layered system
+***** Code on demand (optional)
+      The server may extend functionality of the client by serving scripts.
+**** Design philosophy for developing REST
+     There are two common perspectives on the process of architectural design,
+     whether it be for buildings or for software. The first is that a designer
+     starts with nothing--a blank slate, whiteboard, or drawing board--and
+     builds-up an architecture from familiar components until it satisfies the
+     needs of the intended system. The second is that a designer starts with the
+     system needs as a whole, without constraints, and then incrementally
+     identifies and applies constraints to elements of the system in order to
+     differentiate the design space and allow the forces that influence system
+     behavior to flow naturally, in harmony with the system. Where the first
+     emphasizes creativity and unbounded vision, the second emphasizes restraint
+     and understanding of the system context. REST has been developed using the
+     latter process. (from [2])
+
+* Footnotes
+
+[1] http://www.restapitutorial.com/lessons/whatisrest.html
+[2] http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
+

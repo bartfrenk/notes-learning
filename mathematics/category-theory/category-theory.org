@@ -1,0 +1,86 @@
+#+TITLE: Category Theory
+#+AUTHOR: Bart Frenk
+#+OPTIONS: toc:nil
+#+LATEX_CLASS_OPTIONS: [10pt, a4paper]
+#+LATEX_HEADER: \usepackage{custom}
+
+* Definitions
+
+\begin{compactitem}
+
+\item A \df{category} is a triple $(\Obj, \Hom, \mathfrak{c})$, where $\Obj$ denotes a class of
+objects, $\Hom$ is a map from pairs of objects to sets, and $\mathfrak{c}$ is a partial function
+that composes elements of $\Hom$.
+
+\item A \df{functor} from $\mathcal{C}$ to $\mathcal{D}$ is a pair of maps, $(F_{\Obj}, F_{\Hom})$.
+
+\end{compactitem}
+
+* Functor algebras, monads and algebraic theories
+
+Let $\mathcal{C}$ be a category and $F$ an endofunctor on $\mathcal{C}$. An $F$-algebra is a pair
+$(A, a)$ with $A$ an object of $\mathcal{C}$ and $a: F(A) \rightarrow A$. A morphism in
+$\mathcal{C}$. A morphism between $F$-algebras $(A, a)$ and $(B, b)$ is a morphism $A \rightarrow B$
+in $\mathcal{C}$ that makes the obvious diagram commute (the nodes in that diagram are $A$, $B$,
+$F(A)$ and $F(B)$).
+
+It is fairly easy to use this construction to specify the existence of certain operations on $A$. If
+$F$ is the polynomial functor, \[ F(X) = a_0 + a_1 X^1 + a_2 X^2 + a_k X^k, \] then the algebras
+have $a_i$ operations of arity $i$. However, this says nothing about the laws, and there are for
+example algebras for the functor $X \mapsto 1 + X^2$ that are not monoids.
+
+The trick seems to be to consider an extension to monads. Let $(T, \eta, \mu)$ be a monad. Since $T$
+is a functor the notion of a $T$-functor algebra makes sense. However, the existence of natural
+transformations allows for restricting the resulting operations further. Some relatively obvious
+diagrams need to commute (see for example the Catsters youtube channel). When done for the monad
+$T(A) = A^* = 1 + A + A^2 + A^3 + \ldots$ this leads to the requirement that the binary $T$-algebra
+operation is associative.
+
+There seems to be a way to take the functor $1 + X^2$, transform it into a monad (the
+\df{algebraically free monad), and end up with actual monoids as monad algebras.
+
+* Code
+
+#+begin_src haskell :tangle yes
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE TypeSynonymInstances #-}
+module Category where
+
+import qualified Prelude as P
+import Control.Monad ((>=>))
+#+end_src
+
+#+begin_src haskell :tangle yes
+class Category hom where
+  id :: hom a a
+  compose :: hom a b -> hom b c -> hom a c
+
+instance Category (->) where
+  id = P.id
+  compose f g = g P.. f
+
+data Kleisli m a b = Kleisli { getMap :: a -> m b }
+
+instance (P.Monad m) => Category (Kleisli m) where
+  id = Kleisli P.pure
+  compose f g = Kleisli (getMap f >=> getMap g)
+
+#+end_src
+
+
+
+
+#+begin_src haskell :tangle yes
+data Isomorphism hom a b = Isomorphism (hom a b) (hom b a)
+#+end_src
+
+#+begin_src haskell :tangle yes
+class Functor hom hom' f where
+  fmap :: hom a b -> hom (f a) (f b)
+#+end_src
+
+
+
+
+

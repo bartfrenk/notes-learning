@@ -1,0 +1,15 @@
+#+TITLE: Notes on Delimited continuations for everyone
+#+AUTHOR: Bart Frenk
+
+* Meta
+  - Description: Summary of the talk 'Delimited continuations for everyone' by
+    Kenichi Asai.
+  - Tags: functional programming
+* Notes
+** Early papers on control operators
+   See [1], [2], [3]. The last is an introduction to delimited continuations,
+   but using CPS transformations. Asai does not explain the latter.
+* Footnotes
+[1] M. Felleisen - The theory and practice of first-class prompts (POPL 1988)
+[2] O. Danvy and A. Filinski - Abstracting control (LFP 1990)
+[3] O. Danvy and A. Filinski - Representing control (MSCS 1992)

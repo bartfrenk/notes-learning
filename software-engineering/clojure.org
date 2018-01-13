@@ -1,0 +1,28 @@
+
+* Tools
+** Documentation
+
+- codox: https://github.com/weavejester/codox
+
+** Contracts
+
+*** clojure spec: http://clojure.org/guides/spec
+This becomes part of the standard library in clojure 1.9.
+*** clojure.core.typed for types
+seems like a good 'getting started'
+https://juxt.pro/blog/posts/typed-clojure.html
+
+* Learning resources
+** Style guide (bbatsov)
+   - Prefer function pre and post conditions to checks inside a function's body,
+   - Don't shadow clojure.core names with local bindings.
+   - Good (< 5 x 10)
+   - To access a private var (e.g. for testing), use the @#'some.ns/var form.
+   - However, when defining sets, only use literal syntax when the values are
+     compile-time constants. [link]
+
+   - Consider wrapping all I/O calls with the io! macro to avoid nasty surprises
+     if you accidentally end up calling such code in a transaction.
+
+   - Tag the annotation with your initials and a date so its relevance can be
+     easily verified.

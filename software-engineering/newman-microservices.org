@@ -1,0 +1,137 @@
+#+TITLE: Microservices
+#+AUTHOR: Bart Frenk
+#+STARTUP: content
+
+* My comments
+** Triad
+The matter seems to revolve around the triad:
+- domain driven design
+- microservices
+- continuous delivery
+** Related concepts
+- Hexagonal architecture
+** Useful terms and ideas
+- Microservices as a decompositional technique
+* Notes on Martin Fowler's blog post on microservices
+The following is essentially a summary of [[http://martinfowler.com/articles/microservices.html][this blog post]].
+** Microservice architecture
+*** Descriptions
+- A particular way of designing software applications as suites of independently deployable
+  services.
+- An approach to developing a single application as a suite of small services, each running in its
+  own process and communicating with lightweight mechanisms, often an HTTP resource API.
+*** Characteristics
+**** Componentization via services
+***** Definitions
+- a *component* is a unit of software that is independently replaceable and upgradeable
+- a *library* is a component that is linked into a program and called using in-memory function calls
+- a *service* are out-of-process components who communicate with a mechanism such as web service
+  request, or remote procedure calls
+***** Benefits of services
+- services are independently deployable
+- a more explicit component interface
+***** Downsides of services
+- remote calls are more expensive than in-process calls
+- more difficult to change the allocation of responsibilities between components
+**** Organized around business capabilities
+- Any organization that designs a system (defined broadly) will produce a design whose structure is
+  a copy of the organization's communication structure. (Conway's law, Melvyn Conway, 1967)
+- Teams are cross-functional
+**** Products not projects
+- A team should own a product over its full lifetime.
+- Could happen with monolothic applications, but the smaller granularity of services can make it
+  easier to create the personal relationships between service developers and their users.
+**** Smart endpoints and dumb pipes
+- Lightweight communication (web, lightweight message bus such as ZeroMQ)
+- The biggest issue in changing a monolith into microservices lies in changing the communication
+  pattern. A naive conversion from in-memory method calls to RPC leads to chatty communications
+  which don't perform well. Instead you need to replace the fine-grained communication with a
+  coarser -grained approach.
+**** Decentralized governance
+
+- Patterns that aid evolving service contracts independently
+  - The [[http://martinfowler.com/articles/consumerDrivenContracts.html][consumer driven contract]] pattern
+  - The [[http://martinfowler.com/bliki/TolerantReader.html][tolerant reader]] pattern
+- Simple tools that allow them to define the contract for a service; part of the automated build
+  before code for the new service is ever written. The service is built out only to the point where
+  it satisfies the contract.
+
+**** Decentralized data management
+    :PROPERTIES:
+    :ORDERED:  t
+    :END:
+
+- Different world view for different systems within an application. See [[http://martinfowler.com/bliki/BoundedContext.html][bounded context]]. Thus,
+  different conceptual models.
+- Decentralize data storage decisions depending on data access patterns. See [[http://martinfowler.com/bliki/PolyglotPersistence.html][polyglot persistence]].
+
+**** Infrastructure automation
+- Continuous delivery and its precursor continuous integration.
+- Deployment should be boring.
+- Automated deployment
+- Automated test
+**** Design for failure
+- Services introduce the additional complexity of failure of services.
+- Real time monitoring to detect failure.
+**** Evolutionary design
+
+- organization around business capabilities
+- independently deployable
+- fully automated deployment
+- intelligence in the endpoints
+- decentralized control of languages and data
+- firm module boundary
+
+- The key property of a component is the notion of independent replacement and upgradeability
+- This emphasis on replaceability is a special case of a more general principle of modular design,
+  which is to drive modularity through the pattern of change [14]. You want to keep things that
+  change at the same time in the same module.
+*** History, or philosophy
+- roots go back to the design principles of Unix
+** Monolithic applications
+*** Drawbacks
+- change cycles are tied together; a change made to a small part of the application, required the
+  entire monolith to be rebuilt and deployed
+- over time it is harder to keep a modular structure
+- scaling required scaling the entire application, instead of parts
+* Notes on the sample of the book 'Building microservices'
+** The world from which microservices emerged
+- Domain-driven design
+- Continuous delivery
+- On-demand virtualization
+- Infrastructure automation
+- Small autonomous teams
+- Systems at scale
+** What are microservices?
+- small and focused on doing one thing well
+- something that could be *rewritten* in two weeks
+** Key benefits
+- Technology heterogeneity
+- Resilience
+- Scaling
+- Ease of deployment
+- Organizational alignment
+- Composability
+- Optimizing for replaceability
+
+** Testing (chapter 7)
+*** Marick's quadrant
+**** Technology-facing versus business facing
+**** Support programming versus critique product
+*** Test pyramid (different scopes for tests)
+**** unit tests
+**** service tests
+**** end-to-end tests
+Tricky to do well in a microservices context
+
+Test Journeys, Not Stories
+
+Separating Deployment from Release (useful section, p. 260)
+- smoke testing
+
+*** Quotes
+A test suite with flaky tests can become a victim of what Diane Vaughan calls the normalization of
+deviance — the idea that over time we can become so accustomed to things being wrong that we start
+to accept them as being normal and not a problem. 2 This very human tendency means we need to find
+and eliminate these tests as soon as we can before we start to assume that failing tests are OK.
+(p. 247)

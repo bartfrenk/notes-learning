@@ -1,0 +1,12 @@
+#+TITLE: Notes on TLA+
+#+AUTHOR: Bart Frenk
+
+* Meta
+  Contains notes on readings about TLA+. Materials references in this document
+  should mostly by reachable via bookmarks in the Technology/Formal methods/TLA+
+  folder.
+* Quotes
+** What to read from 'Specifying Systems'
+  The book is 364 pages long (including a 17-page index).  However, most people
+  will want to read only the first part, which comprises the first seven
+  chapters and is 83 pages long.  Here is the list of chapters.

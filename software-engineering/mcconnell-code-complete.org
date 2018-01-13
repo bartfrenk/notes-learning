@@ -1,0 +1,303 @@
+#+STARTUP: overview
+* Book
+** Title
+Code Complete
+Second Edition
+** Authors
+Steve McConnell
+* Summary by chapter
+** Chapter 4. Key construction decisions
+One key to successful programming is avoiding arbitrary variations so
+that your brain can be free to focus on the variations really are needed.
+(p. 66)
+
+If you’re in the late part of the wave, you can plan to spend most of
+your day steadily writing new functionality. If you’re in the early
+part of the wave, you can assume that you’ll spend a sizeable portion
+of your time trying to figure out your programming language’s
+undocumented features, debugging errors that turn out to be defects in
+the library code, revising code so that it will work with a new
+release of some vendor’s library, and so on.
+(p. 67)
+
+** Chapter 5. Design in construction
+*Software's Primary Technical Imperative: Managing complexity* (p. 77).
+
+See Fred Brooks's landmark paper: "No silver bullets: Essence and
+accidents of software engineering"
+
+*** How to attack complexity
+(p. 79)
+**** Minimize the amount of essential complexity
+**** Keep accidental complexity from needlessly proliferating.
+
+*** Quotes
+"Once you understand that all other technical goals in software are
+secondary to managing complexity, many design considerations become
+straightforward."
+
+*** Desirable characteristics of a design
+(p. 80)
+**** Minimal complexity
+**** Ease of maintenance
+**** Loose coupling
+**** Extensibility
+**** Reusability
+**** High fan-in
+High fan-in refers to having a high number of classes that use a given class.
+**** Low-to-medium fan out
+Low-to-medium fan out means having a given class use a low-to-medium number of other classes.
+**** Portability
+**** Leanness
+Leanness means designing the system so that is has no extra parts.
+**** Stratification
+Stratification means trying to keep the levels of decomposition
+stratified so that you can view the system at any single level and get
+a consistent view.
+
+*** Levels of design
+(p. 82)
+1. Software system
+2. Divisions into subsystems/packages
+3. Division into classes within packages
+4. Division into data and routines within classes
+5. Internal routine design
+
+To keep the connections easy to understand and maintain, err on the
+side of simple intersubsystem relations. The simplest relationship is
+to have one subsystem call routines in another. A more involved
+relationship is to have one subsystem contain classes from
+another. The most involved relationship is to have classes in one sub-
+system inherit from classes in another.
+(p. 84)
+
+*** Common subsystems
+
+**** Business rules
+**** User interface
+**** Database access
+**** System dependencies
+
+*** Heuristics (p.87-)
+**** Find real-world and synthetic objects
+**** Form consistent abstractions
+**** Encapsulate implementation details
+**** Inherit--when inheritance simplifies the design
+**** Hide secrets
+*Tip*: If you don't get the interface right the first time, try a
+few more times until it stabilizes. If it doesn't stabilize, you need
+to try a different approach.
+*Tip*: Get into the habit of asking "What should I hide?". You'd be
+ surprised at how many difficult desing issues dissolve before your
+ eyes (p. 97)
+***** Hiding complexity
+so that your brain doesn't have to deal with it unless you're
+specifically concerned with it.
+***** Hiding sources of changes
+so that when change occurs, the effects are localized.
+**** Identify areas likely to change
+
+Steps to follow to prepare for isolating unstable areas so that the
+effect of a change will be limited to one routine, class, or package.
+
+1. identify items that seem likely to change
+2. seperate items that are likely to change
+3. isolate items that seem likely to change
+
+Areas likely to change
+
+***** Business rules
+***** Hardware dependencies
+***** Input and output
+***** Non-standard language features
+***** Difficult design and construction areas
+***** Status variables
+
+**** Keep coupling loose
+
+***** Tips
+****** Additional level of abstraction
+The point of loose coupling is that an effective module provides an
+ additional level of abstraction--once you write it, you can take it
+ for granted.
+****** Intellectual tools for reducing complexity
+Classes and routines are first and foremost intellectual tools
+forreducing complexity. If they're not making your job simpler,
+they'renot doing their jobs. (p. 103)
+
+***** Coupling criteria
+
+****** Size
+small is better
+****** Visibility
+visibility refers to the prominence of the connection between two
+modules
+****** Flexibility
+flexibility refers to how easily you can change the connections between modules.
+
+***** Kinds of coupling
+
+****** Simple-data-parameter coupling
+all the data passes are primitive data types,
+****** Simple-object coupling
+if the module instantiates the object,
+****** Object-parameter coupling
+object 1 requires object 2 to pass it an object 3.
+**** Look for common design patterns
+
+**** Other heuristics
+
+***** Aim for strong cohesion
+at the class level largely subsumed by /consistent abstractions/
+***** Build hierarchies
+***** Formalize class contracts
+***** Assign responsibilities
+broader than 'what information should the object hide
+***** Design for test
+***** Avoid failure
+***** Choose binding time consciously
+***** Make central points of control
+see P.J. Plauger "The principle of one right place"
+***** Consider using brute force
+***** Draw a diagram
+***** Keep your design modular
+
+
+*Anecdote*: Thomas Edison was reportedly asked if he felt his time had
+been wasted since he had discovered nothing. "Nonsense", Edison is
+supposed to have replied. "I have discovered a thousand things that
+don't work". (p. 111)
+
+*** Design practices
+**** Divide and conquer (also /incremental refinement/)
+"As Polya recommended in mathematical problem solving, understand the
+problem, devise a plan, carry out the plan, and then *look back* to
+see how you did.
+
+**** Top-down and bottom-up design approaches
+**** Experimental prototyping
+If you do create prototypes using the production technology, a
+practical standard that can help is requiring the class names of
+package names for prototype code by prefixed with prototype.
+** Chapter 6. Working classes
+*Quote*: One way of thinking of a class is as an abstract data type
+plus inheritance and polymorphism.
+
+Try to make the names of classes and access routines independent of
+how the data is stored, and refer to the abstract data type, like the
+insurance-rates table, instead. That would give your class and access
+routine names like rateTable.Read() or simply rates.Read().
+(p. 132)
+*** Benefits of using ADTs
+**** You can hide implementation details
+**** Changes don't affect the whole program
+**** You can mek the interface more informative
+**** It is easier to improve performance
+**** The program is more obviously correct
+**** The program becomes more self-documenting
+**** You don't have to pass data all over your program
+**** You are able to work with real world entities
+As opposed to with low-level implementation structures
+*** Good abstraction
+**** Provide a consistent level of abstraction in the class interface.
+In practice, this is what happens when you mix levels of
+abstraction. As the program is modified, the mixed levels of
+abstraction make the program harder and harder to understand, and it
+gradually degrades until it becomes unmaintainable.
+(p. 137)
+
+**** *Be sure you understand what abstraction the class is implementing.*
+**** Provide services in pairs with their opposites
+**** Move unrelated information to another class.
+**** *Make interfaces programmatic rather than semantic when possible.*
+Each interface consists of a programmatic part and a semantic
+part. The programmatic part consists of the data types and other
+attributes of the interface that can be enforced by the compiler.  The
+semantic part of the interface consists of the assumptions about how
+the interface will be used, which cannot be enforced by the compiler
+(p. 138)
+**** Beware of erosion of the interface's abstraction under modification
+**** *Don't add public members that are inconsistent with the interface abstraction.*
+**** Consider abstraction and cohesion together
+If you see that a class has weak cohesion and aren't sure how to
+correct it, ask yourself whether the class presents a consistent
+abstraction instead. (p. 139)
+
+*** Good encapsulation
+
+**** *Minimize accessibility of classes and members.*
+**** Don't expose data members in public
+**** Avoid putting private implementation details into a class's interface
+For C++ putting implementation details in the private section of a
+class declaration violates this principle.
+**** *Don't make assumptions about the class's users.*
+**** Don't put a routine into the public interface just because it uses only public routines
+**** *Be very, very wary of semantic violations of encapsulation.*
+A class should be usable from its public interface!
+It ain't abstract if you have to look at the underlying implementation
+to understand what's going on.
+P.J. Plauger (p. 141)
+
+If you can’t figure out how to use a class based solely on its interface documentation,
+the right response is not to pull up the source code and look at the implementation.
+That’s good initiative but bad judgment. The right response is to contact the author of
+the class and say “I can’t figure out how to use this class.” The right response on the
+class-author’s part is not to answer your question face to face. The right response for
+the class author is to check out the class-interface file, modify the class-interface doc-
+umentation, check the file back in, and then say “See if you can understand how it
+works now.” You want this dialog to occur in the interface code itself so that it will be
+preserved for future programmers. You don’t want the dialog to occur solely in your
+own mind, which will bake subtle semantic dependencies into the client code that
+uses the class. And you don’t want the dialog to occur interpersonally so that it bene-
+fits only your code but no one else’s. (p. 142)
+
+**** *Watch for coupling that is too tight.*
+
+
+*** Design and implementation issues
+
+**** Containment
+
+***** Implement 'has a' through containment
+***** Implement 'has a' through private inheritance as a last resort
+***** Be critical of classes that contain more than about seven data members
+
+**** Inheritance
+
+***** Implement 'is a' through public inheritance
+***** Design and document for inheritance or prohibit it
+***** Adhere to the Liskov Substitution Principle (LSP)
+***** *Be sure to inherit only what you want to inherit*
+
+Types of inherited routines come from the Cartesian product,
+
+{implementation: default provided, implementation: no default provided (abstract)}
+x
+{overridable, not overridable}
+
+giving rise to three types (one element of the product does not make sense)
+
+1 abstract overridable (Java: abstract)
+2 overridable with default provided (Java: no keywords)
+3 non-overridable (Java: final)
+
+***** Don't reuse names
+of non-overridable base-class routines in derived classes
+(e.g. private routines in Java)
+***** Move common interfaces, data, and behaviour as high as possible
+in the inheritance, without breaking abstractions
+***** Be suspicious of classes of which there is only one instance
+***** Be suspicious of base classes of which there is only one derived class
+The best way to prepare for future work is not to design extra layers
+of base classes that 'might be needed someday'. it's to make current
+work as clear, straighforward, and simple as possible.
+***** Be suspicious of classes that override a routine and do nothing
+inside the derived routine (maybe use Strategy pattern)
+***** Avoid deep inheritance trees
+
+* Action list
+** TODO Read /G. Polya - How to solve it (1957)/
+** TODO Read /Adams - Conceptual blockbusting/
+** TODO Read: /P.J. Plauger - Programming on purpose: Essays on software design/
+** TODO Read: /Adams, James L. - Conceptual blockbusting: a guide to better ideas/
+** TODO read Liskov's 1988 paper!
