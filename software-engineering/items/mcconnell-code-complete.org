@@ -297,7 +297,6 @@ inside the derived routine (maybe use Strategy pattern)
 
 * Action list
 ** TODO Read /G. Polya - How to solve it (1957)/
-** TODO Read /Adams - Conceptual blockbusting/
 ** TODO Read: /P.J. Plauger - Programming on purpose: Essays on software design/
 ** TODO Read: /Adams, James L. - Conceptual blockbusting: a guide to better ideas/
-** TODO read Liskov's 1988 paper!
+** TODO Read Liskov's 1988 paper!
