@@ -1,0 +1,210 @@
+#+TITLE: Overview Data Science Topics
+#+AUTHOR: Bart Frenk
+#+TODO: TODO WAIT STARTED | DONE CANCELED TRACKED
+#+TAGS: PP
+
+* Topics
+  :PROPERTIES:
+  :VISIBILITY: children
+** Probabilistic programming, graphical models, Bayesian methods
+
+   Hesitant which resource is a good one to start with. Still needs some research.
+*** YouTube videos
+**** DONE On Cardinal, a Clojure probabilistic programming library
+     CLOSED: [2018-02-05 Mon 22:43]
+     See https://www.youtube.com/watch?v=ANyrmQESMkc
+
+***** Notes
+****** Advantages
+       - Incorporates domain knowledge
+       - Works well with small to medium data
+       - Models are explainable and understandable
+****** Disadvantages
+       - Need to build a model
+       - Computationally expensive
+
+
+*** Tutorials
+**** TODO Tutorial on PyMC3
+     PyMC3 is an industrial strengh probabilistic programming framework written
+     in Python. It has an embedded DSL for specifying models.
+
+*** Projects
+**** Pyro from Uber
+     http://eng.uber.com/pyro/
+
+     Pyro is a tool for deep probabilistic modeling, unifying the best of modern
+     deep learning and Bayesian modeling.
+*** Books
+**** WAIT Bayesian methods for hackers
+     Well written, not very deep on theory, but showcases some good uses.
+     Available online for free at [5]. Seems like the book version is still at
+     PyMC2, while the online version has moved to PyMC3 (I think).
+
+**** WAIT Chapter 8 on Graphical Models from Bishop
+**** STARTED Chapter 11 on sampling from Bishop
+**** WAIT Graphical models course (Coursera)
+
+** Online machine learning
+*** Scientific articles
+**** DONE Computational personalization Data science methods for personalized health
+     CLOSED: [2018-02-05 Mon 22:39]
+     Inaugural address of Maurits Kaptein. Layman's overview of his research
+     program.
+**** DONE Dealing with data streams (2016)
+     CLOSED: [2018-02-05 Mon 22:34]
+     Tutorial on computing sample statistics online, e.g., mean, variance,
+     covariance, etc. Fairly easy read.
+
+*** Code repositories
+**** TODO Streaming bandit
+     Provides a webserver to quickly setup and evaluate possible solutions to
+     contextual multi-armed bandit (cMAB) problems. Allows user to create new
+     /experiments/, each with their own policy, and disclose an API to evaluate
+     the policy in applications.
+
+     https://github.com/Nth-iteration-labs/streamingbandit
+
+     Depending on the contents of the repo, it might be a good idea to port the
+     backend to Clojure. Both for improving on Clojure and for better
+     understanding of the codebase.
+
+*** Book chapters
+**** Algorithms for Massive Data Problems: Streaming, Sketching and Sampling
+     From *Blum - Foundations of Data Science*. It partially deals with
+     streaming data. There is an algorithm to approximate the number of distinct
+     elements in a stream under limited space constraints.
+
+** Neural networks and deep learning
+*** Courses
+**** Deep Learning specialization (Coursera)
+     Quite theoretical, and does not seem to make use of higher level frameworks.
+     
+     Useful blog from someone that completed the first three courses very
+     quickly: https://medium.com/@gedanken.thesis
+**** Deep Learning Foundations Nanodegree (Udacity)
+     In this program, you’ll cover topics like Keras and TensorFlow, convolutional
+     and recurrent networks, deep reinforcement learning, and GANs. You'll learn
+     from authorities such as Sebastian Thrun, Ian Goodfellow, and Andrew Trask,
+     and enjoy access to Experts-in-Residence from OpenAI, GoogleBrain, DeepMind,
+     and more. This is the ideal point-of-entry into the field of AI.
+
+     This is the GitHub: https://github.com/udacity/deep-learning
+**** TRACKED Fast.ai - Practical deep learning for coders
+     CLOSED: [2018-02-07 Wed 13:45]
+     Very practical, hands-on, top-down. Uses high level frameworks. Free! Uses
+     PyTorch.
+     Link: [[file:extracts/fast-ai-practical-deep-learning-for-coders.org]]
+
+**** Fast.ai - Cutting edge deep learning for coders
+     Follow up to the first course
+*** Blog posts
+**** Blog post comparing 3 popular deep learning courses
+    Does a comparison between the deep learning courses on Udacity, Fast.ai, and
+    Deeplearning.ai (Coursera) [1]
+
+*** Scientific articles
+**** Opening the black box of deep neural networks 
+     Link [2] to *the morning paper*, that introduces the paper as follows:
+
+     In my view, this paper fully justifies all of the excitement surrounding
+     it. We get three things here:
+     - a theory we can use to reason about what happens during deep learning,
+     - a study of DNN learning during training based on that theory, which sheds
+       a lot of light on what is happening inside, and
+     - some hints for how the results can be applied to improve the efficiency
+       of deep learning – which might even end up displacing SGD in the later
+       phases of training.  Relation information theory and machine learning
+
+** Tooling
+*** Books
+**** TRACKED Python for data analysis (Wes McKinney)
+     CLOSED: [2018-02-25 Sun 16:47]
+     Recommended in the fastai course for learning pandas etc...
+     Recommended in the fastai course.
+     Link: file:extracts/mckinney-python-for-data-science.org
+
+**** TRACKED Clojure for data science
+     CLOSED: [2018-02-07 Wed 13:46]
+     Book published in 2016 using Clojure for data science.
+     Link: [[file:extracts/garner-clojure-for-data-science.org]]
+
+**** Data science at the command line 
+     Using standard Unix tools to do data science at the command line. Seems
+     interesting. Available on-line for free. See [4].
+
+*** Courses
+**** TODO Apache Spark 2.0 with Scala - Hands on with big data
+     See [7].
+
+* Projects
+  :PROPERTIES:
+  :VISIBILITY: children
+** Kaggle Competitions
+*** DONE Getting started: Titanic competition in Python
+    CLOSED: [2018-02-20 Tue 23:15]
+    Get (re)acquinted with the Python data science stack
+
+    Probably good to start here: https://www.kaggle.com/c/titanic#tutorials
+
+**** DONE Interesting notebook on ensembles and different types of classifiers
+     CLOSED: [2018-02-20 Tue 23:09]
+     https://www.kaggle.com/yassineghouzam/titanic-top-4-with-ensemble-modeling
+**** WAIT Follow up on ensemble methods
+     https://mlwave.com/kaggle-ensembling-guide/
+**** References
+***** On realistic scores for the Titanic competition
+      https://www.kaggle.com/c/titanic/discussion/4894
+
+*** WAIT Housing prices: Advanced regression techniques
+* Miscellaneous
+  :PROPERTIES:
+  :VISIBILITY: children
+** Interview with Google researchers
+   Peter Norvig, Yann LeCunn, Eric Horvitz
+
+   *Words*: Bounded rationality
+
+*** Question on deep learning and other areas of ML
+   Yann LeCunn: there is no opposition between deep learning and graphical
+   models. You can very well have graphical models, say factor graphs, in which
+   the factors are entire neural nets. Those are orthogonal concepts. People
+   have built Probabilistic Programming frameworks on top of Deep Learning
+   framework. Look at Uber's Pyro, which is built on top of PyTorch
+   (probabilistic programming can be seen as a generalization of graphical
+   models theway differentiable programming is a generalization of deep
+   learning). Turns it's very useful to be able to back-propagate gradients to
+   do inference in graphical models. As for SVM/kernel methods, trees, etc have
+   a use when the data is scarce and can be manually featurized.
+
+** DONE How to become a data scientist
+   CLOSED: [2018-02-15 Thu 15:24]
+
+   http://www.fast.ai/2017/03/01/changing-careers/
+
+   Rachel Thomas (fast.ai) on how to become a data scientist.
+   
+   Analyze any data you have: from research for an upcoming purchase
+   (i.e. deciding which microwave to buy), data from a personal fitness tracker,
+   nutrition data from recipes you’re cooking, pre-schools you’re looking at for
+   your child. Turn it into a mini-data analysis project and write it up in a
+   blog post. E.g. if you are a graduate student, you could analyze grade data
+   from the students you are teaching
+
+   Use Kaggle. Do the tutorials, participate in the forums, enter a competition
+   (don’t worry about where you place - just focus on doing a little better
+   every day). It’s the best way to learn practical machine skills.
+
+   including having a weekly reading group that was working through Bishop’s
+   Pattern Recognition and Machine Learning
+
+
+* References
+[1] https://towardsdatascience.com/the-3-popular-courses-for-deeplearning-ai-ac37d4433bd.
+[2] https://blog.acolyer.org/2017/11/15/opening-the-black-box-of-deep-neural-networks-via-information-part-i/
+[3] http://docs.pymc.io/notebooks/getting_started.html#Case-study-1:-Stochastic-volatility
+[4] https://www.datascienceatthecommandline.com/
+[5] http://camdavidsonpilon.github.io/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/
+[6] https://www.reddit.com/r/science/comments/7yegux/aaas_ama_hi_were_researchers_from_google/
+[7] https://www.udemy.com/apache-spark-with-scala-hands-on-with-big-data/
+[8] Christopher M. Bishop - Pattern recognition and machine learning (2006)

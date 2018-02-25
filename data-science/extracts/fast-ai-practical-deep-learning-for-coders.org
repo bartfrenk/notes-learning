@@ -1,0 +1,150 @@
+#+TITLE: Notes on Practical Deep Learning For Coders (fast.ai)
+#+AUTHOR: Bart Frenk
+
+* Information
+
+* Lessons
+** DONE Recognizing cats and dogs
+   CLOSED: [2018-02-07 Wed 13:40]
+*** DONE Set up paperspace account and rent GPU (0.40$/hour)
+    CLOSED: [2018-02-07 Wed 11:25]
+    *Remember to close SSH connections and stop machine!*
+
+*** DONE Read Wikipedia article on Arthur Samuel    
+    CLOSED: [2018-02-07 Wed 13:42]
+    Machine learning invented by [[https://en.wikipedia.org/wiki/Arthur_Samuel][Arthur Samuel]]. He coined the term in 1959.
+
+*** Ingredients
+**** Infinitely flexible function (parametrizable)
+     - Neural network
+     - Universal approximation theorem
+**** All-purpose parameters fitting
+     - Gradient descent
+     - Problem of local optima is not so relevant for neural networks (why?)
+**** Fast and scalable
+     - GPUs (cheaper than CPUs and faster for the problem at hand)
+     - Universal approximation for a single hidden layers requires an
+       exponentially increasing number of parameters. Solved by introducing
+       multiple hidden layers.
+
+  No need for intensive and domain-specific feature engineering.
+
+*** Projects
+**** Many at Google (exponential growth)
+**** Microsoft Skype Translator Preview
+     [3]
+**** Semantic style transfer
+     Turn doodles into paintings in a specific style
+     (impressionist) [4]. Creative AI.
+**** Diagnose lung cancer
+**** Many more:
+     ao. Ad optimization, pricing, resume screening
+
+*** How does it work?
+    Interesting link, convolutions explained visually [5]
+
+**** Gradient descent
+**** Learning rate
+
+**** Interesting paper
+     Visualizing and Understanding Convolutional Networks (2013) [6]
+     Draw a picture of what each layers in a convolutional neural networks learned.
+
+**** Choosing a learning rate
+     Cyclical Learning Rates for Training Neural Networks (2015) [7]
+
+**** DONE For this week: experiment
+     CLOSED: [2018-02-10 Sat 21:41]
+     - What image does it work well for
+     - How does the learning rate vary
+     - How many epochs
+     - Get a sense for what is in the data object
+     - Practice with numpy
+***** Learn three or four keyboard shortcuts per day
+
+**** Tricks in Jupyter notebook
+     - Tab completion method names
+     - Shift-Tab to get the signature and docstring, twice to get documentation,
+       thrice to make help appear in a separate frame
+     - ?<method name> also brings docs up the separate frame
+     - ??<method name> brings up the source code
+     - press 'h' brings up keyboard shortcuts (learn three or four keyboard
+       shortcuts per day)
+
+** DONE Improving your image classifier
+   CLOSED: [2018-02-23 Fri 11:20]
+*** Learning rate 
+    If your loss if going off to infinity, it is probably because your learning
+    rate is too high.
+    
+    Learning rate trainer. Important plot is the loss versus the learning
+    rate. Rule of thumb: one magnitude smaller (x10) than the minimum.
+*** Data augmentation
+    Transform data, acceptable transforms depend on type of images, e.g. no use
+    flipping letters.
+*** Cycle length
+    Stochastic gradient descent with restarts.
+
+    - Learning rate annealing :: Decreasing learning rate.
+    - Cosine annealing :: Take learning rate according to half of the cosine.
+
+*** Saving learning rate
+    Good to save learned parameters every once in a while.
+*** Different learning rates for different layers
+    Differential learning rates
+
+*** Test time augmentation
+    Augment the data in the validation set.
+
+*** Steps to get a world-class image classifier
+**** Full version
+    1. enable data augmentation, and precompute=True
+    2. use lr_find() to find highest learning rate where loss is still clearly improving
+    3. train last layer from precomputed activations for 1-2 epochs
+    4. train last layer with data augmentation (i.e. precompute=False) for 2-3 epoch with cycle_len=1
+    5. unfreeze all layers
+    6. set earlier layers to 3x-10x lower learning rate than next higher layer
+    7. use lr_find() again
+    8. train full network with cycle_mult=2 until over-fitting
+**** Minimal version
+    2. use lr_find() to find highest learning rate where loss is still clearly improving
+    4. train last layer with data augmentation (i.e. precompute=False) for 2-3 epoch with cycle_len=1
+    5. unfreeze all layers
+    6. set earlier layers to 3x-10x lower learning rate than next higher layer
+    8. train full network with cycle_mult=2 until over-fitting
+**** Summarized
+     1. find good learning rate
+     2. train last layer (rest of the network is frozen)
+     3. train full network with differential learning rates
+*** Things that improve the classifier
+    - bigger size, if the size of the images allow it
+    - different architecture  
+      - resnet44
+      - resnext50
+     
+*** DONE For this week: Do the dog breed classification
+    CLOSED: [2018-02-17 Sat 00:11]
+    Use the course 1 notebook
+** STARTED Understanding convolutions
+   Useful command
+   #+BEGIN_SRC ipython :session :exports code
+   for t in tables:
+       display(t.head()) # display renders the widget
+   #+END_SRC
+   Also, Jeremy has collapsing sections in the Jupyter notebook.
+
+** Structured time series and language models
+** Collaborative filtering. Inside the training loop
+** Interpreting embeddings. RNNs from scratch
+** Resnets from scratch
+
+
+* References
+
+[1] http://www.fast.ai/ (course website)
+[2] https://www.paperspace.com/ (machine provider)
+[3] https://www.skype.com/en/features/skype-translator/
+[4] https://arxiv.org/abs/1603.01768
+[5] http://setosa.io/ev/image-kernels/
+[6] https://arxiv.org/abs/1311.2901
+[7] https://arxiv.org/abs/1506.01186

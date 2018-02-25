@@ -1,0 +1,239 @@
+#+TITLE: Notes on Clojure for data science
+#+AUTHOR: Bart Frenk
+#+STARTUP: content
+
+* Preamble
+  Notes on *Garner - Clojure for data science (2015)*
+
+* Summary
+** DONE Statistics
+   CLOSED: [2018-01-21 Sun 16:39]
+** DONE Inference
+   CLOSED: [2018-01-22 Mon 22:31]
+*** Cochran's theorem
+    This shows that the sample mean and sample variance are independent. This
+    can also be shown by Basu's theorem, and in fact this property characterizes
+    the normal distribution – for no other distribution are the sample mean and
+    sample variance independent. ([1]).
+*** Distributions of common test statistics
+    Sample mean: N(population mean, standard error)
+    Sample standard error: Chi distribution
+    Variance: Chi^2 distribution 
+
+** DONE Correlation
+   CLOSED: [2018-01-26 Fri 15:49]
+   Such hidden causes are called confounding variables, because they confound
+   our ability to determine the relationship between their dependent variables.
+*** Terms
+    - correlation
+    - covariance
+    - confounding variable
+    - residual
+    - cost function / loss function
+    - residual plot
+    - heteroscedastic: The variables are said to be heteroscedastic when the
+      variance of one variable changes with respect to another. This is a
+      concern in regression analysis, because it invalidates the assumption that
+      modeling errors are uncorrelated and normallydistributed and that their
+      variances do not vary with the effects being modeled.
+    - coefficient of determination (R^2)
+    - coefficient of multiple determination
+    - adjusted R^2
+*** Multivariate linear regression
+     The function to fit multivariate linear models is
+     ~incanter.stats/linear-model~.
+
+**** Assumptions
+     Obviously, the primary assumption of linear regression is that there is a
+     linear relationship between the dependent and independent variable. In
+     addition, the residuals must not be correlated with each other or with the
+     independent variable.  In other words, we expect the errors to have a zero
+     mean and constant variance versus the dependent and independent variable.
+
+**** Terms
+     - Residuals :: Difference between the actual target values and the estimates.
+     - Coefficient of determination :: Also R-square. The proportion of
+          variation in the target variable that is accounted for by the
+          model. Adjusted R-square can be used to test whether the contribution
+          of a new independent variable is significant.
+     - Model significance :: To test whether the model has explanatory power,
+          i.e., whether or not some coefficient is different from zero. Based on
+          the F-distribution, and hence referred to as the F-test for model
+          significance.
+     - Categorical variables :: Use one-hot encodings.
+     - Standardized regression coefficient :: Allows comparing the relative
+          contributions of the coefficients: \[ b_i = \beta_i
+          \frac{s_{x_i}}{s_y}, \qquad \mbox{for $i = 2, \ldots, n$} \] Also
+          referred to as /beta weights/. Interpretation of $b_i$ is that when
+          variable $x_i$ increases by one standard deviation, the mean value of
+          $y$ increases by $b_i$ standard deviations.
+     - Prediction interval :: Confidence interval of a prediction. Must take
+          into account the variance of $Y$, and the variance in the
+          prediction. Based on the t-distribution.
+
+**** Pitfalls 
+***** Multicollinearity
+****** Symptoms
+      - The fact that the addition of a new feature has altered the importance of
+        an existing feature indicates that we have a problem. (p. 156)
+      - If two features are so strongly correlated that they always vary
+        together, how can the algorithm distinguish their relative importance?
+        As a result, there may be high variance in the coefficient estimates and
+        a high standard error. (p. 157)
+      - The surest method to assess multicollinearity is to regress each
+        independent variable on all the other independent variables. When any of
+        the R 2 from these equations is near 1.0, there is
+        high-multicollinearity. In fact, the largest of these R 2 serves as an
+        indicator of the degree of multicollinearity that exists. (p. 157)
+****** Solutions
+       - Increase the sample size. More data can produce more precise parameter
+         estimates with smaller standard errors.
+       - Combine the features into one. If you have several features that measure
+         essentially the same attribute, find a way to unify them into a single
+         feature.
+       - Discard the offending variable(s).
+       - Limit the equation of prediction. Collinearity affects the coefficients
+         of the model, but the result may still be a good fit for the data. (p. 158)
+
+** DONE Classification
+   CLOSED: [2018-01-31 Wed 23:32]
+*** Bootstrapping
+    In statistics, bootstrapping is any test or metric that relies on random
+    sampling with replacement. Bootstrapping allows assigning measures of
+    accuracy (defined in terms of bias, variance, confidence intervals,
+    prediction error or some other such measure) to sample estimates. This
+    technique allows estimation of the sampling distribution of almost any
+    statistic using random sampling methods. [1]
+*** Pooled sample proportion
+    See also [2].
+*** Visualizing categories
+    Although they were originally devised to represent proportions, pie charts
+    are generally not a good way to represent parts of a whole. People have a
+    difficult time visually comparing the areas of slices of a
+    circle. Representing quantities linearly, as with a stacked bar chart, is
+    nearly always a better approach. Not only are the areas easier to interpret
+    but they're easier to compare side by side.
+*** Methods
+**** Logistic regression
+**** Naive Bayes
+     In spite of being conceptually a simpler classifier as compared to logistic
+     regression, naive Bayes can often outperform it in cases where either data
+     is scarce or the number of parameters is very large. Because of naive
+     Bayes' ability to deal with a very large number of features, it is often
+     employed for problems such as automatic medical diagnosis or in spam
+     classification. In spam classification, features could run into the tens or
+     hundreds of thousands, with each word representing a feature that can help
+     identify whether the message is spam or not.  However, a drawback of naive
+     Bayes is its assumption of independence—in problem domains where this
+     assumption is not valid, other classifiers can outperform naive Bayes. With
+     a lot of data, logistic regression is able to learn more sophisticated
+     models and classify potentially more accurately than naive Bayes is able
+     to. (p.210)
+**** Decision trees
+**** Ensemble learning
+     
+** Big data
+** Clustering
+** Recommender systems
+** Network analysis
+** WAIT Time series
+   Better to read a good chapter on time series, and then do this chapter to
+   figure out how stuff is done in Clojure (if at all, the Python data science
+   ecosystem is so much more mature)
+*** Time-series decomposition
+**** Stationarity
+**** De-trending and differencing
+*** Discrete time models
+**** Random walks
+**** Autoregressive models
+**** Autocorrelation
+**** Moving-average models
+** Visualization
+
+* Errata
+** Chapter 1
+*** p. 15: s/sd and s/variance
+    The first computes the sample standard deviation, while the second computes
+    the sample variance. (Related to existing error on the errata list).
+** Chapter 2
+*** p. 76
+    Since the standard error has a normal probability distribution. How can this
+    be, since the standard error is always positive.
+
+* References
+[1] https://en.wikipedia.org/wiki/Cochran%27s_theorem#Sample_mean_and_sample_variance
+
+* Exercises
+** Implement normality tests in incanter
+   They seem not to exist yet, e.g. Kolmogorov-Smirnov, or Shapiro-Wilk, where
+   we need to do matrix multiplication.
+
+* Flowchart
+** test for difference of means
+*** single sample, two samples: t-test
+*** multiple samples: F-test, t-test with Bonferroni correction
+
+* Musings
+** Test statistics
+   
+   Given a sample $X = (X_1, \ldots, X_n)$, of size $n$ and a test statistic $T_n := t(X)$.
+
+**** Hypothesis testing
+     
+     Under $H_0$ and assumptions on $X$ it is known that $T_n(X)$ converges to a
+     random variable $Z$ with some known probability distribution. For a fixed
+     threshold $\alpha$ and a given realization $x$ of $X$, we reject $H_0$, when
+     \[
+     \Pr(Z \geq t(x)) < \alpha.
+     \]
+     Note that $t(x)$ is the corresponding realization of $T_n(X)$.
+
+     Two-sided testing fits into this framework by a transformation $x \mapsto
+     \|t(x)\|$.
+
+**** Confidence intervals
+
+     Added complexity, estimate f(X) of some population parameter $\phi$, assume
+     unbiased. Need to figure out $\Delta$ such that,
+
+     \[
+     \Pr(f(X) - \Delta \leq \phi \leq f(X) + \Delta) = 1 - \alpha
+     \]
+
+     Assume there exists $t'$ such that $t(x) = t'(f(x))$. Now write down the
+     confidence interval for $t'(\phi)$, and pull it back under $t'$ to give the
+     sought after confidence interval for $\phi$.
+    
+     
+
+
+* Other sources
+** Using econometrics: a practical guide
+   Studenmund - Using econometrics: a practical guide
+*** The classical model
+**** The classical assumptions
+     1. The regression model is linear in the coefficients, is correctly
+        specified, and has an additive error term.
+     2. The error term has zero population mean.
+     3. All explanatory variables are uncorrelated with the population mean.
+     4. Observations of the error term are uncorrelated with each other
+     5. The error term has a constant variance (no heteroskedacity)
+     6. No explanatory variable is a perfect linear function of any other
+        explanatory variables (no perfect multicollinearity).
+     7. The error term is normally distributed (this assumption is optional, but
+        usually invoked).
+
+**** The Gaus-Markov theorem
+     Under classical assumptions 1-6 the *ordinary least squares estimator* of
+     the regression coefficients is the minimum variance estimator from the set
+     of all unbiased estimators.
+
+* Techniques
+** Comparing two independent samples
+   Given independent random samples $\mathcal{X}_m = (X_1, \ldots, X_m)$ and
+   $\mathcal{Y} = (Y_1, \ldots, Y_n)$ with $\sigma(X_i) = \sigma(X_j)$ for $i =
+   1, \ldots, m$ and $j = 1, \ldots, n$.
+   
+* References
+[1] https://en.wikipedia.org/wiki/Bootstrapping_(statistics)
+[2] http://stattrek.com/hypothesis-test/difference-in-proportions.aspx

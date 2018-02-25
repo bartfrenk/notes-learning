@@ -1,0 +1,14 @@
+#+TITLE: Notes on Python for Data Science
+#+AUTHOR: Bart Frenk
+
+* Contents
+** CANCELED Preliminaries
+   CLOSED: [2018-02-25 Sun 22:29]
+** CANCELED Python language basics
+   CLOSED: [2018-02-25 Sun 22:29]
+** CANCELED Built-in data structures
+   CLOSED: [2018-02-25 Sun 22:29]
+** DONE Numpy Basics
+   CLOSED: [2018-02-25 Sun 22:29]
+   Important numpy functionality. Very useful for a quick overview.
+** TODO Getting started with pandas (chapter 5)
