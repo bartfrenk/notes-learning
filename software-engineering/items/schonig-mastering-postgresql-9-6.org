@@ -1,3 +1,5 @@
+-*- eval: (linum-mode -1) -*- ; avoid slow down due to large file size
+
 #+TITLE: Notes on Mastering PostgreSQL 9.6
 #+AUTHOR: Bart Frenk
 
@@ -11,7 +13,8 @@
   :visibility: children
   :END:
 
-** Preliminaries
+** DONE Preliminaries
+   CLOSED: [2018-02-07 Wed 23:10]
    Create table and load data
    
    #+BEGIN_SRC sql
@@ -28,27 +31,218 @@
 
 ** PostgreSQL overview
 ** Understanding transactions and locking
-** Making use of indexes
-** STARTED Handling advanced SQL
-*** Hypothetical aggregates
-
-    #+BEGIN_SRC sql :exports code
-    SELECT region,
-           rank(9000) WITHIN GROUP (ORDER BY production DESC NULLS LAST)
+** TODO Making use of indexes
+** DONE Handling advanced SQL
+   CLOSED: [2018-02-07 Wed 23:09]
+*** GROUPING SETS, CUBE, ROLLUP
+   
+    #+BEGIN_SRC sql
+    SELECT region, country, avg(production)
     FROM t_oil
-    GROUP BY ROLLUP (1);
+    WHERE country IN ('USA', 'Canada', 'Iran', 'Oman')
+    GROUP BY CUBE (region, country)
     #+END_SRC
 
     #+RESULTS:
-    | region        | rank |
-    |---------------+------|
-    | Middle East   |   21 |
-    | North America |   27 |
-    |               |   47 |
+
+    #+BEGIN_SRC sql
+    EXPLAIN ANALYZE SELECT region, sum(production)
+    FROM t_oil
+    GROUP BY region
+    #+END_SRC
+
+    #+RESULTS:
+    | QUERY PLAN                                                                                              |
+    |---------------------------------------------------------------------------------------------------------|
+    | HashAggregate  (cost=15.66..15.68 rows=2 width=16) (actual time=0.200..0.200 rows=2 loops=1)            |
+    | Group Key: region                                                                                       |
+    | ->  Seq Scan on t_oil  (cost=0.00..12.44 rows=644 width=16) (actual time=0.003..0.051 rows=644 loops=1) |
+    | Planning time: 0.175 ms                                                                                 |
+    | Execution time: 0.247 ms                                                                                |
+
+    #+BEGIN_SRC sql
+    EXPLAIN ANALYZE SELECT region, country, sum(production)
+    FROM t_oil
+    GROUP BY ROLLUP (region, country)
+    #+END_SRC
+
+    #+RESULTS:
+    | QUERY PLAN                                                                                              |
+    |---------------------------------------------------------------------------------------------------------|
+    | GroupAggregate  (cost=42.49..49.24 rows=31 width=24) (actual time=0.392..0.522 rows=17 loops=1)         |
+    | Group Key: region, country                                                                              |
+    | Group Key: region                                                                                       |
+    | Group Key: ()                                                                                           |
+    | ->  Sort  (cost=42.49..44.10 rows=644 width=24) (actual time=0.377..0.401 rows=644 loops=1)             |
+    | Sort Key: region, country                                                                               |
+    | Sort Method: quicksort  Memory: 75kB                                                                    |
+    | ->  Seq Scan on t_oil  (cost=0.00..12.44 rows=644 width=24) (actual time=0.004..0.085 rows=644 loops=1) |
+    | Planning time: 0.180 ms                                                                                 |
+    | Execution time: 0.570 ms                                                                                |
+
+    #+BEGIN_SRC sql
+    EXPLAIN (ANALYZE, TIMING, BUFFERS, COSTS) SELECT sum(production)
+    FROM t_oil
+    #+END_SRC
+
+    #+RESULTS:
+    | QUERY PLAN                                                                                             |
+    |--------------------------------------------------------------------------------------------------------|
+    | Aggregate  (cost=14.05..14.06 rows=1 width=4) (actual time=0.118..0.118 rows=1 loops=1)                |
+    | Buffers: shared hit=6                                                                                  |
+    | ->  Seq Scan on t_oil  (cost=0.00..12.44 rows=644 width=4) (actual time=0.007..0.044 rows=644 loops=1) |
+    | Buffers: shared hit=6                                                                                  |
+    | Planning time: 0.124 ms                                                                                |
+    | Execution time: 0.150 ms                                                                               |
+
+    #+BEGIN_SRC sql
+    CREATE INDEX country_idx
+    ON t_oil (country)
+    #+END_SRC
+
+    #+RESULTS:
+    | CREATE INDEX |
+    |--------------|
+
+    #+BEGIN_SRC sql
+    DROP INDEX country_idx;
+    #+END_SRC
+
+    #+RESULTS:
+    | DROP INDEX |
+    |------------|
+
+
+    #+BEGIN_SRC sql
+    EXPLAIN SELECT region, country, sum(production) as production
+    FROM t_oil
+    GROUP BY GROUPING SETS ((), region, country);
+    #+END_SRC
+
+    #+RESULTS:
+    | QUERY PLAN                                                  |
+    |-------------------------------------------------------------|
+    | GroupAggregate  (cost=42.49..82.53 rows=17 width=24)        |
+    | Group Key: region                                           |
+    | Group Key: ()                                               |
+    | Sort Key: country                                           |
+    | Group Key: country                                          |
+    | ->  Sort  (cost=42.49..44.10 rows=644 width=24)             |
+    | Sort Key: region                                            |
+    | ->  Seq Scan on t_oil  (cost=0.00..12.44 rows=644 width=24) |
+
+*** FILTER
+
+    #+BEGIN_SRC sql
+    SELECT
+        region,
+        sum(production) AS total,
+        sum(production) FILTER (WHERE year < 1990) AS old,
+        sum(production) FILTER (WHERE year >= 1990) AS new
+    FROM t_oil
+    GROUP BY ROLLUP (region)
+    #+END_SRC
+
+    #+RESULTS:
+    | region        |   total |    old |    new |
+    |---------------+---------+--------+--------|
+    | Middle East   |  864790 | 391401 | 473389 |
+    | North America |  626708 | 335374 | 291334 |
+    |               | 1491498 | 726775 | 764723 |
+
+
+    Note that if it is possible to move conditions to a WHERE clause it is
+    always more desirable as less data has to be fetched from the table. FILTER
+    is only useful if the data left by the WHERE clause is not needed by each
+    aggregate. (p.96)
+
+
+*** Making use of ordered sets: mode, percentile_disc, percentile_cont
+    
+    #+BEGIN_SRC sql
+    SELECT region,
+           percentile_disc(0.5) WITHIN GROUP (ORDER BY production) AS median,
+           percentile_cont(0.5) WITHIN GROUP (ORDER BY production) AS interpolated
+    FROM t_oil
+    GROUP BY 1;
+    #+END_SRC
+
+    #+RESULTS:
+    | region        | median | interpolated |
+    |---------------+--------+--------------|
+    | Middle East   |   1082 |         1094 |
+    | North America |   3054 |       3066.5 |
+
+    #+BEGIN_SRC sql
+    SELECT percentile_disc(0.5) WITHIN GROUP (ORDER BY x) as median,
+           percentile_cont(0.5) WITHIN GROUP (ORDER BY x) as interpolated
+    FROM generate_series(0, 1) as x
+    #+END_SRC
+
+    #+RESULTS:
+    | median | interpolated |
+    |--------+--------------|
+    |      0 |          0.5 |
+
+*** Hypothetical aggregates
+
+    #+BEGIN_SRC sql :exports code
+    SELECT country,
+           rank(9000) WITHIN GROUP (ORDER BY production DESC NULLS LAST)
+    FROM t_oil
+    GROUP BY ROLLUP (country);
+    #+END_SRC
+
+    #+RESULTS:
+    | country              | rank |
+    |----------------------+------|
+    | Canada               |    1 |
+    | Iran                 |    1 |
+    | Iraq                 |    1 |
+    | Israel               |    1 |
+    | Kuwait               |    1 |
+    | Mexico               |    1 |
+    | Oman                 |    1 |
+    | Other Middle East    |    1 |
+    | Qatar                |    1 |
+    | Saudi Arabien        |   21 |
+    | Syria                |    1 |
+    | United Arab Emirates |    1 |
+    | USA                  |   27 |
+    | Yemen                |    1 |
+    |                      |   47 |
 
 *** Windowing queries
+**** Partitioning data
 
-**** Partitioning data    
+
+     #+BEGIN_SRC sql
+     SELECT distinct(year < 1990, avg(production) OVER (PARTITION BY year < 1990))
+     FROM t_oil
+     #+END_SRC
+
+     #+RESULTS:
+     | row                       |
+     |---------------------------|
+     | (f,2801.1831501831501832) |
+     | (t,2430.6856187290969900) |
+
+     Better with a filter condition (the query plan is much less complex, and
+     the query is more efficient)
+
+     #+BEGIN_SRC sql
+     SELECT
+         avg(production) FILTER (WHERE year < 1990) as old,
+         avg(production) FILTER (WHERE year >= 1990) as new
+     FROM t_oil
+     #+END_SRC
+
+     #+RESULTS:
+     |                   old |                   new |
+     |-----------------------+-----------------------|
+     | 2430.6856187290969900 | 2801.1831501831501832 |
+
+
      - the number of rows returned doesn't change (unlike with GROUP BY)
      - ordering within a partition matters for aggregation
 
@@ -109,29 +303,44 @@
      - Can be unbounded on both sides by UNBOUNDED FOLLOWING, or UNBOUNDED PRECEDING
 
 **** Abstracting window clauses
+     You can name your window clauses using a WINDOW clause, as in the query
+     below
 
      #+BEGIN_SRC sql
-     SELECT country,
+     SELECT region, country,
             year,
             production,
             min(production) OVER (w),
             max(production) OVER (w)
      FROM t_oil
-     WHERE country = 'Canada' AND year BETWEEN 1980 AND 1985
-     WINDOW w AS (ORDER BY year)
+     WHERE region = 'North America' AND year BETWEEN 1980 AND 1985
+     WINDOW w AS (PARTITION BY country ORDER BY year)
      #+END_SRC
 
      #+RESULTS:
-     | country | year | production |  min |  max |
-     |---------+------+------------+------+------|
-     | Canada  | 1980 |       1764 | 1764 | 1764 |
-     | Canada  | 1981 |       1610 | 1610 | 1764 |
-     | Canada  | 1982 |       1590 | 1590 | 1764 |
-     | Canada  | 1983 |       1661 | 1590 | 1764 |
-     | Canada  | 1984 |       1775 | 1590 | 1775 |
-     | Canada  | 1985 |       1812 | 1590 | 1812 |
+     | region        | country | year | production |   min |   max |
+     |---------------+---------+------+------------+-------+-------|
+     | North America | Canada  | 1980 |       1764 |  1764 |  1764 |
+     | North America | Canada  | 1981 |       1610 |  1610 |  1764 |
+     | North America | Canada  | 1982 |       1590 |  1590 |  1764 |
+     | North America | Canada  | 1983 |       1661 |  1590 |  1764 |
+     | North America | Canada  | 1984 |       1775 |  1590 |  1775 |
+     | North America | Canada  | 1985 |       1812 |  1590 |  1812 |
+     | North America | Mexico  | 1980 |       2129 |  2129 |  2129 |
+     | North America | Mexico  | 1981 |       2553 |  2129 |  2553 |
+     | North America | Mexico  | 1982 |       3001 |  2129 |  3001 |
+     | North America | Mexico  | 1983 |       2930 |  2129 |  3001 |
+     | North America | Mexico  | 1984 |       2942 |  2129 |  3001 |
+     | North America | Mexico  | 1985 |       2912 |  2129 |  3001 |
+     | North America | USA     | 1980 |      10170 | 10170 | 10170 |
+     | North America | USA     | 1981 |      10181 | 10170 | 10181 |
+     | North America | USA     | 1982 |      10199 | 10170 | 10199 |
+     | North America | USA     | 1983 |      10247 | 10170 | 10247 |
+     | North America | USA     | 1984 |      10509 | 10170 | 10509 |
+     | North America | USA     | 1985 |      10580 | 10170 | 10580 |
 
 **** Various functions
+     Windowing works with all aggregate functions, and additionaly:
      - rank
      - dense_rank
      - ntile
@@ -142,7 +351,55 @@
      - last_value
      - row_number
        
+     #+BEGIN_SRC sql
+     SELECT year, production,
+            ntile(4) OVER (ORDER BY production)
+     FROM t_oil
+     WHERE country = 'Iraq' AND year BETWEEN 2000 AND 2006
+     #+END_SRC
+
+     #+RESULTS:
+     | year | production | ntile |
+     |------+------------+-------|
+     | 2003 |       1344 |     1 |
+     | 2005 |       1833 |     1 |
+     | 2006 |       1999 |     2 |
+     | 2004 |       2030 |     2 |
+     | 2002 |       2116 |     3 |
+     | 2001 |       2522 |     3 |
+     | 2000 |       2613 |     4 |
+
+     #+BEGIN_SRC sql
+     SELECT region, country, year, production,
+            rank() OVER (PARTITION BY region ORDER BY production DESC NULLS LAST)
+     FROM t_oil
+     WHERE year = 2010
+     ORDER BY region, rank
+     #+END_SRC
+
+     #+RESULTS:
+     | region        | country              | year | production | rank |
+     |---------------+----------------------+------+------------+------|
+     | Middle East   | Saudi Arabien        | 2010 |      10007 |    1 |
+     | Middle East   | Iran                 | 2010 |       4352 |    2 |
+     | Middle East   | United Arab Emirates | 2010 |       2895 |    3 |
+     | Middle East   | Kuwait               | 2010 |       2562 |    4 |
+     | Middle East   | Iraq                 | 2010 |       2490 |    5 |
+     | Middle East   | Qatar                | 2010 |       1655 |    6 |
+     | Middle East   | Oman                 | 2010 |        865 |    7 |
+     | Middle East   | Syria                | 2010 |        385 |    8 |
+     | Middle East   | Yemen                | 2010 |        306 |    9 |
+     | Middle East   | Other Middle East    | 2010 |        192 |   10 |
+     | Middle East   | Israel               | 2010 |            |   11 |
+     | North America | USA                  | 2010 |       7513 |    1 |
+     | North America | Canada               | 2010 |       3332 |    2 |
+     | North America | Mexico               | 2010 |       2959 |    3 |
+
+
 *** Writing your own aggregates
+    Writing aggregates is not hard and it can be highly beneficial to perform
+    more complex operations. In this section the plan is to write a hypothetical
+    aggregate, which has already been discussed in this chapter (p.120)
 
     #+BEGIN_SRC sql :exports code
     CREATE FUNCTION taxi_per_line (numeric, numeric)
@@ -166,7 +423,54 @@
     );
     #+END_SRC
 
+    #+RESULTS    
+
+    One can optimize the aggregate functions to be more efficient when using
+    with sliding windows. Think recursive filters. How to starts at page 118.
+
+*** Random experiments
+
+    #+BEGIN_SRC sql
+    SELECT *
+    FROM pg_catalog.pg_tables
+    WHERE tablename = 't_oil';
+    #+END_SRC
+
     #+RESULTS:
+    | schemaname | tablename | tableowner | tablespace | hasindexes | hasrules | hastriggers | rowsecurity |
+    |------------+-----------+------------+------------+------------+----------+-------------+-------------|
+    | public     | t_oil     | bart       |            | f          | f        | f           | f           |
+
+    #+BEGIN_SRC sql
+    CREATE INDEX region_country_idx
+    ON t_oil (region, country);
+    #+END_SRC
+
+    #+RESULTS:
+    | CREATE INDEX |
+    |--------------|
+
+
+    #+BEGIN_SRC sql
+    SELECT region,
+           country,
+           sum(production) as production,
+           sum(consumption) as consumption
+    FROM t_oil
+    WHERE country IN ('USA', 'Canada', 'Iran', 'Oman')
+    GROUP BY ROLLUP (region, country);
+    #+END_SRC
+
+    #+RESULTS:
+    | region        | country | production | consumption |
+    |---------------+---------+------------+-------------|
+    | Middle East   | Iran    |     167058 |       44894 |
+    | Middle East   | Oman    |      25804 |             |
+    | Middle East   |         |     192862 |       44894 |
+    | North America | Canada  |      97668 |       82728 |
+    | North America | USA     |     420502 |      794365 |
+    | North America |         |     518170 |      877093 |
+    |               |         |     711032 |      921987 |
 
 ** Log files and system statistics
 ** DONE Optimizing queries for good performance
@@ -250,6 +554,24 @@
       - Takes linear time, but can emit partial results
 
 *** Understanding execution plans: Spotting problems
+
+    Some relevant quotes from the PostgreSQL manual:
+
+    The most critical part of the display is the estimated statement execution
+    cost, which is the planner's guess at how long it will take to run the
+    statement (measured in cost units that are arbitrary, but conventionally
+    mean disk page fetches). Actually two numbers are shown: the start-up cost
+    before the first row can be returned, and the total cost to return all the
+    rows.
+
+    The ANALYZE option causes the statement to be actually executed, not only
+    planned. Then actual run time statistics are added to the display, including
+    the total elapsed time expended within each plan node (in milliseconds) and
+    the total number of rows it actually returned. This is useful for seeing
+    whether the planner's estimates are close to reality.
+
+
+
     - Start where the query times jump
     - Inspect estimates
       - Maybe row sizes are over- or under-estimated due to wrong statistics
@@ -307,7 +629,7 @@
        this context.
 *** JavaScript is also available as trusted language
     See [3] and [4] for the full matrix of available programming languages.
-** Managing PostreSQL security
+** Managing PostgreSQL security
 ** Handling backup and recovery
 ** Making sense of backups and replication
 ** Deciding on useful extensions
