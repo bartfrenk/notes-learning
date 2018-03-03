@@ -25,10 +25,9 @@
 
 
 *** Tutorials
-**** TODO Tutorial on PyMC3
+**** WAIT Tutorial on PyMC3
      PyMC3 is an industrial strengh probabilistic programming framework written
      in Python. It has an embedded DSL for specifying models.
-
 *** Projects
 **** Pyro from Uber
      http://eng.uber.com/pyro/
@@ -42,7 +41,8 @@
      PyMC2, while the online version has moved to PyMC3 (I think).
 
 **** WAIT Chapter 8 on Graphical Models from Bishop
-**** STARTED Chapter 11 on sampling from Bishop
+**** DONE Chapter 8 on graphical models from Bishop
+     CLOSED: [2018-03-03 Sat 20:56]
 **** WAIT Graphical models course (Coursera)
 
 ** Online machine learning
@@ -136,7 +136,7 @@
 *** Courses
 **** TODO Apache Spark 2.0 with Scala - Hands on with big data
      See [7].
-
+     
 * Projects
   :PROPERTIES:
   :VISIBILITY: children
@@ -157,6 +157,12 @@
       https://www.kaggle.com/c/titanic/discussion/4894
 
 *** WAIT Housing prices: Advanced regression techniques
+*** TODO data-science-for-good-kiva-crowdfunding
+    First project in the Data Science for Good program from Kaggle.
+
+    In this challenge, Kiva's inviting you to estimate and describe the welfare
+    levels of residents in given regions using historical loans data combined
+    with external data sources. (from the project website)
 * Miscellaneous
   :PROPERTIES:
   :VISIBILITY: children
@@ -199,6 +205,10 @@
    Pattern Recognition and Machine Learning
 
 
+** Google crash course on machine learning
+   Aimed at developers. Very crisp presentation.
+
+   https://developers.google.com/machine-learning/crash-course/
 * References
 [1] https://towardsdatascience.com/the-3-popular-courses-for-deeplearning-ai-ac37d4433bd.
 [2] https://blog.acolyer.org/2017/11/15/opening-the-black-box-of-deep-neural-networks-via-information-part-i/
