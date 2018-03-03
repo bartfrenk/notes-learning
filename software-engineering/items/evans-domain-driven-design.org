@@ -5,6 +5,31 @@
 ** What is domain driven design?
 ** What is strategic design?
 
+* Practical takeaways from Domain Driven Design
+** Modeling out loud
+   Play with the model as you talk about the system. Describe scenarios out loud
+   using the elements and interactions of the model, combining concepts in ways
+   allowed by the model. Find easier ways to say what you need to say, and then
+   take those new ideas back down to the diagrams and code.
+** One team, one language
+   If sophisticated domain experts don't understand the model, there is
+   something wrong with the model
+** Documents and diagrams
+   The vital detail about the design is captured in the code. A well-written implementation should be
+   transparent, revealing the model underlying it.
+** Documents and diagrams
+   A document must be involved in project activities. The easiest way to judge
+   this is to observe the document's interaction with the UBIQUITOUS
+   LANGUAGE. Is the document written in the language people speak on the project
+   (now)?  Is it written in the language embedded in the code?
+
+   Good programming style keeps this connection as direct as possible, but it is
+   still an exercise in self-discipline.  It takes fastidiousness to write code
+   that doesn't just do the right thing but also says the right thing. (p. 24)
+** The smart UI anti-pattern
+   It is a common mistake to undertake a sophisticated design approach that the
+   team isn't committed to carrying all the way through.
+
 * Eric Evans - Domain Driven Design
 Notes on the book  'Domain Driven Design' by Eric Evans.
 Start with introduction to Part I, as well as Chapter 1.
@@ -25,14 +50,26 @@ Always remember that the model is not the diagram. (p. 22)
 A document shouldn't try to do what the code already does well. The code already supplies the
 detail. It is an exact specification of program behavior. (p. 23)
 
-Good programming style keeps this connection as direct as possible, but it is still an exercise in
-self-discipline.  It takes fastidiousness to write code that doesn't just do the right thing but
-also says the right thing. (p. 24)
 
 ** Chapters
 *** Part I. Putting the domain model to work
 **** 1. Crunching knowledge
 **** 2. Communication and the use of language
+     A domain model can be the core of a common language for a software
+     project. The model is a set of concepts built up in the heads of people on
+     the project, with terms and relationships that reflect domain
+     insight. These terms and interrelationships provide the *semantics* of a
+     language that is *tailored to the domain* while being *precise enough for
+     technical development*. This is a crucial cord that weaves the model into
+     development activity and binds it with the code.  This model-based
+     communication is not limited to diagrams in Unified Modeling Language
+     (UML).  To make most effective use of a model, it needs to pervade every
+     medium of communication. It increases the utility of written text
+     documents, as well as the informal diagrams and casual conversation
+     reemphasized in Agile processes. It improves communication through the code
+     itself and through the tests for that code.  The use of language on a
+     project is subtle but all-important. (p.14)
+
      But the next time you attend a requirements or design discussion, really
      listen. You'll hear descriptions of features in *business jargon* or
      layman's versions of the jargon. You'll hear talk about *technical
@@ -69,8 +106,8 @@ mechanism . The meaning of the objects being partitioned needs to drive the
 choice of MODULES. When you place some classes together in a MODULE , you are
 telling the next developer who looks at your design to think about them
 together. If your model is telling a story, the MODULES are chapters. The name
-of the MODULE conveys its meaning. These names enter the UBIQUITOUS LANGUAGE
-. “Now let's talk about the 'customer' module,” (p. 67)
+of the MODULE conveys its meaning. These names enter the UBIQUITOUS
+LANGUAGE. “Now let's talk about the 'customer' module,” (p. 67)
 
 Looking at conceptual relationships is not an alternative to technical
 measures. They are different levels of the same issue, and both have to be
@@ -80,6 +117,12 @@ the conceptual clarity, even if it means more references between MODULES or
 occasional ripple effects when changes are made to a MODULE . Developers can
 handle these problems if they understand the story the model is telling
 them. (p. 67)
+
+The ideas of high cohesion and low coupling, often thought of as technical
+metrics, can be applied to the concepts themselves. In a MODEL-DRIVEN DESIGN,
+MODULES are part of the model, and they should reflect concepts in the
+domain. (p. 48)
+
 **** 6. The life cycle of a domain object
 ***** Aggregate
       First we need an abstraction for encapsulating references within the
