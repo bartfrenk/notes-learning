@@ -125,7 +125,8 @@
 *** DONE For this week: Do the dog breed classification
     CLOSED: [2018-02-17 Sat 00:11]
     Use the course 1 notebook
-** STARTED Understanding convolutions
+** DONE Understanding convolutions
+   CLOSED: [2018-03-01 Thu 22:03]
    Useful command
    #+BEGIN_SRC ipython :session :exports code
    for t in tables:
@@ -133,7 +134,22 @@
    #+END_SRC
    Also, Jeremy has collapsing sections in the Jupyter notebook.
 
+*** TODO Try out image classification challenges from Kaggle
+    Aim is to gain familiarity with the fast.ai method for image classification.
 ** Structured time series and language models
+*** DONE Recommended blog post on setting learning rates
+    CLOSED: [2018-03-03 Sat 22:31]
+    https://techburst.io/improving-the-way-we-work-with-learning-rate-5e99554f163b
+    Article on different ways to improve setting the learning rate for the
+    optimizer of a deep neural network.
+    - How to estimate a good learning rate (plot it against loss or accuracy)
+    - Cyclic learning rates
+    - Snapshots ensemble. Ensemble the parameters of multiple local minima that
+      are found at the end of each (later) cycle of training.
+*** Transfer learning
+*** Drop out
+    Absolutely critical. Just about solved the problem of generalization.
+
 ** Collaborative filtering. Inside the training loop
 ** Interpreting embeddings. RNNs from scratch
 ** Resnets from scratch
