@@ -31,7 +31,12 @@
 
 ** PostgreSQL overview
 ** Understanding transactions and locking
-** TODO Making use of indexes
+** STARTED Making use of indexes
+   After 17 years of professional, full-time PostgreSQL consulting and
+   PostgreSQL 24x7 support, I can say one thing for sure. Bad indexing is the
+   main source of bad performance.  Of course, it is important to adjust memory
+   parameters and all that. However, it is all in vain if indexes are not used
+   properly. There is simply no replacement for a missing index. (p.43)
 ** DONE Handling advanced SQL
    CLOSED: [2018-02-07 Wed 23:09]
 *** GROUPING SETS, CUBE, ROLLUP
