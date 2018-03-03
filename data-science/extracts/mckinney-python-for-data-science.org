@@ -11,4 +11,5 @@
 ** DONE Numpy Basics
    CLOSED: [2018-02-25 Sun 22:29]
    Important numpy functionality. Very useful for a quick overview.
-** TODO Getting started with pandas (chapter 5)
+** STARTED Getting started with pandas (chapter 5)
+   p. 145
