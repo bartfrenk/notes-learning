@@ -40,9 +40,12 @@
      Available online for free at [5]. Seems like the book version is still at
      PyMC2, while the online version has moved to PyMC3 (I think).
 
-**** WAIT Chapter 8 on Graphical Models from Bishop
-**** DONE Chapter 8 on graphical models from Bishop
-     CLOSED: [2018-03-03 Sat 20:56]
+**** DONE Chapter 8 on Graphical Models from Bishop
+     CLOSED: [2018-03-06 Tue 14:28]
+***** TODO Implement the iterated conditional modes algorithm in Clojure
+      Interesting questions:
+      - How to represent the graph?
+**** STARTED Chapter 11 on sampling from Bishop
 **** WAIT Graphical models course (Coursera)
 
 ** Online machine learning
@@ -57,7 +60,7 @@
      covariance, etc. Fairly easy read.
 
 *** Code repositories
-**** TODO Streaming bandit
+**** WAIT Streaming bandit
      Provides a webserver to quickly setup and evaluate possible solutions to
      contextual multi-armed bandit (cMAB) problems. Allows user to create new
      /experiments/, each with their own policy, and disclose an API to evaluate
@@ -134,7 +137,7 @@
      interesting. Available on-line for free. See [4].
 
 *** Courses
-**** TODO Apache Spark 2.0 with Scala - Hands on with big data
+**** WAIT Apache Spark 2.0 with Scala - Hands on with big data
      See [7].
      
 * Projects
@@ -157,7 +160,7 @@
       https://www.kaggle.com/c/titanic/discussion/4894
 
 *** WAIT Housing prices: Advanced regression techniques
-*** TODO data-science-for-good-kiva-crowdfunding
+*** WAIT data-science-for-good-kiva-crowdfunding
     First project in the Data Science for Good program from Kaggle.
 
     In this challenge, Kiva's inviting you to estimate and describe the welfare

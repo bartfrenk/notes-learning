@@ -136,7 +136,7 @@
 
 *** TODO Try out image classification challenges from Kaggle
     Aim is to gain familiarity with the fast.ai method for image classification.
-** Structured time series and language models
+** STARTED Structured time series and language models
 *** DONE Recommended blog post on setting learning rates
     CLOSED: [2018-03-03 Sat 22:31]
     https://techburst.io/improving-the-way-we-work-with-learning-rate-5e99554f163b
@@ -150,6 +150,14 @@
 *** Drop out
     Absolutely critical. Just about solved the problem of generalization.
 
+*** Cross-validation for time series data
+    Depends on what to predict. Usually the future. So cross-validate on the
+    last data points, e.g., the validation set is the last 25% percent of the
+    data points, ordered by timestamp.
+**** TODO Rachel Thomas' post How (and why) to create a good validation set
+*** Embeddings
+    Rich distributed representation
+     http://www.fast.ai/2017/11/13/validation-sets/
 ** Collaborative filtering. Inside the training loop
 ** Interpreting embeddings. RNNs from scratch
 ** Resnets from scratch
