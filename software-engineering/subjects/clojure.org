@@ -12,5 +12,12 @@
 **** DONE A surpassing problem
      CLOSED: [2018-02-15 Thu 15:23]
 
+**** DONE Improving on saddleback search
+     CLOSED: [2018-03-03 Sat 23:21]
+**** DONE A selection problem
+     CLOSED: [2018-03-03 Sat 23:21]
+**** DONE Making a century
+     CLOSED: [2018-03-03 Sat 23:21]
+**** TODO Building a tree with minimum height
 * References
 [1] https://github.com/bartfrenk/clj-pearls

@@ -1,0 +1,13 @@
+#+TITLE: Overview of software engineering topics
+#+AUTHOR: Bart Frenk
+#+EMAIL: bart.frenk@gmail.com
+
+
+* Introduction
+  This document serves to track my progress digesting more generic software
+  engineering topics, including:
+  - software architecture
+  - the process of software engineering
+* Topics
+** Software architecture
+*** WAIT Read Robert C. Martin's Clean Architecture
