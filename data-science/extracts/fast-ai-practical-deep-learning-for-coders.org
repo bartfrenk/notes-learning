@@ -134,9 +134,10 @@
    #+END_SRC
    Also, Jeremy has collapsing sections in the Jupyter notebook.
 
-*** TODO Try out image classification challenges from Kaggle
+*** STARTED Try out image classification challenges from Kaggle
     Aim is to gain familiarity with the fast.ai method for image classification.
-** STARTED Structured time series and language models
+** DONE Structured time series and language models
+   CLOSED: [2018-03-09 Fri 11:14]
 *** DONE Recommended blog post on setting learning rates
     CLOSED: [2018-03-03 Sat 22:31]
     https://techburst.io/improving-the-way-we-work-with-learning-rate-5e99554f163b
@@ -154,7 +155,19 @@
     Depends on what to predict. Usually the future. So cross-validate on the
     last data points, e.g., the validation set is the last 25% percent of the
     data points, ordered by timestamp.
-**** TODO Rachel Thomas' post How (and why) to create a good validation set
+**** DONE Rachel Thomas' post How (and why) to create a good validation set
+     CLOSED: [2018-03-09 Fri 11:30]
+***** Quotes
+      - On of the most likely culprits for this disconnect between results in
+        development vs results in production is a poorly chosen validation set.
+      - .. takes a random subset of the data, which is a poor choice for many
+        real-world problems.
+      - a *key property* of the validation and test sets is that they must be
+        *representative of the new data you will see in the future*.
+***** Training set, validation set, test set
+      - the training set is used to train a given model
+      - the validation set is used to choose between models
+      - the test set tells you how you've done
 *** Embeddings
     Rich distributed representation
      http://www.fast.ai/2017/11/13/validation-sets/

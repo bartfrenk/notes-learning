@@ -11,3 +11,9 @@
 * Topics
 ** Software architecture
 *** WAIT Read Robert C. Martin's Clean Architecture
+*** WAIT Write down thoughts on domain driven design
+    This might grow into a blog post. 
+    Input:
+    - Domain driven design
+    - The language of the system
+    - The talk of that guy that talks about missing design

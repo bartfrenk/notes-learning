@@ -2,16 +2,18 @@
 #+AUTHOR: Bart Frenk
 
 * Contents
-** CANCELED Preliminaries
+** CANCELED Preliminaries (chapter 1)
    CLOSED: [2018-02-25 Sun 22:29]
-** CANCELED Python language basics
+** CANCELED Python language basics (chapter 2)
    CLOSED: [2018-02-25 Sun 22:29]
-** CANCELED Built-in data structures
+** CANCELED Built-in data structures (chapter 3)
    CLOSED: [2018-02-25 Sun 22:29]
-** DONE Numpy Basics
+** DONE Numpy Basics (chapter 4)
    CLOSED: [2018-02-25 Sun 22:29]
    Important numpy functionality. Very useful for a quick overview.
 ** DONE Getting started with pandas (chapter 5)
    CLOSED: [2018-03-03 Sat 23:16]
-   p. 145
-* TODO Plotting and visualization
+* DONE Plotting and visualization (chapter 9)
+  CLOSED: [2018-03-07 Wed 16:51]
+  Useful primer on matplotlib and seaborn.
+** TODO Data loading, storage and file formats (chapter 6)

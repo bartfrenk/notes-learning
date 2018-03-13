@@ -1,0 +1,30 @@
+#+TITLE: Notes on Streaming Bandit and related online learning techniques
+#+AUTHOR: Bart Frenk
+#+EMAIL: bart.frenk@gmail.com
+
+* Framework
+  See [1].
+* Learning resources
+  :PROPERTIES:
+  :VISIBILITY: children
+** DONE Kapteijn's tutorial on how to use streaming bandit
+   CLOSED: [2018-03-09 Fri 11:13]
+   This is [1].
+** WAIT Good tutorial on Thompson sampling
+   This is [2].
+
+   On wait because the chapter on sampling is not easily read for someone
+   without background. It is recommended to read the chapter on sampling from
+   Bishop first.
+
+   There are particularly interesting examples in the paper, that are worth
+   studying carefully.
+
+* References
+
+[1] Kapteijn, Kruijswijk. Streaming Bandit: Developing adaptive persuasive
+systems. http://www.nth-iteration.com/wp-content/uploads/2016/02/article-1.pdf
+
+[2] Russell ea. A tutorial on Thompson
+sampling. https://arxiv.org/abs/1707.02038
+

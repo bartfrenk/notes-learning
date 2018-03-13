@@ -60,7 +60,8 @@
      covariance, etc. Fairly easy read.
 
 *** Code repositories
-**** WAIT Streaming bandit
+**** TRACKED Streaming bandit
+     CLOSED: [2018-03-09 Fri 11:12]
      Provides a webserver to quickly setup and evaluate possible solutions to
      contextual multi-armed bandit (cMAB) problems. Allows user to create new
      /experiments/, each with their own policy, and disclose an API to evaluate
@@ -71,6 +72,8 @@
      Depending on the contents of the repo, it might be a good idea to port the
      backend to Clojure. Both for improving on Clojure and for better
      understanding of the codebase.
+     
+     Link [[file:extracts/streaming-bandit.org]].
 
 *** Book chapters
 **** Algorithms for Massive Data Problems: Streaming, Sketching and Sampling
@@ -212,6 +215,9 @@
    Aimed at developers. Very crisp presentation.
 
    https://developers.google.com/machine-learning/crash-course/
+** MIT AGI (Artificial General Intelligence)
+   Seems to have some very interesting lectures on different kinds of topics,
+   from renowned speakers.
 * References
 [1] https://towardsdatascience.com/the-3-popular-courses-for-deeplearning-ai-ac37d4433bd.
 [2] https://blog.acolyer.org/2017/11/15/opening-the-black-box-of-deep-neural-networks-via-information-part-i/

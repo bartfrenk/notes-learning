@@ -8,13 +8,25 @@
 * Contents
   :PROPERTIES:
   :engine:   postgresql
-  :cmdline: "-U bart"
+  :cmdline: "-h localhost -p 15432 -U docker"
   :exports: both
   :visibility: children
   :END:
 
 ** DONE Preliminaries
    CLOSED: [2018-02-07 Wed 23:10]
+
+   #+BEGIN_SRC sh
+   docker run -d --name mastering-postgres-db \
+          -p 15432:5432 \
+          -e POSTGRES_USER=docker \
+          -e POSTGRES_DB=docker \
+          postgres:9.6.2
+   #+END_SRC
+
+   #+RESULTS:
+   : 25e721ec9235c6c73ac80bf196090ecb3b6aedde19ce38c4ae4d453ecfb5cafe
+
    Create table and load data
    
    #+BEGIN_SRC sql
@@ -29,9 +41,13 @@
    COPY t_oil FROM PROGRAM ' curl www.cybertec.at/secret/oil_ext.txt ';
    #+END_SRC
 
+   #+RESULTS:
+   | CREATE TABLE |
+   |--------------|
+
 ** PostgreSQL overview
-** Understanding transactions and locking
-** STARTED Making use of indexes
+** STARTED Understanding transactions and locking
+** WAIT Making use of indexes
    After 17 years of professional, full-time PostgreSQL consulting and
    PostgreSQL 24x7 support, I can say one thing for sure. Bad indexing is the
    main source of bad performance.  Of course, it is important to adjust memory
