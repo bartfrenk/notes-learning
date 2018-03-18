@@ -1,7 +1,6 @@
 #+TITLE: Overview Data Science Topics
 #+AUTHOR: Bart Frenk
 #+TODO: TODO WAIT STARTED | DONE CANCELED TRACKED
-#+TAGS: PP
 
 * Topics
   :PROPERTIES:
@@ -23,7 +22,30 @@
        - Need to build a model
        - Computationally expensive
 
+**** STARTED Efficient Bayesian inference with Hamiltonian Monte Carlo
+     Somewhat in depth talk about the subject by one of the authors of
+     Stan. About 1h30m, but from someone who really knows his stuff, and is a
+     professional statistician. See [9].
+     
+     There is a long introduction on the issues of doing statistics in high
+     dimenstional spaces. It has some worthwhile conceptual points:
+     - Anything involving only a the probability density function is tricky,
+       since the choice for a pdf is not canonical, there should always be a
+       probability measure involved. That is way expectations make sense, while
+       extrema don't.
+     - The aim of an MCMC algorithm is to end up in the `typical set`. This is
+       not perse related to the mode. A good example is a high dimensional
+       Gaussian. Such a distribution is centered at the mode, while the typical
+       set is further away from the center, for increasing dimensions. The
+       principle in play is the same as the one that ensures that for an
+       n-dimensional sphere the mass will be closer and closer to the surface,
+       as the dimensions increase.
+     It ends with Hamiltonian Monte Carlo (but I sort of skipped over that).
 
+     In the end the Michael Betancourt talks about Stan, which is the language
+     he co-created for doing Hamiltonian Monte Carlo.
+
+     The video has a part 2, wh
 *** Tutorials
 **** WAIT Tutorial on PyMC3
      PyMC3 is an industrial strengh probabilistic programming framework written
@@ -35,7 +57,7 @@
      Pyro is a tool for deep probabilistic modeling, unifying the best of modern
      deep learning and Bayesian modeling.
 *** Books
-**** WAIT Bayesian methods for hackers
+**** TODO Bayesian methods for hackers
      Well written, not very deep on theory, but showcases some good uses.
      Available online for free at [5]. Seems like the book version is still at
      PyMC2, while the online version has moved to PyMC3 (I think).
@@ -45,7 +67,8 @@
 ***** TODO Implement the iterated conditional modes algorithm in Clojure
       Interesting questions:
       - How to represent the graph?
-**** STARTED Chapter 11 on sampling from Bishop
+**** DONE Chapter 11 on sampling from Bishop
+     CLOSED: [2018-03-16 Fri 13:18]
 **** WAIT Graphical models course (Coursera)
 
 ** Online machine learning
@@ -217,7 +240,8 @@
    https://developers.google.com/machine-learning/crash-course/
 ** MIT AGI (Artificial General Intelligence)
    Seems to have some very interesting lectures on different kinds of topics,
-   from renowned speakers.
+   from renowned speakers
+
 * References
 [1] https://towardsdatascience.com/the-3-popular-courses-for-deeplearning-ai-ac37d4433bd.
 [2] https://blog.acolyer.org/2017/11/15/opening-the-black-box-of-deep-neural-networks-via-information-part-i/
@@ -227,3 +251,5 @@
 [6] https://www.reddit.com/r/science/comments/7yegux/aaas_ama_hi_were_researchers_from_google/
 [7] https://www.udemy.com/apache-spark-with-scala-hands-on-with-big-data/
 [8] Christopher M. Bishop - Pattern recognition and machine learning (2006)
+[9] https://www.youtube.com/watch?v=pHsuIaPbNbY
+[10] https://www.youtube.com/watch?v=xWQpEAyI5s8

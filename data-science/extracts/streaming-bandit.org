@@ -5,12 +5,10 @@
 * Framework
   See [1].
 * Learning resources
-  :PROPERTIES:
-  :VISIBILITY: children
 ** DONE Kapteijn's tutorial on how to use streaming bandit
    CLOSED: [2018-03-09 Fri 11:13]
    This is [1].
-** WAIT Good tutorial on Thompson sampling
+** TODO Good tutorial on Thompson sampling
    This is [2].
 
    On wait because the chapter on sampling is not easily read for someone

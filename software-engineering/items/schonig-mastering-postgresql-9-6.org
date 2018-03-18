@@ -1,7 +1,6 @@
--*- eval: (linum-mode -1) -*- ; avoid slow down due to large file size
-
 #+TITLE: Notes on Mastering PostgreSQL 9.6
 #+AUTHOR: Bart Frenk
+#+TAGS: interesting
 
 * Meta
   Description: Notes on Schonig - Mastering PostgreSQL 9.6 (2017)
@@ -16,6 +15,7 @@
 ** DONE Preliminaries
    CLOSED: [2018-02-07 Wed 23:10]
 
+   Create Docker container
    #+BEGIN_SRC sh
    docker run -d --name mastering-postgres-db \
           -p 15432:5432 \
@@ -26,6 +26,11 @@
 
    #+RESULTS:
    : 25e721ec9235c6c73ac80bf196090ecb3b6aedde19ce38c4ae4d453ecfb5cafe
+
+   Start Docker container
+   #+BEGIN_SRC sh
+   docker start mastering-postgres-db
+   #+END_SRC
 
    Create table and load data
    
@@ -46,7 +51,197 @@
    |--------------|
 
 ** PostgreSQL overview
-** STARTED Understanding transactions and locking
+   #+BEGIN_SRC sql
+   SHOW max_worker_processes
+   #+END_SRC
+
+   #+RESULTS:
+   | max_worker_processes |
+   |----------------------|
+   |                    8 |
+
+** DONE Understanding transactions and locking
+   CLOSED: [2018-03-17 Sat 23:37]
+*** Working with PostgreSQL transactions
+    now() returns transaction time
+
+   #+BEGIN_SRC sql
+   SELECT now(), now()
+   #+END_SRC
+
+   #+RESULTS:
+   | now                         | now                         |
+   |-----------------------------+-----------------------------|
+   | 2018-03-13 22:17:06.6095+00 | 2018-03-13 22:17:06.6095+00 |
+
+   #+BEGIN_SRC sql
+   SELECT now();
+   SELECT now()
+   #+END_SRC
+
+   #+RESULTS:
+   | now                           |
+   |-------------------------------|
+   | 2018-03-13 22:19:25.857049+00 |
+   | now                           |
+   | 2018-03-13 22:19:25.857415+00 |
+
+   For multiple statements to return the transaction time, they need to be
+   started with a BEGIN statement.
+   
+   #+BEGIN_SRC sql
+   BEGIN;
+   SELECT now();
+   SELECT now();
+   COMMIT
+   #+END_SRC
+
+   #+RESULTS:
+   | BEGIN                         |
+   |-------------------------------|
+   | now                           |
+   | 2018-03-13 22:19:42.807131+00 |
+   | now                           |
+   | 2018-03-13 22:19:42.807131+00 |
+   | COMMIT                        |
+
+**** Handling errors inside a transaction
+     Only error-free transactions can be committed
+**** Making use of savepoints
+     #+BEGIN_SRC sql
+     BEGIN;
+     SELECT 1;
+     SAVEPOINT a;
+     SELECT 2 / 0;
+     ROLLBACK TO SAVEPOINT a;
+     SELECT 3;
+     COMMIT;
+     #+END_SRC
+
+     #+RESULTS:
+     | BEGIN     |
+     |-----------|
+     | ?column?  |
+     | 1         |
+     | SAVEPOINT |
+     | ROLLBACK  |
+     | ?column?  |
+     | 3         |
+     | COMMIT    |
+
+     The number of savepoints inside a transaction is practically unlimited.
+
+     Point in a transaction to rollback to
+**** Transactional DDLs
+     
+     All DDLs in PostgreSQL are transactional except:
+     - DROP DATABASE
+     - CREATE TABLESPACE/DROP TABLESPACE on so on
+     
+     #+BEGIN_SRC sql
+     BEGIN;
+     CREATE TABLE t_test (id int);
+     ALTER TABLE t_test ALTER COLUMN id TYPE int8;
+     COMMIT
+     #+END_SRC
+
+     #+RESULTS:
+     | BEGIN        |
+     |--------------|
+     | CREATE TABLE |
+     | ALTER TABLE  |
+     | COMMIT       |
+                   
+     #+BEGIN_SRC sql
+     SELECT *
+     FROM pg_stat_user_tables;
+     #+END_SRC
+
+     #+RESULTS:
+     | relid | schemaname | relname | seq_scan | seq_tup_read | idx_scan | idx_tup_fetch | n_tup_ins | n_tup_upd | n_tup_del | n_tup_hot_upd | n_live_tup | n_dead_tup | n_mod_since_analyze | last_vacuum | last_autovacuum | last_analyze | last_autoanalyze | vacuum_count | autovacuum_count | analyze_count | autoanalyze_count |
+     |-------+------------+---------+----------+--------------+----------+---------------+-----------+-----------+-----------+---------------+------------+------------+---------------------+-------------+-----------------+--------------+------------------+--------------+------------------+---------------+-------------------|
+
+*** Understanding basic locking
+    #+BEGIN_SRC sql
+    DROP TABLE t_test
+    #+END_SRC
+
+    #+RESULTS:
+    | DROP TABLE |
+    |------------|
+
+
+    #+BEGIN_SRC sql
+    CREATE TABLE t_test (id int);
+    INSERT INTO t_test VALUES (1);
+    #+END_SRC
+
+    #+RESULTS:
+    | CREATE TABLE |
+    |--------------|
+    | INSERT 0 1   |
+
+   #+BEGIN_SRC sql
+   BEGIN;
+   UPDATE t_test SET id = id + 1 RETURNING *;
+   COMMIT
+#+END_SRC
+
+   #+RESULTS:
+   | BEGIN    |
+   |----------|
+   | id       |
+   | 2        |
+   | UPDATE 1 |
+   | COMMIT   |
+
+
+   - A transaction can see only those changes that have already been committed
+   - Writing transactions will not block reading transactions
+   - PostgreSQL will only lock rows affected by the UPDATE
+**** Avoiding typical mistakes and explicit locking
+*** Making use of for share and for update
+    SELECT .. FOR UPDATE block each other; this allows the application to do
+    read-modify-write cycles correctly. There is also SELECT .. FOR UPDATE SKIP
+    LOCKED, which is not blocked, but only returns rows for which no lock is
+    active.
+*** Understanding transaction isolation levels
+**** Phenomena defined in the SQL standard
+***** dirty read
+      Read a value that has not been committed yet
+***** nonrepeatable read
+      Reading data in a transaction twice yields different values
+***** phantom read
+      Selections change during transaction
+***** dirty write
+      Overwrite uncommitted value
+
+**** Isolation levels (SQL)
+***** READ UNCOMMITTED
+      Not possible in PostgreSQL, silently mapped to READ COMMITTED.
+***** READ COMMITTED
+      Every statement inside a transaction will get a new snapshot of the
+      data. This is the default isolation level.
+***** REPEATABLE READ
+      Transaction will use the same snapshot throughout the entire
+      transaction. This isolation level is not more costly than READ COMMITTED.
+***** SERIALIZABLE
+      Transactions performed as the would be by a single client (in some order
+      matching the time frames of the transactions).
+*** Observing deadlocks and similar issues
+    deadlocks will be resolved after the duration set in =deadlock_timeout=.
+*** Utilizing advisory locks
+    PostgreSQL has a function to unlock all advisory locks, =pg_advisory_unlock_all()=
+*** Optimizing storage and managing cleanup
+**** Configuring vacuum and autovacuum    
+**** Watching vacuum at work                                    :interesting:
+     Example of table size and vacuum.
+
+     To see human-readable description of the size of 't_test'.
+     #+BEGIN_SRC sql
+     SELECT pg_size_pretty(pg_relation_size('t_test'));
+     #+END_SRC
+
 ** WAIT Making use of indexes
    After 17 years of professional, full-time PostgreSQL consulting and
    PostgreSQL 24x7 support, I can say one thing for sure. Bad indexing is the
@@ -778,3 +973,4 @@
 [2] https://www.postgresql.org/docs/9.6/
 [3] https://github.com/plv8/plv8
 [4] https://wiki.postgresql.org/wiki/PL_Matrix
+

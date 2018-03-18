@@ -1,0 +1,19 @@
+
+* Description
+  Shared by Dennis Abrazhevich. To be found [[https://www.dropbox.com/s/19fy2uegxopk8b0/Business%20Case%20for%20Better%20Software%20Practices%20WP.pdf?dl=0][here]].
+
+* Summary
+
+** State of the practice
+   Distribution of good software practice frequencies is skewed to the
+   right. Most people haven't seen software practices at their best, which gives
+   rise to skepticism.
+** Detailed benefits of improved software practices
+   Organizations that are hooked on code-and-fix development tend to think there is
+   a tradeoff between low defect count and productivity.
+** ROIs for selected practices
+** Insights from software estimation
+** Indirect benefits of improved software practices
+** Challenge is organizational
+** The last great frontier
+** Ten tough questions
