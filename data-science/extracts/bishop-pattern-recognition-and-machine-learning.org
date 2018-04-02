@@ -1,0 +1,104 @@
+#+TITLE: Pattern recognition and machine learning
+#+AUTHOR: Bart Frenk
+
+* Connect to Jupyter
+This is necessary due to [[https://github.com/gregsexton/ob-ipython/issues/141][this issue]] with =ob-ipython=.
+
+** Set up connection
+Start =jupyter console= in an appropriate directory (e.g., one which works with
+a miniconda environment). This creates a =kernel-<xxxx>.json= file in the
+directory below.
+
+List all active kernels.
+#+BEGIN_SRC sh
+ls /run/user/1000/jupyter
+#+END_SRC
+
+#+RESULTS:
+| kernel-ob.json         |
+| notebook_cookie_secret |
+
+Create directory to store temporary (image) files:
+#+BEGIN_SRC sh
+mkdir -p /tmp/bishop
+#+END_SRC
+
+Rename the =kernel-<xxxx>.json= file to =kernel-ob.json= and set the =:session=
+field to that filename.
+#+BEGIN_SRC ipython :session kernel-ob.json :exports code
+import sys
+sys.version
+#+END_SRC
+
+#+RESULTS:
+: # Out[3]:
+: : '3.5.2 (default, Nov 23 2017, 16:37:01) \n[GCC 5.4.0 20160609]'
+
+** Test plotting functionality
+
+Set up plotting configuration appropriate for use in this org mode file.
+#+BEGIN_SRC ipython :session kernel-ob.json :exports code :results raw drawer
+from matplotlib import rcParams
+
+sns.set()
+%matplotlib inline
+%config InlineBackend.figure_format = 'svg'
+
+(w, h) = rcParams['figure.figsize']
+rcParams['figure.figsize'] = (1.5 * w, 1.5 * h)
+
+rcParams['figure.facecolor'] = 'white'
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+# Out[4]:
+:END:
+
+Test if the required dependencies exist and if plotting works
+#+NAME: example-plot
+#+BEGIN_SRC ipython :session kernel-ob.json :exports code :ipyfile /tmp/bishop/test-hist.svg :results raw drawer
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+ys = np.random.normal(size=100)
+plt.hist(ys, bins=20);
+#+END_SRC
+
+#+RESULTS: example-plot
+:RESULTS:
+# Out[5]:
+[[file:/tmp/bishop/test-hist.svg]]
+:END:
+
+You can refer to results in the same session.
+#+BEGIN_SRC ipython :session kernel-ob.json :exports code
+len(ys)
+#+END_SRC
+
+#+RESULTS:
+: # Out[6]:
+: : 100
+
+* Chapters
+** Introduction
+** Probability distributions
+
+** DONE Linear models for regression
+CLOSED: [2018-04-03 Tue 00:13]
+** STARTED Linear models for classification
+** Neural networks
+** Kernel methods
+** Sparse kernel machines
+** DONE Graphical models
+CLOSED: [2018-04-03 Tue 00:13]
+** Mixture models and EM
+** STARTED Approximate inference
+** DONE Sampling methods
+CLOSED: [2018-04-03 Tue 00:13]
+** Continuous latent variables
+** Sequential data
+** Combining models
+
+

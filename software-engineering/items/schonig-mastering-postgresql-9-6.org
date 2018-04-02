@@ -53,7 +53,7 @@ docker start mastering-postgresql-db
 #+END_SRC
 
 #+RESULTS:
-: mastering-postgres-db
+: mastering-postgresql-db
 
 *** Seed the database
 
@@ -267,7 +267,8 @@ COPY t_oil FROM PROGRAM 'curl -L www.cybertec.at/secret/oil_ext.txt ';
      SELECT pg_size_pretty(pg_relation_size('t_test'));
      #+END_SRC
 
-** STARTED Making use of indexes
+** DONE Making use of indexes
+CLOSED: [2018-04-03 Tue 00:01]
    After 17 years of professional, full-time PostgreSQL consulting and
    PostgreSQL 24x7 support, I can say one thing for sure. Bad indexing is the
    main source of bad performance.  Of course, it is important to adjust memory
@@ -415,8 +416,385 @@ EXPLAIN SELECT * FROM t_test ORDER BY id DESC LIMIT 10;
 
 **** WAIT Read the article on concurrent B-trees
 See Lehman, Yao
-*** Taking advantage of pg_trgm
-**** Install extension
+*** Improving speed using clustered tables
+**** Clustering tables
+The =CLUSTER= commands allows one to rewrite tables in the order of some
+index. This might speed up queries. However:
+1. the =CLUSTER= command will lock the table for writing,
+2. the clustered state will not be maintained, need to do this regularly.
+**** Making use of index only scans
+
+#+BEGIN_SRC sql
+EXPLAIN ANALYZE SELECT * FROM t_test where id = 34234;
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                                                                    |
+|---------------------------------------------------------------------------------------------------------------|
+| Index Scan using idx_id on t_test  (cost=0.43..8.45 rows=1 width=9) (actual time=0.009..0.009 rows=1 loops=1) |
+| Index Cond: (id = 34234)                                                                                      |
+| Planning time: 0.177 ms                                                                                       |
+| Execution time: 0.032 ms                                                                                      |
+
+#+BEGIN_SRC sql
+EXPLAIN ANALYZE SELECT id FROM t_test where id = 34234;
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                                                                         |
+|--------------------------------------------------------------------------------------------------------------------|
+| Index Only Scan using idx_id on t_test  (cost=0.43..8.45 rows=1 width=4) (actual time=0.015..0.015 rows=1 loops=1) |
+| Index Cond: (id = 34234)                                                                                           |
+| Heap Fetches: 1                                                                                                    |
+| Planning time: 0.171 ms                                                                                            |
+| Execution time: 0.040 ms                                                                                           |
+
+*Conclusion*: There does not seem to be much difference between an index scan
+and an index only scan.
+
+*** Understanding additional B-tree features
+Takeaways from this chapter.
+1. Order matters for combined indexes (this is not new information)
+2. One can also index on the result of a function (this is not new information)
+3. Indexing can be expensive in terms of space consumption (use =\di+= displays
+   space usage of indices, and =\d+= displays space usage of tables).
+4. Normally you cannot modify a table while an index is being built, use CREATE
+   INDEX CONCURRENTLY to allow modifications while building an index. Note that
+   this operation might fail.
+
+**** WAIT Read the article describing PostgreSQL's B-tree implementation
+See [5].
+
+*** Introducing operator classes
+It is possible to use a custom order for B-tree indices. The mechanism by which
+to do so is called an operator class. This section defines one for social
+security numbers.
+
+Accordingly, the particular operators with which a GiST index can be used vary
+depending on the indexing strategy (the operator class). As an example, the
+standard distribution of PostgreSQL includes GiST operator classes for several
+two-dimensional geometric data types, ... <from the [[https://www.postgresql.org/docs/9.2/static/indexes-types.html][PostgreSQL manual]]>
+*** Understanding PostgreSQL index types
+**** Hash indexes
+Do not use them as:
+1. they have no support for concurrency,
+2. and do not work well with the transaction log
+**** GiST indexes
+More complex index family.
+
+Use cases for GiST indexes:
+1. range types
+2. geometric indexes
+3. fuzzy searching
+
+The explanation in the book is half-hearted and vague. 
+***** WAIT Write your own operator class for a GiST index
+Start with this section. There are some pointers on how to implement B-tree
+indexes using GiST.
+**** GIN indexes
+We follow this [[https://hashrocket.com/blog/posts/exploring-postgres-gin-index][Hashrocket blog post]] for some additional information on GIN
+indexes. They are useful for full text search. See the section on full text
+search.
+
+***** Hashrocket blog post
+#+BEGIN_SRC sql
+CREATE TABLE users (
+       first_name text,
+       last_name text
+)
+#+END_SRC
+
+#+RESULTS:
+| CREATE TABLE |
+|--------------|
+
+#+BEGIN_SRC sql
+INSERT INTO users
+SELECT md5(random()::text), md5(random()::text)
+FROM generate_series(1, 1000000)
+#+END_SRC
+
+#+RESULTS:
+| INSERT 0 1000000 |
+|------------------|
+
+#+BEGIN_SRC sql
+SELECT * FROM users LIMIT 10;
+#+END_SRC
+
+#+RESULTS:
+| first_name                       | last_name                        |
+|----------------------------------+----------------------------------|
+| a0ba7243f50f00f4573ba75e8e1589b3 | 7c2e1ac7bde261ff00910d2d42d0b776 |
+| 2eb0aeefae47a8d5878181a06c0ba451 | 96753c7b8d8dc5ec61eb7c3207a0df2d |
+| 679142fb39459e78716eecbc49eb4fb2 | 5a7eba0270f9880f39f1a0343320b9c8 |
+| b13f93cd46310dde473cd610839dc9c5 | 60b41f3331b91de7d388451015f993fe |
+| efbe4c5e4a1ceb9c3a6ed5e09b07877f | 93ecca4e085e5d6137a3b73da3f61357 |
+| 8d54e947d7f08f971198a67169d3bd24 | 7717571c5b75066946bf77305a819015 |
+| 54d49bc3f7265a19e0aa7005f042ecc8 | 262ebc439f0e887a1330c9c1a087e794 |
+| 70eaa5de69144e77a7e259ae4d61a5ad | 4a369aafec92628dc35ad02df0e1067e |
+| e6b98032892a734b24c481c66699ad6a | a901221461e8da4ac89bc21d96397a88 |
+| 8cdf6c102624ab432c381e31d188af45 | 8632f8f0d0478ffeab9bb2e9a192c48f |
+
+#+NAME: ilike_first_name
+#+BEGIN_SRC sql
+EXPLAIN ANALYSE SELECT count(*) FROM users WHERE first_name ilike '%aeb%'
+#+END_SRC
+
+#+RESULTS: ilike_first_name
+| QUERY PLAN                                                                                                                  |
+|-----------------------------------------------------------------------------------------------------------------------------|
+| Aggregate  (cost=395.28..395.29 rows=1 width=8) (actual time=18.946..18.946 rows=1 loops=1)                                 |
+| ->  Bitmap Heap Scan on users  (cost=20.77..395.03 rows=100 width=0) (actual time=2.112..18.456 rows=7335 loops=1)          |
+| Recheck Cond: (first_name ~~* '%aeb%'::text)                                                                                |
+| Heap Blocks: exact=5546                                                                                                     |
+| ->  Bitmap Index Scan on users_search_idx  (cost=0.00..20.75 rows=100 width=0) (actual time=1.296..1.296 rows=7335 loops=1) |
+| Index Cond: (first_name ~~* '%aeb%'::text)                                                                                  |
+| Planning time: 0.927 ms                                                                                                     |
+| Execution time: 19.099 ms                                                                                                   |
+
+#+NAME: ilike_both
+#+BEGIN_SRC sql
+EXPLAIN ANALYSE SELECT count(*) FROM users WHERE first_name ilike '%aeb%' OR last_name ilike '%aeb%'
+#+END_SRC
+
+#+RESULTS: ilike_both
+| QUERY PLAN                                                                                                                  |
+|-----------------------------------------------------------------------------------------------------------------------------|
+| Aggregate  (cost=765.31..765.32 rows=1 width=8) (actual time=37.249..37.249 rows=1 loops=1)                                 |
+| ->  Bitmap Heap Scan on users  (cost=41.60..764.81 rows=200 width=0) (actual time=3.815..36.390 rows=14378 loops=1)         |
+| Recheck Cond: ((first_name ~~* '%aeb%'::text) OR (last_name ~~* '%aeb%'::text))                                             |
+| Heap Blocks: exact=8562                                                                                                     |
+| ->  BitmapOr  (cost=41.60..41.60 rows=200 width=0) (actual time=2.472..2.472 rows=0 loops=1)                                |
+| ->  Bitmap Index Scan on users_search_idx  (cost=0.00..20.75 rows=100 width=0) (actual time=1.310..1.310 rows=7335 loops=1) |
+| Index Cond: (first_name ~~* '%aeb%'::text)                                                                                  |
+| ->  Bitmap Index Scan on users_search_idx  (cost=0.00..20.75 rows=100 width=0) (actual time=1.162..1.162 rows=7082 loops=1) |
+| Index Cond: (last_name ~~* '%aeb%'::text)                                                                                   |
+| Planning time: 0.995 ms                                                                                                     |
+| Execution time: 37.415 ms                                                                                                   |
+
+#+BEGIN_SRC sql
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX users_search_idx
+ON users
+USING gin (first_name gin_trgm_ops,
+           last_name gin_trgm_ops)
+#+END_SRC
+
+#+RESULTS:
+| CREATE EXTENSION |
+|------------------|
+| CREATE INDEX     |
+
+
+| GIN index | Query            | Estimated cost | Execution time |
+|-----------+------------------+----------------+----------------|
+| No        | ilike_first_name |       24846.26 | 957.001 ms     |
+| No        | ilike_both       |       27346.51 | 1892.734 ms    |
+| Yes       | ilike_first_name |         395.29 | 18.843 ms      |
+| Yes       | ilike_both       |         765.32 | 59.019 ms      |
+
+#+BEGIN_SRC sql
+CREATE INDEX users_search_idx_btree ON users (first_name)
+#+END_SRC
+
+#+RESULTS:
+| CREATE INDEX |
+|--------------|
+
+
+#+BEGIN_SRC sql
+SELECT pg_size_pretty(pg_relation_size('users_search_idx')) as users_search_idx,
+       pg_size_pretty(pg_relation_size('users')) as users,
+       pg_size_pretty(pg_relation_size('users_search_idx_btree')) as users_search_idx_btree
+#+END_SRC
+
+#+RESULTS:
+| users_search_idx | users | users_search_idx_btree |
+|------------------+-------+------------------------|
+| 237 MB           | 96 MB | 56 MB                  |
+
+
+**** SP-GiST indexes
+More complex index family.
+
+Mainly been designed for in-memory use. They can be used to implement various
+types of trees, such as quadtrees, k-d trees and radix trees (tries).
+**** BRIN indexes
+
+Characteristics of BRIN indexes:
+1. very small,
+2. but lossy
+
+It will store the minimum and maximum values for blocks of data.
+
+#+BEGIN_SRC sql
+CREATE INDEX idx_id_brin ON t_test USING brin(id);
+#+END_SRC
+
+#+RESULTS:
+| CREATE INDEX |
+|--------------|
+
+#+BEGIN_SRC sql
+CREATE INDEX idx_id on t_test (id)
+#+END_SRC
+
+#+RESULTS:
+| CREATE INDEX |
+|--------------|
+
+
+#+BEGIN_SRC sql
+SELECT pg_size_pretty(pg_relation_size('idx_id_brin')) as idx_id_brin,
+       pg_size_pretty(pg_relation_size('idx_id')) as idx_id
+#+END_SRC
+
+#+RESULTS:
+| idx_id_brin | idx_id |
+|-------------+--------|
+| 24 kB       | 86 MB  |
+
+#+BEGIN_SRC sql
+DROP INDEX IF EXISTS idx_id
+#+END_SRC
+
+#+RESULTS:
+| DROP INDEX |
+|------------|
+
+#+BEGIN_SRC sql
+DROP INDEX IF EXISTS idx_id_brin
+#+END_SRC
+
+#+RESULTS:
+| DROP INDEX |
+|------------|
+
+
+#+BEGIN_SRC sql
+EXPLAIN ANALYZE SELECT * FROM t_test WHERE id = 12345;
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                                                                    |
+|---------------------------------------------------------------------------------------------------------------|
+| Index Scan using idx_id on t_test  (cost=0.43..8.45 rows=1 width=9) (actual time=0.028..0.028 rows=1 loops=1) |
+| Index Cond: (id = 12345)                                                                                      |
+| Planning time: 0.233 ms                                                                                       |
+| Execution time: 0.052 ms                                                                                      |
+
+| Index  | Estimated cost | Method            | Execution time |
+|--------+----------------+-------------------+----------------|
+| None   |          71622 | Seq Scan          | 336.013 ms     |
+| B-tree |           8.45 | Index Scan        | 0.052 ms       |
+| BRIN   |          16.02 | Bitmap Index Scan | 4.192 ms       |
+
+**** Adding additional indexes
+Talks about bloom filters and how to access them from PostgreSQL. For the actual
+theory the book refers to the [[https://en.wikipedia.org/wiki/Bloom_filter][Wikipedia]] entry on Bloom filters.
+
+Quite useful when there are a large number of columns that are all eligible for
+indexing.
+
+Requires an extension:
+#+BEGIN_SRC sql
+CREATE EXTENSION bloom;
+#+END_SRC
+
+#+RESULTS:
+| CREATE EXTENSION |
+|------------------|
+
+#+BEGIN_SRC sql
+DROP TABLE IF EXISTS t_bloom;
+CREATE TABLE t_bloom (x1 int, x2 int, x3 int, x4 int, x5 int, x6 int, x7 int)
+#+END_SRC
+
+#+RESULTS:
+| DROP TABLE   |
+|--------------|
+| CREATE TABLE |
+
+#+BEGIN_SRC sql
+CREATE INDEX idx_bloom ON t_bloom (x1, x2, x3, x4, x5, x6, x7)
+#+END_SRC
+
+#+RESULTS:
+| CREATE INDEX |
+|--------------|
+
+#+BEGIN_SRC sql
+DROP INDEX IF EXISTS idx_bloom;
+#+END_SRC
+
+#+RESULTS:
+| DROP INDEX |
+|------------|
+
+#+BEGIN_SRC sql
+CREATE INDEX idx_bloom_btree_x1 ON t_bloom(x1)
+#+END_SRC
+
+#+RESULTS:
+| CREATE INDEX |
+|--------------|
+
+
+
+#+BEGIN_SRC sql
+INSERT INTO t_bloom
+SELECT floor(random() * 1000) AS x1,
+       floor(random() * 1000) AS x2,
+       floor(random() * 1000) AS x3,
+       floor(random() * 1000) AS x4,
+       floor(random() * 1000) AS x5,
+       floor(random() * 1000) AS x6,
+       floor(random() * 1000) AS x7
+FROM generate_series(1, 100000);
+#+END_SRC
+
+#+RESULTS:
+| INSERT 0 100000 |
+|-----------------|
+
+#+BEGIN_SRC sql
+EXPLAIN SELECT * FROM t_bloom WHERE x1 = 42 AND 1000 <= x3 AND x3 < 2000;
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                                    |
+|-------------------------------------------------------------------------------|
+| Index Only Scan using idx_bloom on t_bloom  (cost=0.42..9.64 rows=1 width=28) |
+| Index Cond: ((x1 = 42) AND (x3 >= 1000) AND (x3 < 2000))                      |
+
+#+BEGIN_SRC sql
+EXPLAIN SELECT * FROM t_bloom WHERE x1 = 42;
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                                     |
+|--------------------------------------------------------------------------------|
+| Bitmap Heap Scan on t_bloom  (cost=5.04..276.68 rows=97 width=28)              |
+| Recheck Cond: (x1 = 42)                                                        |
+| ->  Bitmap Index Scan on idx_bloom_btree_x1  (cost=0.00..5.02 rows=97 width=0) |
+| Index Cond: (x1 = 42)                                                          |
+
+
+#+BEGIN_SRC sql
+SELECT pg_size_pretty(pg_relation_size('idx_bloom')) AS idx_bloom,
+       pg_size_pretty(pg_relation_size('idx_bloom_btree_x1')) AS idx_bloom_btree_x1
+#+END_SRC
+
+#+RESULTS:
+| idx_bloom | idx_bloom_btree_x1 |
+|-----------+--------------------|
+| 4880 kB   | 2208 kB            |
+
+
+*** Achieving better answers with fuzzy searching
+**** Taking advantage of pg_trgm
+***** Install extension
 
 #+BEGIN_SRC sql
 CREATE EXTENSION pg_trgm
@@ -426,7 +804,7 @@ CREATE EXTENSION pg_trgm
 | CREATE EXTENSION |
 |------------------|
 
-**** Seed database
+***** Seed database
 
 #+BEGIN_SRC sql
 CREATE TABLE t_location (name text)
@@ -444,7 +822,7 @@ COPY t_location FROM PROGRAM 'curl -L www.cybertec.at/secret/orte.txt'
 | COPY 2354 |
 |-----------|
 
-**** Experiment with pg_trgm
+***** Experiment with pg_trgm
 
 #+BEGIN_SRC sql
 SELECT 'abcde' <-> 'abdeacb'
@@ -493,7 +871,7 @@ SELECT * FROM t_location ORDER BY name <-> 'Kramertneusiedel' LIMIT 3;
 | Klein-Neusiedl |
 | Potzneusiedl   |
 
-**** Compare pg_trgm GiST index on a small table
+***** Compare pg_trgm GiST index on a small table
 
 #+BEGIN_SRC sql
 SELECT count(*) FROM t_location;
@@ -565,9 +943,9 @@ EXPLAIN SELECT * FROM t_location WHERE name = 'Gramatneusiedl';
 | Index Only Scan using idx_name on t_location  (cost=0.28..8.30 rows=1 width=13) |
 | Index Cond: (name = 'Gramatneusiedl'::text)                                     |
 
-**** Compare trigram GiST index on larger table
+***** Compare trigram GiST index on larger table
 
-***** Create function to generate random string
+****** Create function to generate random string
 
 Create a function to generate random strings. From this [[http://www.simononsoftware.com/random-string-in-postgresql/][blog post]].
 #+BEGIN_SRC sql
@@ -604,7 +982,7 @@ SELECT random_text(10);
 |-------------|
 | lF7jhITRpd  |
 
-***** Set up database
+****** Set up database
 
 Create a table with a single bounded text column:
 
@@ -638,7 +1016,7 @@ CREATE INDEX idx_name_btree ON t_names (name)
 | CREATE INDEX |
 |--------------|
 
-***** Perform the experiment
+****** Perform the experiment
 
 List the sizes of all object under consideration:
 
@@ -693,11 +1071,117 @@ EXPLAIN SELECT name FROM t_names WHERE name = 'HelloWorld';
 | Index Only Scan using idx_name_btree on t_names  (cost=0.42..8.44 rows=1 width=42) |
 | Index Cond: (name = 'HelloWorld'::text)                                            |
 
-***** Conclusion
+****** Conclusion
 Selecting the $n$ closest words gets to be more expensive when $n$ is around 50,
 when there are 400K random words in the database of length 42. Here, random
 means that each letter of the word is selected uniformly at random from the set
 of digits, upper-case and lower-case letters.
+
+**** Speeding up LIKE queries; handling regular expressions
+Makes use of the tables creating in the previous two items.
+
+#+BEGIN_SRC sql
+EXPLAIN ANALYZE SELECT *
+FROM t_location
+WHERE name LIKE '%neu%'
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                                                                      |
+|-----------------------------------------------------------------------------------------------------------------|
+| Bitmap Heap Scan on t_location  (cost=4.33..19.05 rows=24 width=13) (actual time=0.338..0.385 rows=13 loops=1)  |
+| Recheck Cond: (name ~~ '%neu%'::text)                                                                           |
+| Rows Removed by Index Recheck: 48                                                                               |
+| Heap Blocks: exact=12                                                                                           |
+| ->  Bitmap Index Scan on idx_trgm  (cost=0.00..4.32 rows=24 width=0) (actual time=0.322..0.322 rows=61 loops=1) |
+| Index Cond: (name ~~ '%neu%'::text)                                                                             |
+| Planning time: 0.237 ms                                                                                         |
+| Execution time: 0.903 ms                                                                                        |
+
+#+BEGIN_SRC sql
+CREATE INDEX idx_trgm ON t_location USING GiST(name GiST_trgm_ops);
+EXPLAIN SELECT *
+FROM t_location
+WHERE name ~ '[A-C].*neu.*'
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                                 |
+|----------------------------------------------------------------------------|
+| Index Scan using idx_trgm on t_location  (cost=0.14..8.16 rows=1 width=13) |
+| Index Cond: (name ~ '[A-C].*neu.*'::text)                                  |
+
+#+BEGIN_SRC sql
+DROP INDEX idx_trgm;
+EXPLAIN SELECT *
+FROM t_location
+WHERE name ~ '[A-C].*neu.*'
+#+END_SRC
+
+#+RESULTS:
+| DROP INDEX                                                 |
+|------------------------------------------------------------|
+| QUERY PLAN                                                 |
+| Seq Scan on t_location  (cost=0.00..43.42 rows=1 width=13) |
+| Filter: (name ~ '[A-C].*neu.*'::text)                      |
+
+
+Compute the expected number of words (out of =word_cnt= words) having a random
+infix of size =infix_sz=. This should be the average number of rows returned
+from the query above, when one varies =neu= over sequences of the same length.
+#+BEGIN_SRC python :session :exports code
+alph_sz = 10 + 26 + 26
+word_sz = 42
+infix_sz = 3
+word_cnt = 400000
+
+rem_sz = word_sz - infix_sz
+p =  (rem_sz + 1) * (alph_sz ** rem_sz) / (alph_sz ** word_sz)
+
+{"expected count": word_cnt * p, "probability": p}
+#+END_SRC
+
+#+RESULTS:
+| expected count | : | 67.13436944043504 | probability | : | 0.00016783592360108759 |
+
+*** Understanding full-text search - FTS
+
+Find words and apply transformations.
+#+BEGIN_SRC sql
+SELECT to_tsvector('english',
+                   'A car, I want a car. I would not even mind having many cars')
+#+END_SRC
+
+#+RESULTS:
+| to_tsvector                                                   |
+|---------------------------------------------------------------|
+| 'car':2,6,14 'even':10 'mani':13 'mind':11 'want':4 'would':8 |
+
+
+Figure out which configurations (e.g., =english= in the query above) are supported.
+#+BEGIN_SRC sql
+SELECT cfgname FROM pg_ts_config;
+#+END_SRC
+
+#+RESULTS:
+| cfgname    |
+|------------|
+| simple     |
+| danish     |
+| dutch      |
+| english    |
+| finnish    |
+| french     |
+| german     |
+| hungarian  |
+| italian    |
+| norwegian  |
+| portuguese |
+| romanian   |
+| russian    |
+| spanish    |
+| swedish    |
+| turkish    |
 
 
 ** DONE Handling advanced SQL
@@ -712,6 +1196,19 @@ of digits, upper-case and lower-case letters.
     #+END_SRC
 
     #+RESULTS:
+    | region        | country |                   avg |
+    |---------------+---------+-----------------------|
+    | Middle East   | Iran    | 3631.6956521739130435 |
+    | Middle East   | Oman    |  586.4545454545454545 |
+    | Middle East   |         | 2142.9111111111111111 |
+    | North America | Canada  | 2123.2173913043478261 |
+    | North America | USA     | 9141.3478260869565217 |
+    | North America |         | 5632.2826086956521739 |
+    |               |         | 3906.7692307692307692 |
+    |               | Canada  | 2123.2173913043478261 |
+    |               | Iran    | 3631.6956521739130435 |
+    |               | Oman    |  586.4545454545454545 |
+    |               | USA     | 9141.3478260869565217 |
 
     #+BEGIN_SRC sql
     EXPLAIN ANALYZE SELECT region, sum(production)
@@ -722,11 +1219,11 @@ of digits, upper-case and lower-case letters.
     #+RESULTS:
     | QUERY PLAN                                                                                              |
     |---------------------------------------------------------------------------------------------------------|
-    | HashAggregate  (cost=15.66..15.68 rows=2 width=16) (actual time=0.200..0.200 rows=2 loops=1)            |
+    | HashAggregate  (cost=15.66..15.68 rows=2 width=20) (actual time=0.222..0.222 rows=2 loops=1)            |
     | Group Key: region                                                                                       |
-    | ->  Seq Scan on t_oil  (cost=0.00..12.44 rows=644 width=16) (actual time=0.003..0.051 rows=644 loops=1) |
-    | Planning time: 0.175 ms                                                                                 |
-    | Execution time: 0.247 ms                                                                                |
+    | ->  Seq Scan on t_oil  (cost=0.00..12.44 rows=644 width=16) (actual time=0.006..0.054 rows=644 loops=1) |
+    | Planning time: 0.126 ms                                                                                 |
+    | Execution time: 0.284 ms                                                                                |
 
     #+BEGIN_SRC sql
     EXPLAIN ANALYZE SELECT region, country, sum(production)
@@ -1140,7 +1637,7 @@ of digits, upper-case and lower-case letters.
     | North America |         |     518170 |      877093 |
     |               |         |     711032 |      921987 |
 
-** Log files and system statistics
+** TODO Log files and system statistics
 ** DONE Optimizing queries for good performance
    CLOSED: [2018-01-02 Tue 15:15]
 *** Optimization strategies

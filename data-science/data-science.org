@@ -71,8 +71,10 @@ CLOSED: [2018-03-19 Mon 20:47]
       - How to represent the graph?
 **** DONE Chapter 11 on sampling from Bishop
      CLOSED: [2018-03-16 Fri 13:18]
-**** STARTED Chapter 4 on Linear models for classification
-Focus on Bayesian methods
+**** TRACKED Pattern recognition and machine learning
+CLOSED: [2018-04-03 Tue 00:14]
+Link: file:extracts/bishop-pattern-recognition-and-machine-learning.org
+
 **** WAIT Graphical models course (Coursera)
 
 ** Online machine learning
@@ -205,7 +207,7 @@ http://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html
 ***** On realistic scores for the Titanic competition
       https://www.kaggle.com/c/titanic/discussion/4894
 
-*** WAIT Housing prices: Advanced regression techniques
+*** STARTED Housing prices: Advanced regression techniques
 *** WAIT data-science-for-good-kiva-crowdfunding
     First project in the Data Science for Good program from Kaggle.
 

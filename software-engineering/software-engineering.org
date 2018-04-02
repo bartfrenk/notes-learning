@@ -10,7 +10,7 @@
   - the process of software engineering
 * Topics
 ** Software architecture
-*** WAIT Read Robert C. Martin's Clean Architecture
+*** STARTED Read Robert C. Martin's Clean Architecture
 *** WAIT Write down thoughts on domain driven design
     This might grow into a blog post. 
     Input:
