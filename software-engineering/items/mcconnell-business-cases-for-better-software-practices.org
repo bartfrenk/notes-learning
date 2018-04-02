@@ -11,6 +11,23 @@
 ** Detailed benefits of improved software practices
    Organizations that are hooked on code-and-fix development tend to think there is
    a tradeoff between low defect count and productivity.
+
+*** Practices   
+**** Formal design inspections
+**** Formal code inspections
+**** Cost and quality estimation tools
+**** Productivity measurements
+**** Process assessment
+**** Long-range technology planning
+**** Management training
+**** Technical staff training
+
+*** Reflection
+Not so clear what most of these mean concretely. I wonder if there are concrete
+paths for these.
+
+The list appears to come from here: Jones, Capers, Assessment and Control of
+Software Risks, Englewood Cliffs, NJ: Your-don Press, 1994
 ** ROIs for selected practices
 ** Insights from software estimation
 ** Indirect benefits of improved software practices

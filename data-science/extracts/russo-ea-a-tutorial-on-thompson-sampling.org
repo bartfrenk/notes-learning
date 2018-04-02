@@ -1,0 +1,39 @@
+#+TITLE: Notes on A tutorial on Thompson sampling
+#+AUTHOR: Bart Frenk
+
+* Summary
+** DONE Introduction
+CLOSED: [2018-03-20 Tue 21:28]
+** DONE Greedy decisions
+CLOSED: [2018-03-20 Tue 21:28]
+** DONE Thompson sampling for the Bernoulli bandit
+CLOSED: [2018-03-20 Tue 21:28]
+** DONE General Thompson sampling
+CLOSED: [2018-03-20 Tue 21:28]
+** WAIT Approximations
+Waiting on background on Lagrange approximations.
+
+Approximations are not so useful, since computation time grows with the size of
+the size of the history.
+
+In order to keep the computational burden manageable, it can be important to
+consider incremental variants of our approximation methods. We refer to an
+algorithm as *incremental* if it operates with *fixed* rather than growing
+per-period compute time. There are many ways to design incremental variants of
+approximate posterior sampling algorithms we have presented. As concrete
+examples, we consider here particular incremental versions of Laplace
+approximation and bootstrap approaches. (p.19)
+
+** Practical modeling considerations
+** Further examples
+** Why it work, when it fails, and alternative approaches
+
+* Follow up
+** WAIT An empirical evaluation of Thompson sampling
+Has the example of optimizing the CTR of an ad display campaign. They use a
+Laplace approximation of the posterior, and a logistic regression model to
+relate context to CTRs. Very similar to what we might do. Has quite some
+references to articles dealing with display ad campaigns.
+
+* References
+[1] Chapelle ea. An empirical evaluation of Thompson sampling

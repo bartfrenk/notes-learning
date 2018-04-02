@@ -14,41 +14,66 @@
 
 ** DONE Preliminaries
    CLOSED: [2018-02-07 Wed 23:10]
+*** Build a docker image with PostgreSQL and curl
+Create the temporary directory:
+#+BEGIN_SRC sh
+mkdir -p /tmp/schonig-mastering-postgresql-9-6
+#+END_SRC
 
-   Create Docker container
-   #+BEGIN_SRC sh
-   docker run -d --name mastering-postgres-db \
-          -p 15432:5432 \
-          -e POSTGRES_USER=docker \
-          -e POSTGRES_DB=docker \
-          postgres:9.6.2
-   #+END_SRC
+#+RESULTS:
 
-   #+RESULTS:
-   : 25e721ec9235c6c73ac80bf196090ecb3b6aedde19ce38c4ae4d453ecfb5cafe
+Use C-c C-v t to create the Dockerfile:
+#+BEGIN_SRC dockerfile :exports code :padline no :tangle /tmp/schonig-mastering-postgresql-9-6/Dockerfile
+FROM postgres:9.6.2
+RUN apt-get update && apt-get install -y curl
+#+END_SRC
 
-   Start Docker container
-   #+BEGIN_SRC sh
-   docker start mastering-postgres-db
-   #+END_SRC
+Build the docker image. This might take a while.
+#+BEGIN_SRC sh
+docker build -t schonig-mastering-postgresql-9-6 /tmp/schonig-mastering-postgresql-9-6/
+#+END_SRC
 
-   Create table and load data
-   
-   #+BEGIN_SRC sql
-   CREATE TABLE t_oil (
-          region text,
-          country text,
-          year int,
-          production int,
-          consumption int
-          );
+*** Create and start a docker container
 
-   COPY t_oil FROM PROGRAM ' curl www.cybertec.at/secret/oil_ext.txt ';
-   #+END_SRC
+Create and run a docker container:
+#+BEGIN_SRC sh
+docker run -d --name mastering-postgresql-db \
+       -p 15432:5432 \
+       -e POSTGRES_USER=docker \
+       -e POSTGRES_DB=docker \
+       schonig-mastering-postgresql-9-6
+#+END_SRC
+
+#+RESULTS:
+: 5056b3a4e1c9fc377c697808327fbb3fef35d2bf88189079d2b758c8b9123551
+
+Start Docker container:
+#+BEGIN_SRC sh
+docker start mastering-postgresql-db
+#+END_SRC
+
+#+RESULTS:
+: mastering-postgres-db
+
+*** Seed the database
+
+Create table and load data:
+#+BEGIN_SRC sql
+CREATE TABLE t_oil (
+       region text,
+       country text,
+       year int,
+       production int,
+       consumption int
+       );
+
+COPY t_oil FROM PROGRAM 'curl -L www.cybertec.at/secret/oil_ext.txt ';
+#+END_SRC
 
    #+RESULTS:
    | CREATE TABLE |
    |--------------|
+   | COPY 644     |
 
 ** PostgreSQL overview
    #+BEGIN_SRC sql
@@ -242,12 +267,439 @@
      SELECT pg_size_pretty(pg_relation_size('t_test'));
      #+END_SRC
 
-** WAIT Making use of indexes
+** STARTED Making use of indexes
    After 17 years of professional, full-time PostgreSQL consulting and
    PostgreSQL 24x7 support, I can say one thing for sure. Bad indexing is the
    main source of bad performance.  Of course, it is important to adjust memory
    parameters and all that. However, it is all in vain if indexes are not used
    properly. There is simply no replacement for a missing index. (p.43)
+*** Understanding simple queries and the cost model
+
+#+BEGIN_SRC sql
+CREATE TABLE t_test (id serial, name text);
+INSERT INTO t_test (name) SELECT 'hans'
+FROM generate_series(1, 2000000);
+INSERT INTO t_test (name) SELECT 'paul'
+FROM generate_series(1, 2000000);
+#+END_SRC
+
+#+RESULTS:
+| CREATE TABLE     |
+|------------------|
+| INSERT 0 2000000 |
+| INSERT 0 2000000 |
+
+#+RESULTS:
+
+#+BEGIN_SRC sql
+SELECT name, count(*) FROM t_test GROUP BY 1;
+#+END_SRC
+
+#+RESULTS:
+| name |   count |
+|------+---------|
+| hans | 2000000 |
+| paul | 2000000 |
+
+#+BEGIN_SRC sql
+ANALYZE t_test;
+#+END_SRC
+
+#+RESULTS:
+| ANALYZE |
+|---------|
+
+
+#+BEGIN_SRC sql
+EXPLAIN SELECT * FROM t_test WHERE id = 432332;
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                               |
+|----------------------------------------------------------|
+| Seq Scan on t_test  (cost=0.00..71622.00 rows=1 width=9) |
+| Filter: (id = 432332)                                    |
+
+#+BEGIN_SRC sql
+SELECT pg_relation_size('t_test') / 8192.0;
+#+END_SRC
+
+#+RESULTS:
+|           ?column? |
+|--------------------|
+| 21622.000000000000 |
+
+#+BEGIN_SRC sql
+SHOW seq_page_cost;
+SHOW cpu_tuple_cost;
+SHOW cpu_operator_cost;
+SHOW random_page_cost;
+SHOW cpu_index_tuple_cost;
+SHOW parallel_tuple_cost;
+SHOW parallel_setup_cost;
+SHOW min_parallel_relation_size;
+#+END_SRC
+
+#+RESULTS:
+| seq_page_cost              |
+|----------------------------|
+| 1                          |
+| cpu_tuple_cost             |
+| 0.01                       |
+| cpu_operator_cost          |
+| 0.0025                     |
+| random_page_cost           |
+| 4                          |
+| cpu_index_tuple_cost       |
+| 0.005                      |
+| parallel_tuple_cost        |
+| 0.1                        |
+| parallel_setup_cost        |
+| 1000                       |
+| min_parallel_relation_size |
+| 8MB                        |
+
+#+BEGIN_SRC python :session :exports code
+21622 * 1 + 4000000 * 0.01 + 4000000 * 0.0025
+#+END_SRC
+
+#+RESULTS:
+: 71622.0
+
+#+BEGIN_SRC sql
+CREATE INDEX idx_id ON t_test (id);
+#+END_SRC
+
+#+RESULTS:
+| CREATE INDEX |
+|--------------|
+
+#+BEGIN_SRC sql
+EXPLAIN SELECT * FROM t_test WHERE id = 432332;
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                          |
+|---------------------------------------------------------------------|
+| Index Scan using idx_id on t_test  (cost=0.43..8.45 rows=1 width=9) |
+| Index Cond: (id = 432332)                                           |
+
+#+BEGIN_SRC sql
+SELECT relname,
+       reltuples,
+       pg_size_pretty(relpages::bigint * 8 * 1024) AS size
+FROM pg_class
+WHERE relname = 'idx_id'
+ORDER BY relpages DESC;
+#+END_SRC
+
+#+RESULTS:
+| relname | reltuples | size  |
+|---------+-----------+-------|
+| idx_id  |     4e+06 | 86 MB |
+
+B-tree indexes are not only useful to find rows. They are also useful to feed
+sorted data to the next stage in the process:
+
+#+BEGIN_SRC sql
+EXPLAIN SELECT * FROM t_test ORDER BY id DESC LIMIT 10;
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                                                  |
+|---------------------------------------------------------------------------------------------|
+| Limit  (cost=0.43..125505.43 rows=4000000 width=9)                                          |
+| ->  Index Scan Backward using idx_id on t_test  (cost=0.43..125505.43 rows=4000000 width=9) |
+
+
+
+**** WAIT Read the article on concurrent B-trees
+See Lehman, Yao
+*** Taking advantage of pg_trgm
+**** Install extension
+
+#+BEGIN_SRC sql
+CREATE EXTENSION pg_trgm
+#+END_SRC
+
+#+RESULTS:
+| CREATE EXTENSION |
+|------------------|
+
+**** Seed database
+
+#+BEGIN_SRC sql
+CREATE TABLE t_location (name text)
+#+END_SRC
+
+#+RESULTS:
+| CREATE TABLE |
+|--------------|
+
+#+BEGIN_SRC sql
+COPY t_location FROM PROGRAM 'curl -L www.cybertec.at/secret/orte.txt'
+#+END_SRC
+
+#+RESULTS:
+| COPY 2354 |
+|-----------|
+
+**** Experiment with pg_trgm
+
+#+BEGIN_SRC sql
+SELECT 'abcde' <-> 'abdeacb'
+#+END_SRC
+
+#+RESULTS:
+| ?column? |
+|----------|
+| 0.833333 |
+
+#+NAME: trigrams-abcde
+#+BEGIN_SRC sql
+SELECT show_trgm('abcde')
+#+END_SRC
+
+#+RESULTS:
+| show_trgm                       |
+|---------------------------------|
+| {"  a"," ab",abc,bcd,cde,"de "} |
+
+#+NAME: trigrams-abdeacb
+#+BEGIN_SRC sql
+SELECT show_trgm('abdeacb')
+#+END_SRC
+
+#+RESULTS:
+| show_trgm                               |
+|-----------------------------------------|
+| {"  a"," ab",abd,acb,bde,"cb ",dea,eac} |
+
+#+BEGIN_SRC emacs-lisp :var table=trigrams-abcde[2, 0]
+(print table)
+#+END_SRC
+
+#+RESULTS:
+: {"  a"," ab",abc,bcd,cde,"de "}
+
+#+BEGIN_SRC sql
+SELECT * FROM t_location ORDER BY name <-> 'Kramertneusiedel' LIMIT 3;
+#+END_SRC
+
+#+RESULTS:
+| name           |
+|----------------|
+| Gramatneusiedl |
+| Klein-Neusiedl |
+| Potzneusiedl   |
+
+**** Compare pg_trgm GiST index on a small table
+
+#+BEGIN_SRC sql
+SELECT count(*) FROM t_location;
+#+END_SRC
+
+#+RESULTS:
+| count |
+|-------|
+|  2354 |
+
+Create B-tree index on name to compare with GiST index:
+#+BEGIN_SRC sql
+CREATE INDEX idx_name ON t_location (name)
+#+END_SRC
+
+#+RESULTS:
+| CREATE INDEX |
+|--------------|
+
+Compare index and relation sizes:
+#+BEGIN_SRC sql
+SELECT pg_size_pretty(pg_relation_size('idx_trgm')) as idx_trgm,
+       pg_size_pretty(pg_relation_size('idx_name')) as idx_name,
+       pg_size_pretty(pg_relation_size('t_location')) as t_location
+#+END_SRC
+
+#+RESULTS:
+| idx_trgm | idx_name | t_location |
+|----------+----------+------------|
+| 200 kB   | 96 kB    | 112 kB     |
+
+#+NAME: with-idx_trgm
+#+BEGIN_SRC sql
+CREATE INDEX idx_trgm ON t_location USING GiST(name GiST_trgm_ops);
+EXPLAIN SELECT * FROM t_location ORDER BY name <-> 'Kramertneusiedel' LIMIT 3;
+#+END_SRC
+
+#+NAME: without-idx_trgm
+#+BEGIN_SRC sql
+DROP INDEX IF EXISTS idx_trgm; 
+EXPLAIN SELECT * FROM t_location ORDER BY name <-> 'Kramertneusiedel' LIMIT 3;
+#+END_SRC
+
+#+NAME: exact-name
+#+BEGIN_SRC sql
+EXPLAIN SELECT * FROM t_location WHERE name = 'Gramatneusiedl';
+#+END_SRC
+
+#+RESULTS: with-idx_trgm
+| CREATE INDEX                                                                        |
+|-------------------------------------------------------------------------------------|
+| QUERY PLAN                                                                          |
+| Limit  (cost=0.14..0.40 rows=3 width=17)                                            |
+| ->  Index Scan using idx_trgm on t_location  (cost=0.14..203.22 rows=2354 width=17) |
+| Order By: (name <-> 'Kramertneusiedel'::text)                                       |
+
+#+RESULTS: without-idx_trgm
+| DROP INDEX                                                        |
+|-------------------------------------------------------------------|
+| QUERY PLAN                                                        |
+| Limit  (cost=73.85..73.86 rows=3 width=17)                        |
+| ->  Sort  (cost=73.85..79.74 rows=2354 width=17)                  |
+| Sort Key: ((name <-> 'Kramertneusiedel'::text))                   |
+| ->  Seq Scan on t_location  (cost=0.00..43.42 rows=2354 width=17) |
+
+#+RESULTS: exact-name
+| QUERY PLAN                                                                      |
+|---------------------------------------------------------------------------------|
+| Index Only Scan using idx_name on t_location  (cost=0.28..8.30 rows=1 width=13) |
+| Index Cond: (name = 'Gramatneusiedl'::text)                                     |
+
+**** Compare trigram GiST index on larger table
+
+***** Create function to generate random string
+
+Create a function to generate random strings. From this [[http://www.simononsoftware.com/random-string-in-postgresql/][blog post]].
+#+BEGIN_SRC sql
+CREATE OR REPLACE FUNCTION random_text(length INTEGER)
+RETURNS TEXT
+LANGUAGE PLPGSQL
+AS $$ 
+DECLARE 
+  cs TEXT := concat('0123456789',
+                    'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                    'abcdefghijklmnopqrstuvwxyz'); 
+  res TEXT := '';
+  i INT4;
+  n INTEGER; 
+BEGIN
+  n := length(cs);
+  FOR i IN 1..length LOOP 
+    res := res || substr(cs, (1 + FLOOR((n + 1) * random() ))::INTEGER, 1);
+  END LOOP;
+  RETURN res;
+END; $$;
+#+END_SRC
+
+#+RESULTS:
+| CREATE FUNCTION |
+|-----------------|
+
+#+BEGIN_SRC sql
+SELECT random_text(10);
+#+END_SRC
+
+#+RESULTS:
+| random_text |
+|-------------|
+| lF7jhITRpd  |
+
+***** Set up database
+
+Create a table with a single bounded text column:
+
+#+BEGIN_SRC sql
+DROP TABLE IF EXISTS t_names;
+CREATE TABLE t_names (name varchar(255))
+#+END_SRC
+
+#+RESULTS:
+| DROP TABLE   |
+|--------------|
+| CREATE TABLE |
+
+Create a trigram-based GiST index:
+
+#+BEGIN_SRC sql
+CREATE INDEX idx_name_trgm ON t_names USING GiST(name GiST_trgm_ops)
+#+END_SRC
+
+#+RESULTS:
+| CREATE INDEX |
+|--------------|
+
+Create a B-tree index for comparison:
+
+#+BEGIN_SRC sql
+CREATE INDEX idx_name_btree ON t_names (name)
+#+END_SRC
+
+#+RESULTS:
+| CREATE INDEX |
+|--------------|
+
+***** Perform the experiment
+
+List the sizes of all object under consideration:
+
+#+BEGIN_SRC sql
+SELECT pg_size_pretty(pg_relation_size('idx_name_trgm')) as idx_name_trgm,
+       pg_size_pretty(pg_relation_size('t_names')) as t_names,
+       pg_size_pretty(pg_relation_size('idx_name_btree')) as idx_name_btree;
+#+END_SRC
+
+#+RESULTS:
+| idx_name_trgm | t_names | idx_name_btree |
+|---------------+---------+----------------|
+| 83 MB         | 29 MB   | 32 MB          |
+
+Insert 100K random strings of length 42 in the table, and return the total count:
+
+#+BEGIN_SRC sql
+INSERT INTO t_names
+SELECT random_text(42)
+FROM generate_series(1, 100000);
+SELECT COUNT(*) FROM t_names;
+#+END_SRC
+
+#+RESULTS:
+| INSERT 0 100000 |
+|-----------------|
+| count           |
+| 400000          |
+
+Select the closest words:
+
+#+BEGIN_SRC sql
+EXPLAIN SELECT name FROM t_names ORDER BY 'HelloWorld' <-> name LIMIT 50;
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                                                |
+|-------------------------------------------------------------------------------------------|
+| Limit  (cost=0.41..8.60 rows=50 width=46)                                                 |
+| ->  Index Scan using idx_name_trgm on t_names  (cost=0.41..65564.41 rows=400000 width=46) |
+| Order By: ((name)::text <-> 'HelloWorld'::text)                                           |
+
+Select a precise word:
+
+#+BEGIN_SRC sql
+EXPLAIN SELECT name FROM t_names WHERE name = 'HelloWorld';
+#+END_SRC
+
+#+RESULTS:
+| QUERY PLAN                                                                         |
+|------------------------------------------------------------------------------------|
+| Index Only Scan using idx_name_btree on t_names  (cost=0.42..8.44 rows=1 width=42) |
+| Index Cond: (name = 'HelloWorld'::text)                                            |
+
+***** Conclusion
+Selecting the $n$ closest words gets to be more expensive when $n$ is around 50,
+when there are 400K random words in the database of length 42. Here, random
+means that each letter of the word is selected uniformly at random from the set
+of digits, upper-case and lower-case letters.
+
+
 ** DONE Handling advanced SQL
    CLOSED: [2018-02-07 Wed 23:09]
 *** GROUPING SETS, CUBE, ROLLUP
@@ -973,4 +1425,7 @@
 [2] https://www.postgresql.org/docs/9.6/
 [3] https://github.com/plv8/plv8
 [4] https://wiki.postgresql.org/wiki/PL_Matrix
-
+[5] Lehman, Yao. Efficient locking for concurrent operations on
+B-trees (1981). https://www.csd.uoc.gr/~hy460/pdf/p650-lehman.pdf
+[6] Fairly useful summary of the PostgreSQL cost
+model. http://shiroyasha.io/the-postgresql-query-cost-model.html

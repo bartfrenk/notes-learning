@@ -1,7 +1,7 @@
 #+TITLE: Overview of software engineering topics
 #+AUTHOR: Bart Frenk
 #+EMAIL: bart.frenk@gmail.com
-
+#+TODO: TODO WAIT STARTED | DONE CANCELED TRACKED
 
 * Introduction
   This document serves to track my progress digesting more generic software
@@ -16,4 +16,16 @@
     Input:
     - Domain driven design
     - The language of the system
-    - The talk of that guy that talks about missing design
+    - The talk of that guy that talks about missing design I am also quite
+      interested in the roots of this idea. There is an interesting piece I
+      picked up, I think from an article by Taylor and Licklider, in which they
+      state something like that communication is building a model.
+** Technologies
+*** JavaScript
+**** TRACKED Eloquent JavaScript
+CLOSED: [2018-03-19 ma 12:30]
+Link: [[file:items/haverbeke-eloquent-javascript.org]]
+Recommended by Niels
+** Miscellaneous
+*** Ken Iverson. Notation as a tool for thought.
+Available online here: http://www.jsoftware.com/papers/tot.htm

@@ -1,0 +1,21 @@
+#+TITLE: Notes on Eloquent JavaScript
+#+AUTHOR: Bart Frenk
+#+TODO: TODO SCAN WAIT STARTED | DONE CANCELED TRACKED
+
+
+* Preamble
+Notes on the book Eloquent JavaScript by Marijn Haverbeke.
+
+It is available on-line for free at https://eloquentjavascript.net/.
+
+* Contents
+** Part 1: Language
+*** CANCELED Values, types and operators
+CLOSED: [2018-03-19 ma 12:53]
+*** SCAN Program structure
+*** Functions
+*** Data structures: objects and arrays
+*** Higher-order functions
+*** The secret life of objects
+** Part 2: Browser
+** Part 3: Node

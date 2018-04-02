@@ -4,7 +4,8 @@
 
 * Topics
   :PROPERTIES:
-  :VISIBILITY: children
+  :visibility: children
+  :END:
 ** Probabilistic programming, graphical models, Bayesian methods
 
    Hesitant which resource is a good one to start with. Still needs some research.
@@ -22,7 +23,8 @@
        - Need to build a model
        - Computationally expensive
 
-**** STARTED Efficient Bayesian inference with Hamiltonian Monte Carlo
+**** DONE Efficient Bayesian inference with Hamiltonian Monte Carlo
+CLOSED: [2018-03-19 Mon 20:47]
      Somewhat in depth talk about the subject by one of the authors of
      Stan. About 1h30m, but from someone who really knows his stuff, and is a
      professional statistician. See [9].
@@ -45,7 +47,7 @@
      In the end the Michael Betancourt talks about Stan, which is the language
      he co-created for doing Hamiltonian Monte Carlo.
 
-     The video has a part 2, wh
+     The video has a part 2, where the same speaker goes into details on Stan.
 *** Tutorials
 **** WAIT Tutorial on PyMC3
      PyMC3 is an industrial strengh probabilistic programming framework written
@@ -69,6 +71,8 @@
       - How to represent the graph?
 **** DONE Chapter 11 on sampling from Bishop
      CLOSED: [2018-03-16 Fri 13:18]
+**** STARTED Chapter 4 on Linear models for classification
+Focus on Bayesian methods
 **** WAIT Graphical models course (Coursera)
 
 ** Online machine learning
@@ -82,6 +86,16 @@
      Tutorial on computing sample statistics online, e.g., mean, variance,
      covariance, etc. Fairly easy read.
 
+**** TRACKED A tutorial on Thompson sampling (2017)
+CLOSED: [2018-03-19 Mon 22:46]
+This is [2].
+
+There are particularly interesting examples in the paper, that are worth
+studying carefully.
+
+Link: [[file:extracts/russo-ea-a-tutorial-on-thompson-sampling.org]]
+**** TODO Ghavamzadeh - Bayesian reinforcement learning: A survey
+This is [13].
 *** Code repositories
 **** TRACKED Streaming bandit
      CLOSED: [2018-03-09 Fri 11:12]
@@ -127,6 +141,11 @@
 
 **** Fast.ai - Cutting edge deep learning for coders
      Follow up to the first course
+*** Tutorials
+**** TRACKED Getting started tutorial on PyTorch
+CLOSED: [2018-03-21 Wed 18:16]
+Here:
+http://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html
 *** Blog posts
 **** Blog post comparing 3 popular deep learning courses
     Does a comparison between the deep learning courses on Udacity, Fast.ai, and
@@ -168,7 +187,8 @@
      
 * Projects
   :PROPERTIES:
-  :VISIBILITY: children
+  :visibility: children
+  :END:
 ** Kaggle Competitions
 *** DONE Getting started: Titanic competition in Python
     CLOSED: [2018-02-20 Tue 23:15]
@@ -194,10 +214,14 @@
     with external data sources. (from the project website)
 * Miscellaneous
   :PROPERTIES:
-  :VISIBILITY: children
-** Interview with Google researchers
+  :visibility: children
+  :END:
+** DONE Interview with Google researchers
+CLOSED: [2018-03-19 Mon 22:24]
    Peter Norvig, Yann LeCunn, Eric Horvitz
 
+   See [6].
+   
    *Words*: Bounded rationality
 
 *** Question on deep learning and other areas of ML
@@ -211,6 +235,25 @@
    learning). Turns it's very useful to be able to back-propagate gradients to
    do inference in graphical models. As for SVM/kernel methods, trees, etc have
    a use when the data is scarce and can be manually featurized.
+
+*** Follow-ups
+**** WAIT Paper on general AI by Eric Horvitz ea
+Might be interesting, gives some history as well, and attempts to construct a
+framework for general AI. Seems to be a light read.
+
+Horvitz ea - Computational rationality (stored on MMC)
+**** TODO Paper on deploying machine learning solutions (2014)
+Seems an easy read, 9 pages only. Written by a bunch of Google engineers.
+
+See [11].
+
+Using the framework of technical debt, we note that it is remarkably easy to
+incur massive ongoing maintenance costs at the system level when applying
+machine learning. The goal of this paper is highlight several machine learning
+specific risk factors and design patterns to be avoided or refactored where
+possible. (from the abstract)
+
+Sculley ea - Machine learning. The high-interest credit card of technical debt.
 
 ** DONE How to become a data scientist
    CLOSED: [2018-02-15 Thu 15:24]
@@ -253,3 +296,6 @@
 [8] Christopher M. Bishop - Pattern recognition and machine learning (2006)
 [9] https://www.youtube.com/watch?v=pHsuIaPbNbY
 [10] https://www.youtube.com/watch?v=xWQpEAyI5s8
+[11] https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43146.pdf
+[12] Russell ea. A tutorial on Thompson sampling. https://arxiv.org/abs/1707.02038
+[13] https://arxiv.org/abs/1609.04436
