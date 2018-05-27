@@ -177,9 +177,13 @@
     Rich distributed representation
      http://www.fast.ai/2017/11/13/validation-sets/
 *** TODO Predict story points from JIRA issue text
-    No idea if this can be done. Use the same approach as Jeremy Howard:
-    - train a language model on the English Wikipedia
-    - use this model as a basis when training on actual JIRA issues
+No idea if this can be done. Use the same approach as Jeremy Howard:
+- train a language model on the English Wikipedia
+- use this model as a basis when training on actual JIRA issues
+
+This could greatly profit from fast AI's model zoo, once it is up:
+http://nlp.fast.ai/category/model_zoo.html
+  
 ** DONE Collaborative filtering. Inside the training loop
 CLOSED: [2018-03-21 Wed 18:15]
 *** DONE Do PyTorch tutorial

@@ -1,0 +1,159 @@
+# -*- org-export-babel-evaluate: nil -*-
+#+TITLE: In-depth notes on data science related topics
+#+AUTHOR: Bart Frenk
+#+EMAIL: bart.frenk@gmail.com
+
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{paralist}
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage{palatino}
+#+LATEX_HEADER: \usepackage{euler}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \renewcommand{\em}[1]{\textbf{#1}}
+#+LATEX_HEADER: \newcommand{\E}[1]{\operatorname{\mathbb{E}}[#1]}
+#+LATEX_HEADER: \setstretch{1.2}
+#+LATEX_HEADER: \let\itemize\compactitem
+#+LATEX_HEADER: \let\description\compactdesc
+#+LATEX_HEADER: \let\enumerate\compactenum
+#+LATEX_HEADER: \setlength{\parindent}{0em}
+#+LATEX_HEADER: \setlength{\parskip}{1em}
+#+LATEX_HEADER: \newcommand{\RR}{\mathbb{R}}
+#+OPTIONS: toc:nil
+
+#+TAGS: noexport
+
+* Set up                                                           :noexport:
+:PROPERTIES:
+:var: kernel_dir="/run/user/1000/jupyter" kernel_target="kernel-data-science-tex.json"
+:END:
+** Set up a connection to jupyter session
+Start =jupyter console= in an appropriate directory (e.g., one which works with
+a miniconda environment). This creates a =kernel-<xxxx>.json= file in the
+directory below.
+
+List all active kernels.
+#+NAME: kernels
+#+BEGIN_SRC sh
+ls ${kernel_dir}
+#+END_SRC
+
+#+RESULTS: kernels
+| kernel-data-science-tex.json |
+| notebook_cookie_secret       |
+
+Create directory to store temporary (image) files:
+#+BEGIN_SRC sh :var kernels=kernels 
+mkdir -p /tmp/data-science-tex
+mv ${kernel_dir}/$(echo ${kernels} | cut -d " " -f1) ${kernel_dir}/${kernel_target}
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC ipython :session kernel-data-science-tex.json :exports code
+import sys
+sys.version
+#+END_SRC
+
+#+RESULTS:
+: # Out[1]:
+: : '3.5.2 (default, Nov 23 2017, 16:37:01) \n[GCC 5.4.0 20160609]'
+
+* Topics
+:PROPERTIES:
+:exports: none
+:cache: yes
+:END:
+** Generalized linear models
+*** Introduction
+
+Ingredients:
+
+- a \em{dependent variable} $Y$ that follows a particular distribution in the exponential family,
+- a vector of \em{independent variables} $X$,
+- an invertible function $g: \mathbb{R} \rightarrow \mathbb{R}$, referred to as the \em{link function},
+- an \em{unknown vector of coefficients} $\beta$, of the same length as $X$
+
+The following relation is assumed to hold:
+
+\begin{equation}
+g^{-1}(\E{Y|X}) = \beta \cdot X.
+\end{equation}
+
+*** Examples
+
+#+BEGIN_SRC ipython :session kernel-data-science-tex.json
+x = 2
+x
+#+END_SRC
+
+#+RESULTS[eb3041bf86be280db2a737f988866122988aee56]:
+: # Out[4]:
+: : 2
+
+
+
+*** Bayesian regression
+** Stochastic approximation
+This is important for both online learning (e.g., iteratively computing maximum
+likelihood estimators as the data comes in, as well as for dealing with large
+data sets).
+*** Sequential estimators and the Robbins-Monro algorithm
+The original article is [1]. It deals solely with the case of stochastically
+approximating solutions of equations of the form $M(x) = \alpha$, in which
+$\alpha$ is a fixed constant, and $M(x)$ is the conditional expectation of a
+random variable $Y$ given $X = x$, i.e.,
+\begin{equation}
+M(x) = \E{Y \mid X=x}
+\end{equation}
+The function $M$ need not be completely specified, but there should be a way of sampling
+from $Y$ given $X=x$.
+
+In section 2.3.5 of [2] there is a method to derive a sequential method for
+computing maximum likelihood estimator using the method of Robbins and Monro.
+
+There is a good exposition of this method in the introduction of [3].
+
+From the article:
+
+Consider the problem of estimating the zero $\theta_*$ of a function $h:
+\mathbb{R}^p -> \mathbb{R}$, where $(\theta)$ is unknown bu can be unbiasedly
+estimated by a random variable $W_{\theta}$ such that $\E{W_{\theta}} =
+h(\theta)$. Starting from an estimate $\theta_0$, Robbins and Munro iteratively
+estimated $\theta_*$ as follows:
+\begin{equation}
+\theta_n = \theta_{n - 1} - \gamma_n W_{\theta_{n - 1}},
+\end{equation}
+where $(\theta_n)$ is usually a decreasing sequence of positive numbers, known
+as the \em{learning rate sequence}. Typically, we choose $\gamma_n \propto 1 /
+n$, for $n = 1, 2, \ldots$, so that $\sum \gamma_i^2 < \infty$ and $\sum
+\gamma_i = \infty$.
+
+*** Stochastic gradient descent
+This should be an example of stochastic approximation. Does it fit in the
+Robbins-Monro framework?
+
+
+
+
+
+
+
+*** Multi-armed bandits
+For infinite time horizons and discounted rewards an optimal solution can be
+determined via dynamic programming. This is 
+**** Simplest formulation
+Ingredients:
+
+- observation $Y$ in some space $\mathcal{Y}$.
+- reward function $r: \mathcal{Y} \rightarrow \RR$: 
+- set of actions $\mathcal{A}$.
+**** Separate reward from observations
+**** With context
+**** Time dependence of the parameters
+
+* Footnotes
+
+[1] Robbins, Monro. A stochastic approximation method (1951)
+[2] Christopher M. Bishop. Pattern recognition and machine learning (2009)
+[3] Toulis ea - Stable Robbins-Monro approximations through stochastic proximal updates (2018)
+[4] Gittins - Bandit processes and dynamic allocation indices (1979)

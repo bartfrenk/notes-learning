@@ -415,7 +415,7 @@ EXPLAIN SELECT * FROM t_test ORDER BY id DESC LIMIT 10;
 
 
 **** WAIT Read the article on concurrent B-trees
-See Lehman, Yao
+See [5].
 *** Improving speed using clustered tables
 **** Clustering tables
 The =CLUSTER= commands allows one to rewrite tables in the order of some
@@ -461,9 +461,6 @@ Takeaways from this chapter.
 4. Normally you cannot modify a table while an index is being built, use CREATE
    INDEX CONCURRENTLY to allow modifications while building an index. Note that
    this operation might fail.
-
-**** WAIT Read the article describing PostgreSQL's B-tree implementation
-See [5].
 
 *** Introducing operator classes
 It is possible to use a custom order for B-tree indices. The mechanism by which
@@ -613,7 +610,6 @@ SELECT pg_size_pretty(pg_relation_size('users_search_idx')) as users_search_idx,
 | users_search_idx | users | users_search_idx_btree |
 |------------------+-------+------------------------|
 | 237 MB           | 96 MB | 56 MB                  |
-
 
 **** SP-GiST indexes
 More complex index family.
@@ -790,7 +786,6 @@ SELECT pg_size_pretty(pg_relation_size('idx_bloom')) AS idx_bloom,
 | idx_bloom | idx_bloom_btree_x1 |
 |-----------+--------------------|
 | 4880 kB   | 2208 kB            |
-
 
 *** Achieving better answers with fuzzy searching
 **** Taking advantage of pg_trgm
@@ -1182,7 +1177,6 @@ SELECT cfgname FROM pg_ts_config;
 | spanish    |
 | swedish    |
 | turkish    |
-
 
 ** DONE Handling advanced SQL
    CLOSED: [2018-02-07 Wed 23:09]
@@ -1637,7 +1631,217 @@ SELECT cfgname FROM pg_ts_config;
     | North America |         |     518170 |      877093 |
     |               |         |     711032 |      921987 |
 
-** TODO Log files and system statistics
+** STARTED Log files and system statistics
+
+*** Checkig live traffic
+#+BEGIN_SRC sql
+\d pg_stat_activity
+#+END_SRC
+
+#+RESULTS:
+| View "pg_catalog.pg_stat_activity" |                          |           |
+|------------------------------------+--------------------------+-----------|
+| Column                             | Type                     | Modifiers |
+| datid                              | oid                      |           |
+| datname                            | name                     |           |
+| pid                                | integer                  |           |
+| usesysid                           | oid                      |           |
+| usename                            | name                     |           |
+| application_name                   | text                     |           |
+| client_addr                        | inet                     |           |
+| client_hostname                    | text                     |           |
+| client_port                        | integer                  |           |
+| backend_start                      | timestamp with time zone |           |
+| xact_start                         | timestamp with time zone |           |
+| query_start                        | timestamp with time zone |           |
+| state_change                       | timestamp with time zone |           |
+| wait_event_type                    | text                     |           |
+| wait_event                         | text                     |           |
+| state                              | text                     |           |
+| backend_xid                        | xid                      |           |
+| backend_xmin                       | xid                      |           |
+| query                              | text                     |           |
+
+#+BEGIN_SRC sql :results value table replace
+\x
+SELECT pid, application_name, state, query FROM pg_stat_activity
+#+END_SRC
+
+#+RESULTS:
+| pid              | 100                                                              |
+|------------------+------------------------------------------------------------------|
+| application_name | psql                                                             |
+| state            | active                                                           |
+| query            | select pg_sleep(1000);                                           |
+|                  |                                                                  |
+| pid              | 104                                                              |
+| application_name | psql                                                             |
+| state            | active                                                           |
+| query            | SELECT pid, application_name, state, query FROM pg_stat_activity |
+
+Cancel a query.
+#+BEGIN_SRC sql
+SELECT pg_cancel_backend(100)
+#+END_SRC
+
+#+RESULTS:
+| pg_cancel_backend |
+|-------------------|
+| t                 |
+
+Cancel a query and terminate the connection
+#+BEGIN_SRC sql
+SELECT pg_terminate_backend(100);
+#+END_SRC
+
+
+*** Inspecting databases
+#+BEGIN_SRC sql
+\d pg_stat_database
+#+END_SRC
+
+#+RESULTS:
+| View "pg_catalog.pg_stat_database" |                          |           |
+|------------------------------------+--------------------------+-----------|
+| Column                             | Type                     | Modifiers |
+| datid                              | oid                      |           |
+| datname                            | name                     |           |
+| numbackends                        | integer                  |           |
+| xact_commit                        | bigint                   |           |
+| xact_rollback                      | bigint                   |           |
+| blks_read                          | bigint                   |           |
+| blks_hit                           | bigint                   |           |
+| tup_returned                       | bigint                   |           |
+| tup_fetched                        | bigint                   |           |
+| tup_inserted                       | bigint                   |           |
+| tup_updated                        | bigint                   |           |
+| tup_deleted                        | bigint                   |           |
+| conflicts                          | bigint                   |           |
+| temp_files                         | bigint                   |           |
+| temp_bytes                         | bigint                   |           |
+| deadlocks                          | bigint                   |           |
+| blk_read_time                      | double precision         |           |
+| blk_write_time                     | double precision         |           |
+| stats_reset                        | timestamp with time zone |           |
+
+#+BEGIN_SRC sql
+\x
+SELECT * FROM pg_stat_database
+#+END_SRC
+
+#+RESULTS:
+| datid          |                         12407 |
+|----------------+-------------------------------|
+| datname        |                      postgres |
+| numbackends    |                             0 |
+| xact_commit    |                           715 |
+| xact_rollback  |                             0 |
+| blks_read      |                           391 |
+| blks_hit       |                         27929 |
+| tup_returned   |                        348577 |
+| tup_fetched    |                          5968 |
+| tup_inserted   |                             0 |
+| tup_updated    |                             7 |
+| tup_deleted    |                             0 |
+| conflicts      |                             0 |
+| temp_files     |                             0 |
+| temp_bytes     |                             0 |
+| deadlocks      |                             0 |
+| blk_read_time  |                             0 |
+| blk_write_time |                             0 |
+| stats_reset    | 2018-04-02 13:41:51.621048+00 |
+|                |                               |
+| datid          |                         16384 |
+| datname        |                        docker |
+| numbackends    |                             2 |
+| xact_commit    |                          1445 |
+| xact_rollback  |                            61 |
+| blks_read      |                        163021 |
+| blks_hit       |                      12201322 |
+| tup_returned   |                      48377835 |
+| tup_fetched    |                        174069 |
+| tup_inserted   |                       5527685 |
+| tup_updated    |                            20 |
+| tup_deleted    |                           177 |
+| conflicts      |                             0 |
+| temp_files     |                            13 |
+| temp_bytes     |                     449219904 |
+| deadlocks      |                             0 |
+| blk_read_time  |                             0 |
+| blk_write_time |                             0 |
+| stats_reset    | 2018-04-02 13:43:20.999935+00 |
+|                |                               |
+| datid          |                             1 |
+| datname        |                     template1 |
+| numbackends    |                             0 |
+| xact_commit    |                             0 |
+| xact_rollback  |                             0 |
+| blks_read      |                             0 |
+| blks_hit       |                             0 |
+| tup_returned   |                             0 |
+| tup_fetched    |                             0 |
+| tup_inserted   |                             0 |
+| tup_updated    |                             0 |
+| tup_deleted    |                             0 |
+| conflicts      |                             0 |
+| temp_files     |                             0 |
+| temp_bytes     |                             0 |
+| deadlocks      |                             0 |
+| blk_read_time  |                             0 |
+| blk_write_time |                             0 |
+| stats_reset    |                               |
+|                |                               |
+| datid          |                         12406 |
+| datname        |                     template0 |
+| numbackends    |                             0 |
+| xact_commit    |                             0 |
+| xact_rollback  |                             0 |
+| blks_read      |                             0 |
+| blks_hit       |                             0 |
+| tup_returned   |                             0 |
+| tup_fetched    |                             0 |
+| tup_inserted   |                             0 |
+| tup_updated    |                             0 |
+| tup_deleted    |                             0 |
+| conflicts      |                             0 |
+| temp_files     |                             0 |
+| temp_bytes     |                             0 |
+| deadlocks      |                             0 |
+| blk_read_time  |                             0 |
+| blk_write_time |                             0 |
+| stats_reset    |                               |
+
+*** Making sense of ps_stat_user_tables                       :interesting:
+*** Digging into indexes
+#+BEGIN_SRC sql
+SELECT
+schemaname,
+indexrelid,
+relname,
+indexrelname,
+idx_scan,
+pg_size_pretty(pg_relation_size(indexrelid)),
+pg_size_pretty(sum(pg_relation_size(indexrelid))
+OVER (ORDER BY idx_scan, indexrelid)) AS total
+FROM
+pg_stat_user_indexes
+ORDER BY total
+#+END_SRC
+
+#+RESULTS:
+| schemaname | indexrelid | relname    | indexrelname           | idx_scan | pg_size_pretty | total  |
+|------------+------------+------------+------------------------+----------+----------------+--------|
+| public     |      16505 | t_test     | idx_id                 |        1 | 86 MB          | 181 MB |
+| public     |      16486 | t_names    | idx_name_trgm          |        8 | 83 MB          | 264 MB |
+| public     |      16487 | t_names    | idx_name_btree         |        0 | 32 MB          | 32 MB  |
+| public     |      16506 | t_test     | idx_id_brin            |        0 | 24 kB          | 32 MB  |
+| public     |      16526 | t_bloom    | idx_bloom              |        0 | 4880 kB        | 37 MB  |
+| public     |      16527 | t_bloom    | idx_bloom_btree_x1     |        0 | 2208 kB        | 39 MB  |
+| public     |      16536 | users      | users_search_idx       |       16 | 237 MB         | 501 MB |
+| public     |      16537 | users      | users_search_idx_btree |        0 | 56 MB          | 95 MB  |
+| public     |      16468 | t_location | idx_name               |        0 | 96 kB          | 96 kB  |
+
+
 ** DONE Optimizing queries for good performance
    CLOSED: [2018-01-02 Tue 15:15]
 *** Optimization strategies

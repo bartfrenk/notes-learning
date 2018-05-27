@@ -1,0 +1,90 @@
+% Created 2018-04-20 Fri 17:37
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage{amsmath}
+\usepackage{paralist}
+\usepackage[utf8]{inputenc}
+\usepackage{palatino}
+\usepackage{euler}
+\usepackage{setspace}
+\renewcommand{\em}[1]{\textbf{#1}}
+\newcommand{\E}[1]{\operatorname{\mathbb{E}}[#1]}
+\setstretch{1.1}
+\let\itemize\compactitem
+\let\description\compactdesc
+\let\enumerate\compactenum
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+\newcommand{\RR}{\mathbb{R}}
+\author{Bart Frenk}
+\date{\today}
+\title{Notes on hash kernels}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 25.1.1 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+
+\section{Meta}
+\label{sec-1}
+
+
+\begin{enumerate}
+\item Weinberger, Dasgupta, Langford, Smola, Attenberg. Feature hashing for large
+scale multitask learning. Proceedings of the 26th International Conference on
+Machine Learning, Montreal, Canada, 2009. (Mostly Yahoo!)
+\item Shi, Petterson, Langford, Smola, Strehl, Dror, Vishnwanathan. Hash
+kernels. 2009.
+\end{enumerate}
+
+\section{Feature hashing for large scale multitask learning}
+\label{sec-2}
+
+Use a random function to map a higher dimensional space (of features) into a
+lower dimensional space. The expectation of the inner product of the range
+equals the inner product on the domain.
+
+The article is sloppy with probability distributions. How to define one on the
+function space $\{1, \ldots, m\} \rightarrow \mathbb{R}$?.
+
+\subsection{Introduction}
+\label{sec-2-1}
+\subsection{Hash functions}
+\label{sec-2-2}
+
+Let $\mathcal{X}$ be a high dimensional feature space, and $\mathcal{Y}$ a lower
+dimensional target space. Both are equipped with inner products. The aim is to
+define a random variable $\Phi$ with values in the function space $\mathcal{X}
+\rightarrow \mathcal{Y}$, such that
+\[
+x_1 \cdot x_2 = \mathbb{E}(\Phi(x_1) \cdot \Phi(x_2)).
+\]
+It is important that $\Phi(x_1) \cdot \Phi(x_2)$ has low variance.
+
+
+
+
+\section{Hash kernels}
+\label{sec-3}
+
+\section{Experiments}
+\label{sec-4}
+% Emacs 25.1.1 (Org mode 8.2.10)
+\end{document}

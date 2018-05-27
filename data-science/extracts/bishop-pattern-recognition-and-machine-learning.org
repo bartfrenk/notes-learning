@@ -1,7 +1,27 @@
+# -*- org-export-babel-evaluate: nil -*-
 #+TITLE: Pattern recognition and machine learning
 #+AUTHOR: Bart Frenk
 
-* Connect to Jupyter
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{paralist}
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage{palatino}
+#+LATEX_HEADER: \usepackage{euler}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \renewcommand{\em}[1]{\textbf{#1}}
+#+LATEX_HEADER: \newcommand{\E}[1]{\operatorname{\mathbb{E}}[#1]}
+#+LATEX_HEADER: \setstretch{1.1}
+#+LATEX_HEADER: \let\itemize\compactitem
+#+LATEX_HEADER: \let\description\compactdesc
+#+LATEX_HEADER: \let\enumerate\compactenum
+#+LATEX_HEADER: \setlength{\parindent}{0em}
+#+LATEX_HEADER: \setlength{\parskip}{1em}
+#+LATEX_HEADER: \newcommand{\RR}{\mathbb{R}}
+#+LATEX_HEADER: \newenvironment{exercise}{\textbf{Exercise.}}{}
+#+OPTIONS: toc:nil todo:nil
+
+
+* Connect to Jupyter                                               :noexport:
 This is necessary due to [[https://github.com/gregsexton/ob-ipython/issues/141][this issue]] with =ob-ipython=.
 
 ** Set up connection
@@ -84,17 +104,40 @@ len(ys)
 * Chapters
 ** Introduction
 ** Probability distributions
-
 ** DONE Linear models for regression
 CLOSED: [2018-04-03 Tue 00:13]
-** STARTED Linear models for classification
+** DONE Linear models for classification
+CLOSED: [2018-04-11 Wed 22:37]
 ** Neural networks
 ** Kernel methods
 ** Sparse kernel machines
 ** DONE Graphical models
 CLOSED: [2018-04-03 Tue 00:13]
-** Mixture models and EM
-** STARTED Approximate inference
+** STARTED Mixture models and EM
+** WAIT Approximate inference
+*** Variational inference
+
+#+begin_exercise
+Find $\alpha$ such that the uniform distribution on $[0, \alpha]$ has smallest
+Kullback-Leibler divergence from the exponential distribution with parameter
+$\lambda = 1$.
+#+end_exercise
+
+Compute the integral (10.3), to end up with a KL divergence of $-\ln(\alpha) +
+\frac{1}{2} \alpha$.
+
+#+begin_src gnuplot :file kullback-leibler.png
+plot [0:10] -log(x) + x / 2
+#+end_src
+
+#+RESULTS:
+[[file:kullback-leibler.png]]
+
+*** Digression: distances between probability measures
+- Hellinger distance (member of the alpha family of divergences)
+- Wasserstein distance (apparently popular for generative adversarial networks
+  (see [[https://datascience.stackexchange.com/questions/22725/what-is-hellinger-distance-and-when-to-use-it][Stack Exchange]]).
+
 ** DONE Sampling methods
 CLOSED: [2018-04-03 Tue 00:13]
 ** Continuous latent variables

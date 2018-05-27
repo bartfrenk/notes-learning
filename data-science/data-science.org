@@ -64,12 +64,13 @@ CLOSED: [2018-03-19 Mon 20:47]
      Available online for free at [5]. Seems like the book version is still at
      PyMC2, while the online version has moved to PyMC3 (I think).
 
-**** DONE Chapter 8 on Graphical Models from Bishop
-     CLOSED: [2018-03-06 Tue 14:28]
-***** TODO Implement the iterated conditional modes algorithm in Clojure
+**** TRACKED Chapter 8 on Graphical Models from Bishop
+CLOSED: [2018-05-17 Thu 00:34]
+***** CANCELED Implement the iterated conditional modes algorithm in Clojure
+CLOSED: [2018-05-17 Thu 00:34]
       Interesting questions:
       - How to represent the graph?
-**** DONE Chapter 11 on sampling from Bishop
+**** TRACKED Chapter 11 on sampling from Bishop
      CLOSED: [2018-03-16 Fri 13:18]
 **** TRACKED Pattern recognition and machine learning
 CLOSED: [2018-04-03 Tue 00:14]
@@ -77,6 +78,13 @@ Link: file:extracts/bishop-pattern-recognition-and-machine-learning.org
 
 **** WAIT Graphical models course (Coursera)
 
+** Markov decision processes
+*** Kallenberg - Lecture notes on MDPs
+Rigorous lecture notes on Markov decision processes. Seems to be the best free
+starting point into Markov decision processes.
+**** How to model and solve MABs as MDPs?
+This is the question to keep in the back of your mind, for now!
+Dynamic programming.
 ** Online machine learning
 *** Scientific articles
 **** DONE Computational personalization Data science methods for personalized health
@@ -98,6 +106,20 @@ studying carefully.
 Link: [[file:extracts/russo-ea-a-tutorial-on-thompson-sampling.org]]
 **** TODO Ghavamzadeh - Bayesian reinforcement learning: A survey
 This is [13].
+**** STARTED Gomez-Uribe - Online Algorithms/
+Full title: Online algorithms for parameters mean and variance estimation in
+dynamic regression models.
+
+Takes into account evolution of the parameters.
+
+This is [14].
+**** WAIT Agrawal ea - Thompson sampling /
+Full title: Agrawal ea - Thompson sampling for contextual bandits with linear payoffs
+
+Article from 2013. Gives theoretical bounds on contextual bandits with reward
+function linear in the context, and Gaussian priors on the coefficients. Might
+say something about when actual model diverges from Gaussian priors.
+
 *** Code repositories
 **** TRACKED Streaming bandit
      CLOSED: [2018-03-09 Fri 11:12]
@@ -117,9 +139,7 @@ This is [13].
 *** Book chapters
 **** Algorithms for Massive Data Problems: Streaming, Sketching and Sampling
      From *Blum - Foundations of Data Science*. It partially deals with
-     streaming data. There is an algorithm to approximate the number of distinct
-     elements in a stream under limited space constraints.
-
+     streaming data. There is an algorithm to approximate the number of distinc
 ** Neural networks and deep learning
 *** Courses
 **** Deep Learning specialization (Coursera)
@@ -166,6 +186,10 @@ http://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html
        of deep learning – which might even end up displacing SGD in the later
        phases of training.  Relation information theory and machine learning
 
+** Optimization
+The book Practical methods of optimization (Fletcher) is referenced by the GSL
+documentation. This is the book at [[https://www.bol.com/nl/p/practical-methods-of-optimization/9200000016360970/?suggestionType=typedsearch&bltgh=uyDVHIEtj22l-s7B9nFBeA.1.2.ProductTitle][bol.com]].
+
 ** Tooling
 *** Books
 **** TRACKED Python for data analysis (Wes McKinney)
@@ -207,7 +231,7 @@ http://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html
 ***** On realistic scores for the Titanic competition
       https://www.kaggle.com/c/titanic/discussion/4894
 
-*** STARTED Housing prices: Advanced regression techniques
+*** WAIT Housing prices: Advanced regression techniques
 *** WAIT data-science-for-good-kiva-crowdfunding
     First project in the Data Science for Good program from Kaggle.
 
@@ -301,3 +325,4 @@ Sculley ea - Machine learning. The high-interest credit card of technical debt.
 [11] https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43146.pdf
 [12] Russell ea. A tutorial on Thompson sampling. https://arxiv.org/abs/1707.02038
 [13] https://arxiv.org/abs/1609.04436
+[14] https://arxiv.org/pdf/1605.05697

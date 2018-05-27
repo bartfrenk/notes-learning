@@ -1,0 +1,90 @@
+#+TITLE: Notes on Clean Architecture
+#+AUTHOR: Bart Frenk
+#+TAGS: important(i)
+
+* Preamble
+Page numbers are from a scrambled Kindle format conversion.
+* Contents
+** Introduction                                                  :important:
+*** What is design and architecture?
+**** The goal
+The goal of software architecture is to minimize the human resources required to
+build and maintain the required system. (p.80)
+**** Case study
+Most modern developers work their butts off. But a part of their brain does
+sleep—the part that knows that good, clean, well-designed code matters. (p.93)
+*** A tale of two values
+1. The first value of software is its behavior. Programmers are hired to make
+   machines behave in a way that makes or saves money for the
+   stakeholders. *Urgent, but not always particularly important.*
+2. To fulfill its purpose, software must be soft—-that is, it must be easy to
+   change. When the stakeholders change their minds about a feature, that change
+   should be simple and easy to make. The difficulty in making such a change
+   should be proportional only to the scope of the change, and not to the shape
+   of the change. *Important, but not always particularly important.*
+
+   The cost of a change should be related to its scope, not to its shape.
+**** Fight for the architecture
+** Starting with the bricks: programming paradigms
+** Design principles
+SOLID
+*** SRP: The single responsibility principle
+Not so well understood. Doesn't mean that every module should do just one
+thing. It means that every module should only have a single reason to change.
+
+Not following the principle leads to:
+1. accidental duplication: the SRP says to separate the code that different
+   actors depend on,
+2. and to merge conflicts.
+*** OCP: The open-closed principle
+Coined in 1988 by Bertrand Meyer.
+
+A software artifact should be open for extension, but closed for modification.
+
+This is how the OCP works at the architectural level. Architects separate
+functionality based on how, why, and when it changes, and then organize that
+separated functionality into a hierarchy of components.  Higher-level components
+in that hierarchy are protected from the changes made to lower-level
+components. (p.274)
+*** LSP: The Liskov sibstitution principle
+In all of these situations, and more, the LSP is applicable because there are
+users who depend on well- defined interfaces, and on thesubstitutability of the
+implementations of those interfaces. (p.288)
+*** ISP: The interface segregation principle
+In general, it is harmful to depend on modules that contain more than you
+need. This is obviously true for source codedependencies that can force
+unnecessary recompilation and redeployment—but it is also true at a much higher,
+architectural level. (p.305)
+*** DIP: The dependency inversion principle
+Don't depend on concrete and volatile things. That usually means don't depend on
+concretions, depend on abstractions.
+** Component principles
+*** Component cohesion
+**** The reuse/release equivalence principle
+The Reuse/Release Equivalence Principle (REP) is a principle that seems obvious,
+at least in hindsight. People who want to reuse software components cannot, and
+will not, do so unless those components are tracked through a release process
+and are given release numbers.
+**** The common closure principle
+Just as the SRP says that a class should not contain multiples reasons to
+change, so the Common Closure Principle (CCP) says that a component should not
+have multiple reasons to change.
+
+Because 100% closure is not attainable, closure must be strategic.  We design
+our classes such that they are closed to the most common kinds of changes that
+we expect or have experienced.  The CCP amplifies this lesson by gathering
+together into the same component those classes that are closed to the same types
+of changes.Thus, when a change in requirements comes along, that change has a
+good chance of being restricted to a minimal number of components.(p.360)
+**** The common reuse principle
+The CRP says that classes that are not tightly bound to each other should not be
+in the same component. (p.366)
+**** The tension diagram for component cohesion
+*** Component coupling
+**** The acyclic dependencies principle
+Allow no cycles in the component dependency graph.
+**** Top-down design
+**** The stable dependencies principle
+**** The stable abstractions principle
+** Architecture
+** Details

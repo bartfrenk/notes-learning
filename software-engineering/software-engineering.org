@@ -10,7 +10,10 @@
   - the process of software engineering
 * Topics
 ** Software architecture
-*** STARTED Read Robert C. Martin's Clean Architecture
+*** TRACKED Read Robert C. Martin's Clean Architecture
+CLOSED: [2018-04-05 Thu 21:55]
+Link: file:items/martin-clean-architecture.org
+
 *** WAIT Write down thoughts on domain driven design
     This might grow into a blog post. 
     Input:
