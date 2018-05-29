@@ -5,18 +5,17 @@
 * Meta
   Description: Notes on Schonig - Mastering PostgreSQL 9.6 (2017)
 * Contents
-  :PROPERTIES:
-  :engine:   postgresql
-  :cmdline: "-h localhost -p 15432 -U docker"
-  :exports: both
-  :visibility: children
-  :END:
+:PROPERTIES:
+:header-args+: :engine postgresql
+:header-args+: :cmdline "postgresql://docker@localhost:15432/docker"
+:visibility: children
+:END:
 
 ** DONE Preliminaries
    CLOSED: [2018-02-07 Wed 23:10]
 *** Build a docker image with PostgreSQL and curl
 Create the temporary directory:
-#+BEGIN_SRC sh
+#+BEGIN_SRC shell
 mkdir -p /tmp/schonig-mastering-postgresql-9-6
 #+END_SRC
 
@@ -29,9 +28,11 @@ RUN apt-get update && apt-get install -y curl
 #+END_SRC
 
 Build the docker image. This might take a while.
-#+BEGIN_SRC sh
+#+BEGIN_SRC shell
 docker build -t schonig-mastering-postgresql-9-6 /tmp/schonig-mastering-postgresql-9-6/
 #+END_SRC
+
+#+RESULTS:
 
 *** Create and start a docker container
 
@@ -45,7 +46,7 @@ docker run -d --name mastering-postgresql-db \
 #+END_SRC
 
 #+RESULTS:
-: 5056b3a4e1c9fc377c697808327fbb3fef35d2bf88189079d2b758c8b9123551
+: f5b5eed6be978c5c29bce575bc225834613058c5780995e0aa3682e8c115798a
 
 Start Docker container:
 #+BEGIN_SRC sh
@@ -74,6 +75,17 @@ COPY t_oil FROM PROGRAM 'curl -L www.cybertec.at/secret/oil_ext.txt ';
    | CREATE TABLE |
    |--------------|
    | COPY 644     |
+
+#+BEGIN_SRC sql
+SELECT COUNT(*)
+FROM t_oil;
+#+END_SRC
+
+#+RESULTS:
+| count |
+|-------|
+|   644 |
+
 
 ** PostgreSQL overview
    #+BEGIN_SRC sql
