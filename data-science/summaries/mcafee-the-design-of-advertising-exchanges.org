@@ -1,0 +1,29 @@
+#+TITLE: Notes on The design of advertising exchanges
+#+AUTHOR: Bart Frenk
+#+DATE: <2018-09-17 Mon>
+
+* Preamble
+R. Preston McAfee. /The design of advertising exchanges/. Review of of Industrial
+Organization (2011).
+
+Seems like a fairly solid economics-oriented account of advertising
+exchanges. Likely a useful paper to organize some thoughts around.
+
+* Notes
+In advertising auctions three major features are:
+1. The speed at which the auction must be accomplished
+2. The miniscule value and high volume of the items that are being traded
+3. The need to use automated systems for bidding, evaluation, and execution of
+   the trades.
+
+Automated systems are needed not just because of the speed of the auctions--a
+human won't be able to bid in a fraction of a second--but also because of the
+complex nature of the item that is being sold.
+
+The complexity arises because of the varied needs of advertisers.
+- Demographics
+- Consumer interests
+- Ad sizes
+- Restrictions put on the ads
+  
+** The machine learner's curse

@@ -1,0 +1,30 @@
+#+TITLE: Notes on Modern React with Redux (Udemy course)
+#+AUTHOR: Bart Frenk
+#+DATE: <2018-09-14 Fri>
+#+EMAIL: bart.frenk@gmail.com
+
+* Preamble
+Stephen Grider. *Modern React with Redux*. Udemy Course (2018)
+* DONE Sections
+CLOSED: [2018-09-23 Sun 22:04]
+** DONE An intro to React
+CLOSED: [2018-09-14 Fri 22:52]
+** DONE Ajax requests with React
+CLOSED: [2018-09-14 Fri 22:52]
+** DONE Modeling application state
+CLOSED: [2018-09-14 Fri 22:52]
+** DONE Managing app state with Redux
+CLOSED: [2018-09-14 Fri 22:52]
+** DONE Intermediate Redux: Middleware
+CLOSED: [2018-09-14 Fri 22:52]
+** DONE React Router + Redux Form
+CLOSED: [2018-09-23 Sun 22:01]
+** CANCELED Bonus - RallyCoding
+CLOSED: [2018-09-23 Sun 22:02]
+Skipped, since these sections are way to specific (and I think, should really
+not be part of the course).
+** CANCELED [Legacy] React Router + Redux Form 
+CLOSED: [2018-09-23 Sun 22:02]
+This is about an older version of the library. I am not interested. More useful
+to go through this section whenever I get to deal with applications that make
+use of the older React Router and Redux Form versions.

@@ -29,6 +29,15 @@ Link: file:items/martin-clean-architecture.org
 CLOSED: [2018-03-19 ma 12:30]
 Link: [[file:items/haverbeke-eloquent-javascript.org]]
 Recommended by Niels
+*** Python
+**** Python3
+**** Asynchronous programming in Python3
 ** Miscellaneous
 *** Ken Iverson. Notation as a tool for thought.
-Available online here: http://www.jsoftware.com/papers/tot.htm
+Available online here: http://www.jsoftware.com/papers/tot.ht
+*** Parnas. On the criteria to be used in decomposing systems into modules
+This seems to be a provoking read.
+
+https://www.win.tue.nl/~wstomv/edu/2ip30/references/criteria_for_modularization.pdf
+
+References in: http://homepages.dcc.ufmg.br/~mtov/pmcc/modularization.pdf

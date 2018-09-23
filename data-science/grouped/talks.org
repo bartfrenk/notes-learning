@@ -1,0 +1,118 @@
+#+TITLE: Notes on data science talks
+#+AUTHOR: Bart Frenk
+
+* Talks
+
+** Selection bias - The elephant in the room
+Speaker: Lucas Bernardi
+Link: https://www.youtube.com/watch?v=3ZWCKr0vDtc
+
+What to do when the observed labels come from a biased sample, in which the bias
+only depends on the feature vectors. If it depends too much on the label, all
+hope is lost (e.g. consider the case that they are equal).
+
+1. More data, since asymptotically the prediction performance on the unobserved
+   part of the population equals that on the observed part of the population
+   (this seems a bit fishy, and was only supported by a specific case, on the
+   other hand, is it a consequence of the independence of the bias and the label?).
+   
+2. Use the propensity score, where the propensity score is defined as
+   follows. Denote a random feature vector by X, and denote the selection by S,
+   i.e., S = 1 when the vector is selected (and hence labeled). The propensity
+   of X is defined as P(S=1|X). High propensity score imply that the model
+   generalizes less well to the unselected part of the population.
+   
+I am kind of wondering how to think about the problem a bit less ad-hoc. We
+suppose a situation depicted by Y <- X -> S, where Y is the label.
+
+** Monitoring models in production 
+Speaker: Jannes Klaas
+
+Seems relating the the "High interest rate credit card of technical debt" from
+Google.
+
+- online learning ::
+- active learning :: Production is an opportunity for learning, monitoring is
+     part of training.
+     1. make predictions
+     2. request labels for low confidence examples
+     3. train on those cases
+        
+Model monitoring.
+
+- Monitoring inputs :: Check whether inputs match training data. More like ops
+     monitoring.
+- Monitoring outputs :: Same, but for predictions versus. Compare against ground
+     truth if possible. Can get ground truth by manual labeling, need good UI.
+
+Model accountability. Understand why the decision for a particular prediction
+was made, e.g. keep all model versions.
+
+References (mainly from Google, he has ):
+
+*** TODO What is your ML test score? A rubric for ML production systems. 
+
+https://ai.google/research/pubs/pub45742
+
+From the page:
+Testing and monitoring are key considerations for assessing the
+production-readiness of an ML system. But how much testing and monitoring is
+enough? We present an ML Test Score rubric based on a set of actionable tests
+to help quantify these issues.  Mi
+
+*** TODO How Zendesk Serves TensorFlow Models in Production
+
+https://medium.com/zendesk-engineering/how-zendesk-serves-tensorflow-models-in-production-751ee22f0f4bhttps://medium.com/zendesk-engineering/how-zendesk-serves-tensorflow-models-in-production-751ee22f0f4b
+
+Interesting, concrete blog post on a specific set of cases for a specific
+company that is not Google scale.
+
+** Andrew Ng - The state of artificial intelligence
+
+Trends in AI.
+
+AI is the new electricity.
+
+In order of economic relevance.
+- Supervised learning :: Hunger for data.
+- Transfer learning
+- Unsupervised learning
+- Reinforcement learning :: Great hunger for data.
+
+Achilles heel of supervised learning : need lots of data.
+
+- virtuous circle of data -> product -> users -> data (data asset, data
+  accumulation)
+  
+What makes an internet company?
+- architected your organization to use the internet well: A/B testing
+- short cycle times
+- Push decision making to engineers and product managers
+  
+What makes an AI company? (Nobody yet fully knows what is)
+- strategic data acquisition
+- unified data warehouses (often a multi-year exercise)
+- pervasive automation
+- new job descriptions
+  - new workflow and processes to have engineers and product managers work
+    together
+- centralized AI team, matrix in the separate business units
+- company wide AI platforms
+
+** Thompson sampling for machine learning
+Speaker: Ruben Mak
+
+** Data engineering architecture at simple
+Speaker: Rob Story
+
+https://www.youtube.com/watch?v=9nX35zrN20E
+
+They use Redshift.
+- Fast load times from S3
+  
+Think about using asyncpg instead of psycopg. It is claimed to be faster and
+native Python.
+
+Postgres logical replication slot.
+
+Has a list of good Python clients for ZooKeeper and other services.

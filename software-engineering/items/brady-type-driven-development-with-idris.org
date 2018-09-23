@@ -1,0 +1,16 @@
+#+TITLE: Notes on Type Driven Development with Idris
+#+AUTHOR: Bart Frenk
+#+DATE: <2018-09-14 Fri>
+#+EMAIL: bart.frenk@gmail.com
+
+* Preamble
+Edwin Brady. /Type Driven Development with Idris/. Manning (2016).
+* Chapters
+** DONE Overview
+CLOSED: [2018-09-14 Fri 22:38]
+** DONE Getting started with Idris
+CLOSED: [2018-09-14 Fri 22:39]
+** DONE Interactive development with types
+CLOSED: [2018-09-14 Fri 22:39]
+** STARTED User-defined data types
+** Interactive programming: input and output

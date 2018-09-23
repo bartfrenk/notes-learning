@@ -1,0 +1,274 @@
+#+TITLE: Notes on The Facebook Field Guide to Machine Learning
+#+AUTHOR: Bart Frenk
+#+DATE: <2018-09-18 di>
+
+* Preamble
+
+#+begin_quote
+The Facebook Field Guide to Machine Learning is a six-part video series
+developed by the Facebook ads machine learning team. The series shares best
+real-world practices and provides practical tips about how to apply
+machine-learning capabilities to real-world problems.
+#+end_quote
+
+Link to the [[https://research.fb.com/the-facebook-field-guide-to-machine-learning-video-series/][website]].
+
+Consists of six lectures each of about 6-10 minutes:
+
+* Summary
+** DONE Lesson 1: Problem definition
+CLOSED: [2018-09-18 di 10:31]
+Cutting edge resource can have impressive results with a clear task
+(e.g. recognizing cats and dogs). The real world is often much more messy.
+
+The right setup is often more important than the choice of algorithm.
+
+How to go from a business problem to a machine learning problem:
+1. Problem definition. Think carefully what the actual machine learning task is
+   that solves the business problem. It is often worth digging into the data to
+   see whether there are proxies for your actual target.
+
+   Look for:
+   1. Reasonable period of time in which you can evaluate your prediction?
+   2. Is it too sparse? A good heuristic is to consider the number of rare
+      labels. *Different algorithms work best for different levels of sparsity.*
+      <follow up: make, or find a chart or a list>
+   3. Do the features contain information about the event.
+      
+   Summary
+   1. Determine the right ML task for your project.
+   2. Simple is better than complicated.
+   3. Define your label and training examples precisely.
+   4. Don't prematurely optimize.
+2. Data.
+3. Evaluation. How do we define success?
+4. Features.
+5. Models.
+6. Experimentation.
+   
+Points 2-6 are covered in later lectures.   
+
+** DONE Lesson 2: Data
+CLOSED: [2018-09-18 di 10:31]
+Preparing training data is one of the most powerful variables we can control to
+create high-performing machine learning model.
+
+Start with raw event information, multiple sources. Do a join to get the data in
+denormalized formats.
+
+1. Data recency and real-time training
+2. Training/prediction consistency
+3. Records and sampling
+   
+Prediction tasks take data from the past to predict the future. Thus, data is
+rarely iid. Another cause is seasonality.
+
+Doing a progressive evaluation of your model gives an indication how the quality
+of predictions drop off with time. If it is getting worse fast, it might be
+useful to do *realtime training*. This technique goes hand-in-hand with the
+ability to generate training data in real time. This presents two challenges:
+
+1. You need to have a service to do the join in real-time.
+2. How long should one wait for the label, and how accurate should the label be.
+   
+Another problem is online-offline consistency. To generate real-time data:
+
+1. You can log the feature directly from the system that does inference: Gives
+   high confidence that the feature use in production are those used for
+   training the model. It comes with the need to log and store data. If they are
+   static it is easy to ensure that they are the same (e.g., gender). It is more
+   difficult and dangerous if they are time dependent (e.g., posts clicked until
+   now).
+   
+   Be careful when data is invalid in a systematic way, e.g., some devices fail
+   to log their data. Use robust monitoring.
+2. You can regenerate the feature from the data logged with an impression.
+   
+*Sampling* is a way to make the tradeoff between training time and
+accuracy. Importance sampling is one of such methods. It should be easy to
+switch to different types of data selection, as easy as it is to experiment with
+different models.
+
+Key takeaway is that to be really sure that your data preparation is doing what
+you think it is doing.
+
+** DONE Lesson 3: Evaluation 
+CLOSED: [2018-09-18 di 10:31]
+/Online/ and /offline evaluation/. Good workflow is to start with offline
+evaluation, then proceed to online evaluation. Offline evaluation is in general
+cheaper, but most likely to be not as close to the /actual truth/.
+
+This lessons focuses specifically on /offline evaluation/.
+
+Make the simplest possible model for the problem, e.g., just use a constant
+model (a bias term), or the empirical click rate of an article. This model
+serves as a *baseline* for future work.
+
+Gold standard for offline evaluation is to split the data into three sets
+- training set :: to train the model
+- validation set :: to tune the hyperparameters of the model (model selection)
+- test set :: to report final results only
+                 
+The textbook approach is to use a random split and use /k-fold cross
+validation/. Split the data into k chunks. Use one (or, each once) as a test
+set, and train and validate the model on the rest of the data.
+   
+A drawbacks of this approach is that we learn from examples that were generated
+later than those in the test set. This does usually not reflect actual practice,
+where predicting is done on data generated in the future (i.e., later than the
+data available when the model was built). This biases the model in ways that are
+hard to interpret in practice.
+
+A popular approach is *progressive evaluation*. This makes evaluation closer to
+the desired online use case. Here we split in time by putting later examples in
+the test set.
+
+Suppose you are mainly interested in a subset called /first clickers/. The very
+first step would be to build evaluation and test sets for the first clickers,
+and train a baseline model.
+
+It may also be useful to divide your population into subsets (because the
+prediction will otherwise be dominated by the majority of the population,
+e.g. people going to big stores. This may or may not be desired.)
+
+The feedback loop between experiment idea and result must be kept as short as
+possible. The ultimate goal is to perform online testing.
+
+Summary:
+1. Evaluate offline before evaluating online
+2. Evaluate both the choice of data and the kind of statistics you calculate
+3. Don't be bound to evaluating and training on the same things
+4. When evaluating your model, understand where the performance comes from
+   
+** DONE Lesson 4: Features
+CLOSED: [2018-09-18 di 10:31]
+Have a:
+1. Training data set
+2. A baseline model
+3. A fast offline method for evaluating model performance
+
+Now we can improve on:
+1. Data
+2. Model
+3. Features
+
+The last has a much faster iteration cycle. The first a very slow cycle.
+
+Type of features:
+1. Categorical, e.g. gender
+2. Continuous, e.g. historical click through rate
+
+Historical features can be very powerful (e.g. historical click through rate). Caveats:
+1. They can introduce a feedback loop
+2. Difficult to form hypothesis. <I don't fully understand this one>
+   
+The semantics of a feature may not chance. Fix the semantics, but anticipate
+changes in the semantics (e.g., monitor). If semantics need to be changed,
+create a new feature.
+
+Use one implementation for the code that generates features (for the training
+set and actual prediction). The speaker talks about Facebook having *prediction
+binaries*. <Independently deployable, closed code to generate features might be
+useful for us, perhaps in the not-so-near future>.
+
+Feature leakage, e.g. using features containing information on the target that
+is not available at prediction time. <This does not make too much sense to me now>
+
+** DONE Lesson 5: Models
+CLOSED: [2018-09-18 di 10:31]
+
+1. How to pick a model
+2. How to tune a model
+3. How to compare models
+   
+Dimensions
+1. Interpretability
+2. Debugging
+3. Speed of evaluation
+4. Speed of training   
+   
+If a model is not calibrated along a certain dimension (what does that mean
+exactly?) then it is an indication that the model is biased.
+
+Break parameters into two groups:
+1. Hyperparameters, such as learning rate and regularization
+2. Model architecture settings, interaction terms for linear models, number of
+   leaves in a decision tree, neural network architecture.
+   
+Bottleneck in machine learning is usually not idea generation. It is between
+your brain and experimental feedback.
+
+- Transparency :: Understand all the steps that lead to an experimental result.
+- Reproducibility :: Experiments should be reproducible
+
+A systematic and scientific approach can feel like it slows you down, it almost
+always pays off.
+
+What is the: hashing trick? It is probably this [[https://en.wikipedia.org/wiki/Feature_hashing][Wikipedia article]]. <Judging by
+the references it is a technique invented in the end of the 2010's>.
+
+Normalized entropy? <Probably not so important now>
+
+Keep track of the models you train and the data you trained them on.
+
+** DONE Lesson 6: Experimentation
+CLOSED: [2018-09-18 di 10:31]
+Presence of *feedback loops* makes online testing different from offline
+testing.
+
+*Topics*
+
+1. Minimize time to the first online experiment
+2. Isolate engineering bugs from ML performance issues
+3. Test models in the presence of real-world feedback loops: use back-tests, not
+   completely sure what these mean.
+4. Pro tips:
+   1. Be able to triangulate the cause of any changes: make sure you are able to
+      pinpoint the cause of a change in any metric.
+   2. Measure the right thing
+   3. Have a backup plan: think about in advance how you are able to terminate
+      an experiment if things go awry.
+   4. Calibrating models
+
+*Minimize time to the first online experiment (important)*
+
+One of the golden rules of machine learning in the real world is to
+minimize time to first experiment.
+
+When we plan out the first five steps previously covered, we should always
+do it in such a way that real world validation comes as soon as
+possible. Even if it just helps us understand the impact of a very basic
+baseline model.
+
+*Isolate engineering bugs from ML performance issues*
+
+An experiment measures two things:
+1. The effect of your code changes
+2. The effect of your model
+
+If you run the experiment online, also test the case in with the extra
+system (the code changes) running a model (transformation) which you would
+expect has no effect (e.g., the identity transform). Measure whether there
+is a difference between the old case and this new case. There should be
+none, if you are interested only in the effects of the model. According to
+the author, this identifies and resolves lots of bugs. (around 4:30).
+
+*Calibration*
+
+Calibration is a metric that measures how the average prediction compares
+to the average response rate. (*Question*: It seems like this is essentially the bias
+of the estimator, is there a reason they don't refer to it by that name?)
+
+There should be none on the training set. Having miscalibration on the test
+test means the model doesn't generalize well (e.g., due to
+overfitting). Having miscalibration in the online experiment means that
+there is an *online/offline* gap.
+
+Miscalibration is a very effective *canary in the coalmine*, that indicates
+something more fundamental is going wrong. <So a useful statistic to monitor>.
+
+
+
+
+
+ 

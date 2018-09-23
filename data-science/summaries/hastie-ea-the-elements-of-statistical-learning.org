@@ -1,0 +1,234 @@
+# -*- org-export-babel-evaluate: nil -*-
+#+TITLE: The elements of statistical learning
+#+AUTHOR: Bart Frenk
+#+STARTUP: hideblocks
+#+OPTIONS: toc:nil todo:nil
+
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{paralist}
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage{palatino}
+#+LATEX_HEADER: \usepackage{euler}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \renewcommand{\em}[1]{\textbf{#1}}
+#+LATEX_HEADER: \newcommand{\E}{\operatorname{\mathbb{E}}}
+#+LATEX_HEADER: \newcommand{\argmax}{\operatorname{\mathrm{argmax}}}
+#+LATEX_HEADER: \setstretch{1.1}
+#+LATEX_HEADER: \let\itemize\compactitem
+#+LATEX_HEADER: \let\description\compactdesc
+#+LATEX_HEADER: \let\enumerate\compactenum
+#+LATEX_HEADER: \setlength{\parindent}{0em}
+#+LATEX_HEADER: \setlength{\parskip}{1em}
+#+LATEX_HEADER: \newcommand{\RR}{\mathbb{R}}
+#+LATEX_HEADER: \newcommand{\df}[1]{\textit{#1}}
+#+LATEX_HEADER: \newenvironment{exercise}[1]{\textbf{Exercise #1.}}{}
+#+LATEX_HEADER: \newenvironment{solution}{\textbf{Solution.}}{}
+#+LATEX_HEADER: \newenvironment{remark}{\textbf{Remark.}}{}
+#+LATEX_HEADER: \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+#+LATEX_HEADER: \renewcommand{\theenumi}{\alph{enumi}}
+#+LATEX_HEADER: \renewcommand\labelenumi{(\theenumi)}
+
+* Introduction
+* Overview of supervised learning
+** Exercises
+
+#+ATTR_LATEX: :options {2.1}
+#+BEGIN_exercise
+Suppose each of \(K\)-classes has an associated target $t_k$, which is a vector of
+all zeros, except a one in the \(k\)-th position. Show that classifying to the
+largest element of $\hat{y}$ amounts to choosing the closest target, $min_k
+\norm{t_k - \hat{y}}$, if the elements of $\hat{y}$ sum to one.
+#+END_exercise
+
+#+BEGIN_solution
+Write $\hat{y} = (y_1, \ldots, y_n)$ and consider its squared distance to $t_k$,
+\begin{eqnarray*}
+\norm{t_k - \hat{y}}^2
+& = & y_1^2 + \ldots + y_{k-1}^2 + (1 - y_k)^2 + y_{k+1}^2 + \ldots + y_n^2 \\
+& = & \norm{\hat{y}}^2 + 1 - 2 y_k
+\end{eqnarray*}
+Thus, picking $k$ for which the distance to $t_k$ is minimal is equivalent to
+picking $k$ for which $y_k$ is largest.
+#+END_solution
+
+#+BEGIN_remark
+It seems that the condition that the elements of $\hat{y}$ sum to one isn't
+needed.
+#+END_remark
+
+#+ATTR_LATEX: :options {2.2}
+#+BEGIN_exercise
+Show how to compute the Bayes decision boundary for the example in Figure 2.5.
+#+END_exercise
+
+#+BEGIN_solution
+The classification criterion for a point $x$ is,
+\[
+g(x) = \argmax_{g \in G} \Pr(G = g|X = x)
+\]
+By Bayes theorem,
+\[
+\Pr(G = g|X = x) = \frac{\Pr(X = x|G = g) \Pr(G = g)}{\Pr(X = x)}
+\]
+and thus
+\[
+g(x) = \argmax_{g \in G} \Pr(X = x|g) \Pr(G = g)
+\]
+
+Since there are only two classes, say $0$ and $1$, the decision boundary is the
+locus of
+\[
+\Pr(X = x|G = 0) \Pr(G = 0) = \Pr(X = x|G = 1) \Pr(G = 1)
+\]
+
+Denote the blue means by $p_i$ and the orange means by $q_j$. Filling in the
+Gaussian mixture distribution gives the equation,
+\begin{equation}{\label{eqn:exercise_2-2}}
+\sum_{i = 1}^{10} \frac{1}{10} \exp(-\frac{|x - p_i|^2}{2}) =
+\sum_{j = 1}^{10} \frac{1}{10} \exp(-\frac{|x - q_j|^2}{2})
+\end{equation}
+#+END_solution
+
+#+BEGIN_remark
+It is not completely clear to me how to solve Equation \ref{eqn:exercise_2-2}.
+#+END_remark
+
+#+ATTR_LATEX: :options {2.3}
+#+BEGIN_exercise
+Derive equation (2.24).
+#+END_exercise
+
+#+BEGIN_solution
+Consider a set of $n$ uniformly distributed data points in the unit sphere of
+dimension $p$. Denote the minimal distance to the origin by $D(n, p)$. Show that the median of $D(n, p)$ equals,
+\[
+\Big(1 - \frac{1}{2}^{1/n}\Big)^{1/p}.
+\]
+
+For each $p$, pick $C_p$ such that the volume of a sphere of radius $x$ in
+dimension $p$ is $C_p x^p$. Then, consider the probability,
+\[
+\Pr(D(1, p) > x) = 1 - \frac{C_p x^p}{C_p} = 1 - x^p
+\]
+
+Thus,
+\[
+\Pr(D(n, p) > x) = \Pr(D(1, p) > x)^n = (1 - x^p)^n
+\]
+
+Solving $(x - x^p)^n = \frac{1}{2}$ for $x$ yields the required expression.
+#+END_solution
+
+#+ATTR_LATEX: :options {2.7}
+#+BEGIN_exercise
+Suppose we have a sample of $N$ pairs $x_i$, $y_i$, drawn i.i.d. from the
+distribution characterized as follows:
+\begin{eqnarray*}
+x_i & \sim & h(x), \quad\mbox{the design density} \\
+y_i & = & f(x_i) + \varepsilon_i, \quad\mbox{$f$ is the regression function} \\
+\varepsilon_i & \sim & (0, \sigma^2), \quad\mbox{(mean zero, variance $\sigma^2$}.
+\end{eqnarray*}
+
+We construct an estimator for $f$ \textit{linear} in the $y_i$,
+\[
+\hat{f}(x_0) = \sum_{i=1}^N \ell_i(x_0; \mathcal{X}) y_i,
+\]
+
+where the weights $\ell_i(x_0; \mathcal{X})$ do not depend on the $y_i$, but do
+depend on the entire training sequence of $x_i$, denoted here by $\mathcal{X}$.
+
+\begin{enumerate}
+
+\item Show that the linear regression and \(k\)-nearest neighbor regression are
+  members of this class of estimators. Describe explicitly the weights
+  $\ell_i(x_0; \mathcal{X})$ in each of these cases.
+
+\item Decompose the conditional mean-squared errror
+  \[
+    \E_{\mathcal{Y}\mid\mathcal{X}}(f(x_0) - \hat{f}(x_0))^2
+  \]
+  into a conditional squared bias and a a conditional variance component. Like
+  $\mathcal{X}$, $\mathcal{Y}$ represents the entire training sequence of $y_i$.
+
+ \item Decompose the (unconditional) mean-squared errror
+  \[
+    \E_{\mathcal{Y},\mathcal{X}}(f(x_0) - \hat{f}(x_0))^2
+  \]
+  into a squared bias and a a variance component.
+  
+\item Establish a relationship between the squared biases and variances in the
+  above two cases.
+
+\end{enumerate}
+#+END_exercise
+
+#+BEGIN_solution
+\begin{enumerate}
+\item 
+  \begin{description}
+  \item[Nearest neighbors]
+    Write $N_k(x_o; \mathcal{X})$ for the set of $k$ points in $\mathcal{X}$ closest to $x_0$. Then
+    \[
+      \ell_i(x_0; \mathcal{X}) = \left\{\begin{array}{ll}
+                                         \frac{1}{k} & x_i \in N_k(x_0; \mathcal{X}) \\
+                                         0 & \mbox{otherwise}
+                                        \end{array}\right.
+    \]
+  \item[Linear regression] Write $M = (X^T X)^{-1} X^T$. Then,
+    \[
+      \hat{\beta} = M y = \sum_{i = 1}^N M_i y_i,
+    \]
+    where $M_i$ is the \(i\)-th column of $M$.
+    
+    Now,
+    \[
+      \hat{f}(x_0)
+      = x_0^T \hat{\beta} \\
+      = x_0^T \Big(\sum_{i = 1}^N M_i y_i\Big) \\
+      = \sum_{i = 1}^N \big(x_0^T M_i\big) y_i.
+    \]
+    Thus
+    \[
+      \ell_i(x_0; \mathcal{X}) = x_0^T M_i = x_0^T (X^T X)^{-1} X^T e_i
+      \]
+    \end{description}
+\end{enumerate}
+#+END_solution
+* Linear methods for regression
+* Linear methods for classification
+* Basis expansion and regularization
+* Kernel smoothing methods
+
+Given a sample $S = \big((x_i, y_i)\big)_i$, a kernel $K_{\lambda}$, a loss function $L$, and a
+family of functions $P$, pick a function $p_x$ that solves the following
+minization problem:
+
+\[
+\min_{p \in P} \sum_{i = 1}^N K_{\lambda}(x, x_i) L(y_i, p(x_i)).
+\]
+
+The regression function $f$ is defined by $f(x) = p_x(x)$.
+
+In case the regression function has the form $f(x) = \sum_{i = 1}^N l_i(x) y_i$,
+the values $l_i(x)$ are collectively referred to as the \df{equivalent kernel}
+for $x$.
+
+The parameter $\lambda$ should be a measure of how spread out the kernel is. It
+is referred to as the \df{width} of the kernel. A greater width results in a
+higher bias, but a lower variance.
+
+One can use kernels as basis functions in linear regression models.
+
+I think it is implied that,
+\[
+\int_{x \in D} K_{\lambda}(x, x_i) dx = \lambda,
+\]
+at least in the chapter on kernel density estimation.
+
+Kernel density estimation estimates a probability density from $S$ by a weighted
+sum of kernel functions, $x \mapsto K_{\lambda}(x, x_i)$. Mixture models share
+similarities with kernel density estimators.
+
+Estimation of probability densities is useful in naive Bayes, for continuous
+predictors one can use kernel density estimates, or mixture models.
+* Model assessment and selection

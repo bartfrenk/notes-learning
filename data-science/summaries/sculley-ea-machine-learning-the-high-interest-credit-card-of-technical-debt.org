@@ -1,0 +1,36 @@
+#+TITLE: Article notes
+#+AUTHOR: Bart Frenk
+#+EMAIL: bart.frenk@gmail.com
+
+
+* Meta
+Sculley ea. - Machine learning. The high-interest credit card of technical debt.
+* Terms
+- dependency debt ::
+- visibility debt ::
+
+* Quotes
+It’s worth noting that glue code and pipeline jungles are symptomatic of
+integration issues that may have a root cause in overly separated “research” and
+“engineering” roles. When machine learning packages are developed in an
+ivory-tower setting, the resulting packages may appear to be more like black
+boxes to the teams that actually employ them in practice. At Google, a hybrid
+research approach where engineers and researchers are embedded together on the
+same teams (and indeed, are often the same people) has helped reduce this source
+of friction significantly [10]. But even when a fully integrated team structure
+is not possible, it can be advantageous to have close, active collaborations. (p.6)
+
+Maintaining backward compatibility with experimental codepaths is a burden for
+making more substantive changes. Furthermore, obsolete experimental codepaths
+can interact with each other in unpredictable ways, and tracking which
+combinations are incompatible quickly results in an exponential blowup in system
+complexity. A famous example of the dangers here was Knight Capital’s system
+losing $465 million in 45 minutes apparently because of unexpected behavior from
+obsolete experimental codepaths [9]. (p.6)
+* Summary
+* References
+[1] Article
+https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43146.pdf
+[2] Bottou. Counterfactual reasoning and learning systems: The example of
+computational advertising. See
+https://www.microsoft.com/en-us/research/wp-content/uploads/2013/11/bottou13a.pdf

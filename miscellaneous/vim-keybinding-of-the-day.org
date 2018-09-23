@@ -1,0 +1,7 @@
+<2018-05-17 Thu>: % jumps to matching bracket
+<2018-06-01 Fri>: d2w deletes the next two words
+Use R to enter overwrite mode
+Use W to move a word forward
+
+
+

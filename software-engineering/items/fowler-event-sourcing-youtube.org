@@ -8,9 +8,7 @@
 ** Distribution support
 ** In-memory processing
 ** Alternative histories
-
 * Problems and subtleties
-  
 ** Unfamiliarity
 ** Asynchrony (I don't completely get this)
 ** External systems

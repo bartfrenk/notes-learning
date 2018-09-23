@@ -28,7 +28,8 @@ CLOSED: [2018-03-20 Tue 21:28]
 CLOSED: [2018-03-20 Tue 21:28]
 ** DONE General Thompson sampling
 CLOSED: [2018-03-20 Tue 21:28]
-** STARTED Approximations
+** CANCELED Approximations
+CLOSED: [2018-08-21 Tue 21:03]
 
 Approximations are not so useful, since computation time grows with the size of
 the size of the history.
@@ -46,7 +47,8 @@ approximation and bootstrap approaches. (p.19)
 ** Why it work, when it fails, and alternative approaches
 
 
-* STARTED An empirical evaluation of Thompson sampling
+* CANCELED An empirical evaluation of Thompson sampling
+CLOSED: [2018-08-21 Tue 21:03]
 ** About
 
 Article published in *december 2011*.
@@ -201,6 +203,17 @@ Mentioned in *An emperical evaluation of Thompson sampling*.
 - Markov inequality ::
 - Chebyshev bound ::
 
+** Blogpost on how to deal with more complicated models
+https://eigenfoo.xyz/bayesian-bandits/.
+
+Interesting that it is possible to use the Bernoulli model to deal with more
+complicated ones. The article is mentioned on the post, but here is the link:
+https://arxiv.org/abs/1111.1797. Written by two people from Microsoft Research
+India.
+
+Other interesting links from the blog post:
+- http://banditalgs.com/ (free Cambridge University Press book on bandit
+  algorithms). The pdf is [[http://downloads.tor-lattimore.com/banditbook/book.pdf][here]].
 
 
 * Time sensitive bandit learning /

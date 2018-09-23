@@ -1,0 +1,9 @@
+#+TITLE: Overview Data Engineering topics
+#+AUTHOR: Bart Frenk
+#+TODO: TODO WAIT STARTED | DONE CANCELED TRACKED
+
+* Topics
+** Google Cloud
+* Steps
+** Integration BigQuery with AirFlow
+See https://medium.com/google-cloud/airflow-for-google-cloud-part-1-d7da9a048aa4

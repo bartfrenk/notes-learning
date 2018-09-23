@@ -8,7 +8,7 @@
   :END:
 ** Probabilistic programming, graphical models, Bayesian methods
 
-   Hesitant which resource is a good one to start with. Still needs some research.
+Hesitant which resource is a good one to start with. Still needs some research.
 *** YouTube videos
 **** DONE On Cardinal, a Clojure probabilistic programming library
      CLOSED: [2018-02-05 Mon 22:43]
@@ -58,6 +58,8 @@ CLOSED: [2018-03-19 Mon 20:47]
 
      Pyro is a tool for deep probabilistic modeling, unifying the best of modern
      deep learning and Bayesian modeling.
+**** WAIT Edward (Google) - seems very interesting
+https://arxiv.org/pdf/1701.03757.pdf
 *** Books
 **** TODO Bayesian methods for hackers
      Well written, not very deep on theory, but showcases some good uses.
@@ -106,7 +108,8 @@ studying carefully.
 Link: [[file:extracts/russo-ea-a-tutorial-on-thompson-sampling.org]]
 **** TODO Ghavamzadeh - Bayesian reinforcement learning: A survey
 This is [13].
-**** STARTED Gomez-Uribe - Online Algorithms/
+**** CANCELED Gomez-Uribe - Online Algorithms/
+CLOSED: [2018-08-21 Tue 21:03]
 Full title: Online algorithms for parameters mean and variance estimation in
 dynamic regression models.
 
@@ -268,7 +271,8 @@ Might be interesting, gives some history as well, and attempts to construct a
 framework for general AI. Seems to be a light read.
 
 Horvitz ea - Computational rationality (stored on MMC)
-**** TODO Paper on deploying machine learning solutions (2014)
+**** DONE Paper on deploying machine learning solutions (2014)
+CLOSED: [2018-09-11 Tue 16:52]
 Seems an easy read, 9 pages only. Written by a bunch of Google engineers.
 
 See [11].
@@ -310,6 +314,17 @@ Sculley ea - Machine learning. The high-interest credit card of technical debt.
 ** MIT AGI (Artificial General Intelligence)
    Seems to have some very interesting lectures on different kinds of topics,
    from renowned speakers
+
+** Course on numerical linear algebra (fast.ai)
+This is heavily focused on practical applications. Might want to do the course.
+
+http://www.fast.ai/2017/07/17/num-lin-alg/
+* Interesting directions
+** Data programming
+Creating labeled data using GANs.
+
+Link: https://arxiv.org/abs/1605.07723 (Data programming: creating large
+training sets quickly).
 
 * References
 [1] https://towardsdatascience.com/the-3-popular-courses-for-deeplearning-ai-ac37d4433bd.

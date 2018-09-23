@@ -1,0 +1,9 @@
+#+TITLE: Notes on ML techniques
+#+AUTHOR: Bart Frenk
+#+EMAIL: bart.frenk@gmail.com
+
+* Techniques
+** Gradient boosting
+* Concepts
+** Empirical risk minimization
+Minimize an estimate of the expected risk, defined by some loss function.

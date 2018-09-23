@@ -11,6 +11,7 @@
 :visibility: children
 :END:
 
+
 ** DONE Preliminaries
    CLOSED: [2018-02-07 Wed 23:10]
 *** Build a docker image with PostgreSQL and curl
@@ -46,7 +47,6 @@ docker run -d --name mastering-postgresql-db \
 #+END_SRC
 
 #+RESULTS:
-: f5b5eed6be978c5c29bce575bc225834613058c5780995e0aa3682e8c115798a
 
 Start Docker container:
 #+BEGIN_SRC sh
@@ -55,6 +55,22 @@ docker start mastering-postgresql-db
 
 #+RESULTS:
 : mastering-postgresql-db
+
+#+BEGIN_SRC sql
+\d
+#+END_SRC
+
+#+RESULTS:
+| List of relations |               |          |        |
+|-------------------+---------------+----------+--------|
+| Schema            | Name          | Type     | Owner  |
+| public            | t_bloom       | table    | docker |
+| public            | t_location    | table    | docker |
+| public            | t_names       | table    | docker |
+| public            | t_oil         | table    | docker |
+| public            | t_test        | table    | docker |
+| public            | t_test_id_seq | sequence | docker |
+| public            | users         | table    | docker |
 
 *** Seed the database
 
@@ -1643,7 +1659,8 @@ SELECT cfgname FROM pg_ts_config;
     | North America |         |     518170 |      877093 |
     |               |         |     711032 |      921987 |
 
-** STARTED Log files and system statistics
+** DONE Log files and system statistics
+CLOSED: [2018-05-31 Thu 23:34]
 
 *** Checkig live traffic
 #+BEGIN_SRC sql
@@ -1853,6 +1870,7 @@ ORDER BY total
 | public     |      16537 | users      | users_search_idx_btree |        0 | 56 MB          | 95 MB  |
 | public     |      16468 | t_location | idx_name               |        0 | 96 kB          | 96 kB  |
 
+*** Using pg_stat_statements
 
 ** DONE Optimizing queries for good performance
    CLOSED: [2018-01-02 Tue 15:15]
@@ -2013,7 +2031,62 @@ ORDER BY total
 ** Managing PostgreSQL security
 ** Handling backup and recovery
 ** Making sense of backups and replication
-** Deciding on useful extensions
+** STARTED Deciding on useful extensions
+#+BEGIN_SRC sql
+SELECT *
+FROM pg_available_extensions;
+#+END_SRC
+
+#+RESULTS:
+| name               | default_version | installed_version | comment                                                              |
+|--------------------+-----------------+-------------------+----------------------------------------------------------------------|
+| btree_gin          |             1.0 |                   | support for indexing common datatypes in GIN                         |
+| sslinfo            |             1.2 |                   | information about SSL certificates                                   |
+| chkpass            |             1.0 |                   | data type for auto-encrypted passwords                               |
+| tablefunc          |             1.0 |                   | functions that manipulate whole tables, including crosstab           |
+| intagg             |             1.1 |                   | integer aggregator and enumerator (obsolete)                         |
+| file_fdw           |             1.0 |                   | foreign-data wrapper for flat file access                            |
+| tcn                |             1.0 |                   | Triggered change notifications                                       |
+| refint             |             1.0 |                   | functions for implementing referential integrity (obsolete)          |
+| bloom              |             1.0 |               1.0 | bloom access method - signature file based index                     |
+| hstore             |             1.4 |                   | data type for storing sets of (key, value) pairs                     |
+| adminpack          |             1.0 |                   | administrative functions for PostgreSQL                              |
+| pg_freespacemap    |             1.1 |                   | examine the free space map (FSM)                                     |
+| dict_xsyn          |             1.0 |                   | text search dictionary template for extended synonym processing      |
+| pg_visibility      |             1.1 |                   | examine the visibility map (VM) and page-level visibility info       |
+| pg_buffercache     |             1.2 |                   | examine the shared buffer cache                                      |
+| lo                 |             1.1 |                   | Large Object maintenance                                             |
+| btree_gist         |             1.2 |                   | support for indexing common datatypes in GiST                        |
+| pgcrypto           |             1.3 |                   | cryptographic functions                                              |
+| earthdistance      |             1.1 |                   | calculate great-circle distances on the surface of the Earth         |
+| pg_trgm            |             1.3 |               1.3 | text similarity measurement and index searching based on trigrams    |
+| fuzzystrmatch      |             1.1 |                   | determine similarities and distance between strings                  |
+| tsm_system_rows    |             1.0 |                   | TABLESAMPLE method which accepts number of rows as a limit           |
+| cube               |             1.2 |                   | data type for multidimensional cubes                                 |
+| moddatetime        |             1.0 |                   | functions for tracking last modification time                        |
+| uuid-ossp          |             1.1 |                   | generate universally unique identifiers (UUIDs)                      |
+| plpgsql            |             1.0 |               1.0 | PL/pgSQL procedural language                                         |
+| intarray           |             1.2 |                   | functions, operators, and index support for 1-D arrays of integers   |
+| pg_prewarm         |             1.1 |                   | prewarm relation data                                                |
+| tsearch2           |             1.0 |                   | compatibility package for pre-8.3 text search functions              |
+| dblink             |             1.2 |                   | connect to other PostgreSQL databases from within a database         |
+| unaccent           |             1.1 |                   | text search dictionary that removes accents                          |
+| autoinc            |             1.0 |                   | functions for autoincrementing fields                                |
+| postgres_fdw       |             1.0 |                   | foreign-data wrapper for remote PostgreSQL servers                   |
+| isn                |             1.1 |                   | data types for international product numbering standards             |
+| xml2               |             1.1 |                   | XPath querying and XSLT                                              |
+| pageinspect        |             1.5 |                   | inspect the contents of database pages at a low level                |
+| ltree              |             1.1 |                   | data type for hierarchical tree-like structures                      |
+| dict_int           |             1.0 |                   | text search dictionary template for integers                         |
+| pgstattuple        |             1.4 |                   | show tuple-level statistics                                          |
+| pg_stat_statements |             1.4 |                   | track execution statistics of all SQL statements executed            |
+| tsm_system_time    |             1.0 |                   | TABLESAMPLE method which accepts time in milliseconds as a limit     |
+| timetravel         |             1.0 |                   | functions for implementing time travel                               |
+| pgrowlocks         |             1.2 |                   | show row-level locking information                                   |
+| insert_username    |             1.0 |                   | functions for tracking who changed a table                           |
+| citext             |             1.3 |                   | data type for case-insensitive character strings                     |
+| seg                |             1.1 |                   | data type for representing line segments or floating-point intervals |
+
 ** Troubleshooting PostgreSQL
 ** Migrating to PostgreSQL
 * Extras

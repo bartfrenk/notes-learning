@@ -18,6 +18,7 @@
      CLOSED: [2018-03-03 Sat 23:21]
 **** DONE Making a century
      CLOSED: [2018-03-03 Sat 23:21]
-**** TODO Building a tree with minimum height
+**** CANCELED Building a tree with minimum height
+CLOSED: [2018-09-23 Sun 22:13]
 * References
 [1] https://github.com/bartfrenk/clj-pearls

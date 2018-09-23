@@ -21,7 +21,7 @@ sleep—the part that knows that good, clean, well-designed code matters. (p.93)
    change. When the stakeholders change their minds about a feature, that change
    should be simple and easy to make. The difficulty in making such a change
    should be proportional only to the scope of the change, and not to the shape
-   of the change. *Important, but not always particularly important.*
+   of the change. *Important, but not always particularly urgent.*
 
    The cost of a change should be related to its scope, not to its shape.
 **** Fight for the architecture
@@ -48,11 +48,11 @@ in that hierarchy are protected from the changes made to lower-level
 components. (p.274)
 *** LSP: The Liskov sibstitution principle
 In all of these situations, and more, the LSP is applicable because there are
-users who depend on well- defined interfaces, and on thesubstitutability of the
+users who depend on well-defined interfaces, and on the substitutability of the
 implementations of those interfaces. (p.288)
 *** ISP: The interface segregation principle
 In general, it is harmful to depend on modules that contain more than you
-need. This is obviously true for source codedependencies that can force
+need. This is obviously true for source code dependencies that can force
 unnecessary recompilation and redeployment—but it is also true at a much higher,
 architectural level. (p.305)
 *** DIP: The dependency inversion principle

@@ -8,8 +8,11 @@
 #+LATEX_HEADER: \usepackage{palatino}
 #+LATEX_HEADER: \usepackage{euler}
 #+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \frenchspacing
+#+LATEX_HEADER: \sloppy
 #+LATEX_HEADER: \renewcommand{\em}[1]{\textbf{#1}}
 #+LATEX_HEADER: \newcommand{\E}[1]{\operatorname{\mathbb{E}}[#1]}
+#+LATEX_HEADER: \newcommand{\EE}{\mathbb{E}}
 #+LATEX_HEADER: \setstretch{1.1}
 #+LATEX_HEADER: \let\itemize\compactitem
 #+LATEX_HEADER: \let\description\compactdesc
@@ -35,13 +38,22 @@ ls /run/user/1000/jupyter
 #+END_SRC
 
 #+RESULTS:
-| kernel-ob.json         |
-| notebook_cookie_secret |
+: kernel-ob.json
+
+#+BEGIN_SRC sh
+mv /run/user/1000/jupyter/kernel-30273.json /run/user/1000/jupyter/kernel-ob.json
+#+END_SRC
+
+#+RESULTS:
+
+
 
 Create directory to store temporary (image) files:
 #+BEGIN_SRC sh
 mkdir -p /tmp/bishop
 #+END_SRC
+
+#+RESULTS:
 
 Rename the =kernel-<xxxx>.json= file to =kernel-ob.json= and set the =:session=
 field to that filename.
@@ -51,7 +63,7 @@ sys.version
 #+END_SRC
 
 #+RESULTS:
-: # Out[3]:
+: # Out[1]:
 : : '3.5.2 (default, Nov 23 2017, 16:37:01) \n[GCC 5.4.0 20160609]'
 
 ** Test plotting functionality
@@ -59,6 +71,7 @@ sys.version
 Set up plotting configuration appropriate for use in this org mode file.
 #+BEGIN_SRC ipython :session kernel-ob.json :exports code :results raw drawer
 from matplotlib import rcParams
+import seaborn as sns
 
 sns.set()
 %matplotlib inline
@@ -80,7 +93,6 @@ Test if the required dependencies exist and if plotting works
 #+BEGIN_SRC ipython :session kernel-ob.json :exports code :ipyfile /tmp/bishop/test-hist.svg :results raw drawer
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 ys = np.random.normal(size=100)
 plt.hist(ys, bins=20);
@@ -109,11 +121,38 @@ CLOSED: [2018-04-03 Tue 00:13]
 ** DONE Linear models for classification
 CLOSED: [2018-04-11 Wed 22:37]
 ** Neural networks
-** Kernel methods
+** TODO Kernel methods
 ** Sparse kernel machines
 ** DONE Graphical models
 CLOSED: [2018-04-03 Tue 00:13]
-** STARTED Mixture models and EM
+** DONE Mixture models and EM
+CLOSED: [2018-09-16 Sun 23:39]
+Given a sample $\mathcal{X}$ drawn from a probability distribution
+$P(x\,|\,\theta)$. The expectation-maximization algorithm constructs a sequence of
+estimators that, under certain conditions not precisely stated in the book,
+converges to a maximum likelihood estimator for $\theta$ (character of the
+convergence is also not stated in the book). This is an interesting topic to
+really understand in detail.
+
+The algorithm assumes the existence of a latent variable $Z$ such that a certain
+optimization problem in $\theta$ over the complete data distribution $p(X,
+Z\,|\,\theta)$ is tractable. It is stated as a process that computes an improved
+estimate $\theta_{i + 1}$ from a given estimate $\theta_i$.
+
+\begin{description}
+
+\item[Expectation] Compute $q^*(z) = P(z\,|\,X, \theta_0)$.
+\item[Maximization] Compute $\theta_{i + 1}$ that maximizes
+$\theta \mapsto \EE_{q^*}(\ln P(\mathcal{X}, z\,|\,\theta)$. Note that
+$q^*$ depends on $\theta_i$.
+
+\end{description}
+
+The relation to the maximum likelihood estimator is seen by considering the
+additive decomposition $P(X\,|\,\theta) = \mathcal{L}(q, \theta) +
+\mathrm{KL}(q\,||\,p(z\,|\,X, \theta))$, where $q$ is any probability
+distribution for $Z$, and $\mathcal{L}$ is given by expression (9.71).
+
 ** WAIT Approximate inference
 *** Variational inference
 
@@ -143,5 +182,3 @@ CLOSED: [2018-04-03 Tue 00:13]
 ** Continuous latent variables
 ** Sequential data
 ** Combining models
-
-

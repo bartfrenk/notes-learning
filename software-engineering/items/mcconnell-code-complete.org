@@ -296,7 +296,8 @@ inside the derived routine (maybe use Strategy pattern)
 ***** Avoid deep inheritance trees
 
 * Action list
-** TODO Read /G. Polya - How to solve it (1957)/
-** TODO Read: /P.J. Plauger - Programming on purpose: Essays on software design/
+** DONE Read /G. Polya - How to solve it (1957)/
+CLOSED: [2018-09-23 Sun 22:21]
+** WAIT Read: /P.J. Plauger - Programming on purpose: Essays on software design/
 ** TODO Read: /Adams, James L. - Conceptual blockbusting: a guide to better ideas/
-** TODO Read Liskov's 1988 paper!
+** WAIT Read Liskov's 1988 paper!

@@ -1,0 +1,212 @@
+#+TITLE: Notes on Competing on Analytics
+#+AUTHOR: Bart Frenk
+#+EMAIL: bart.frenk@gmail.com
+#+DATE: <2018-09-17 Mon>
+
+* Preamble
+Thomas H. Davenport. Competing on analytics.
+* Contents
+** Part 1: The Nature of Analytical Competition
+*** One: The Nature of Analytical Competition
+*** Two: What Makes an Analytical Competitor
+*** THree: Analytics and Business Performance
+*** Four: Competing on Analytics with Internal Processes
+*** Five: Competing on Analytics with External Processes
+** Part II: Building an Analytical Capability
+*** DONE Six: A Road Map to Enhanced Analytical Capabilities
+CLOSED: [2018-09-17 Mon 22:23]
+Progressing through the five stages of analytical maturity
+
+Stages:
+1. Analytically impaired
+2. Localized analytics
+3. Analytical aspirations
+4. Analytical companies
+5. Analytical competitors
+   
+From *Assessing analytical capabilities*   
+#+begin_quote
+Begin with an assessment--how differentiated is your offering versus what you
+and your customers want it to be? Big data and analytics can be a real game
+changer. But you must have a clear vision of what value looks like if you are
+going to figure out how to unleash that vision.
+#+end_quote
+
+The key elements in an analytical capability
+1. Organization
+   - Insight into performance drivers
+   - *Choosing a distinctive capability*
+   - Performance management and strategy execution
+   - Process redesign and integration
+2. Human
+   - Leadership and senior executive commitment
+   - Establishing a fact-based culture
+   - *Securing and building skills*
+   - Managing analytical people
+3. Technology
+   - Quality data
+   - Analytical technologies
+
+This chapter is about (1). Chapter 7 is about (2), and chapter 8 is about (3).
+
+From *Assessing analytical capabilities*
+#+begin_quote
+A company needs a clear strategy in order to know which data to focus on, how to
+allocate analytical resources, and what it is trying to accomplish (what we
+refer to as targets in the DELTA models that we describe in chapter 2 and later
+in this chapter).
+#+end_quote
+
+From *Choosing a strategic focus or target*
+#+begin_quote
+Organizations initially focus on one or two areas for analytical competition.
+#+end_quote
+
+#+begin_quote
+To decide where to focus their resources for the greatest strategic impact,
+managers should answer the following questions.
+- How can we distinguish ourselves in the marketplace?
+- What is our distinctive capability? <How is this different from the previous
+  question?>
+- What key decisions in those processes, and elsewhere, need support from
+  analytical insights.
+- What information really matters to the business?
+- What are the information and knowledge leverage points of the firm's
+  performance?
+#+end_quote
+
+To me it seems that GreenhouseGroup is in stage 2, but well on its way to
+stage 3.
+
+From *Stage 2: Prove-it detour*
+#+begin_quote
+In stage 2, it is best to keep things simple and narrow in scope. The steps
+essentially boil down to:
+1. Finding a sponsor and a business problem that can benefit from analytics.
+2. Implementing a small, localized project to add value and produce measurable
+   benefits.
+3. Documenting the benefits and sharing the news with key stakeholders.
+4. Continuing to build a string of localized successes until the organization
+   has acquired enough experience and sponsorship to progress to the next stage.
+#+end_quote
+
+From *Stage 3: Analytical aspirations*
+
+This quote is important since it outlines the changes to incorporate in stage 3.
+#+begin_quote
+The first task, then, is to articulate a vision of the benefits expected from
+analytical competition. Bolstered by a series of *smaller successes*
+<bidwiser?>, management should set its sights on using analytics in the
+company's *distinctive capability* <name> and addressing *strategic business
+problems* <enumerate>. For the first time, program benefits should be defined in
+terms of improved business performance and care should be taken to measure
+progress against broad business objectives. A *critical element* of stage 3 is
+defining a *set of achievable performance metrics* and putting the processes in
+place to monitor progress.
+
+To focus scarce resources appropriately, the organization may create a
+centralized "analytics hub" to foster and support analytical activities.
+#+end_quote
+
+What should the IT organization strive for in stage 3. It might be good to take
+this into account in the later phase of stage 2 as well.
+#+begin_quote
+If it hasn't already done so, the IT organization must develop a vision and a
+program plan (an analytical architecture) to support analytical competition. In
+particular, IT must work more aggressively to integrate and standardize
+enterprise data in anticipation of radically increased demand from users.
+#+end_quote
+I see BannerConnect's Core in this context.
+
+From *Stage 4: Analytical companies*
+
+Start of with a quote on the goal in stage 4.
+#+begin_quote
+The primary focus in stage 4 is on building world-class analytical capabilities
+at the enterprise level.
+#+end_quote
+We are obviously not there yet. Notes on this section will be light.
+
+This may be about automating key decision processes automatically. Also, the
+quote /This provides the organization with a critical mass of analysts to focus
+on the most strategic issues/ shows that in stage 4 it is potentially even more
+about strategic business problems.
+
+From *Progressing along the road map*
+
+#+begin_quote
+Unless you are blessed with analytical leadership and culture, becoming an
+analytical competitor means significant change for an organization. To recap,
+DELTA stands for:
+- Data :: Leveraging data to glean valuable insights.
+- Enterprise :: Managing and coordinating resources at an enterprise level.
+- Leadership :: Fostering an analytical leadership team and culture.
+- Targets :: Focusing analytics investments on the best, high value areas.
+- Analysts :: Developing and managing analytical talent.
+- Technology :: *In chapter 8*, we describe (at a conceptual level) the required
+                components and considerations for an analytical technical
+                architecture.
+- Analytical techniques :: As organizations become more sophisticated in their
+     application of analytics, the generally rely on more diverse and advanced
+     analytical techniques too. We provided a sampling of these techniques and
+     some appropriate situations in which to use them *in chapter 4 and 5*.
+#+end_quote
+
+There is a useful piece of advice on targets, although it is a bit obvious.
+#+begin_quote
+The right targets will depend on the organization's analytical maturity,
+industry and business strategy. Targets should be achievable yet have the
+potential to make a significant impact by cutting costs, optimizing processes,
+improving customer engagement, expanding the business, or increasing
+profitability. As an enterprise's analytical maturity improves, targets should
+be focused on the organization's distinctive capabilities, leading to
+initiatives that are more strategic and game-changing for the organization and
+its customers. The number of targets can also grow with time and greater
+analytical maturity.
+#+end_quote
+
+There are a number of sections best described separately
+**** Managing for outcomes
+Four types of outcomes are critical to measuring an initiative's performance:
+behaviors; processes and programs; products and services; and financial results.
+
+The rest of the section goes deeper into each of those classes of outcomes.
+
+**** Establishing priorities
+#+begin_quote
+Questions to ask when evaluating new analytical initiatives
+- How will this investment make us more competitive?
+- To what extent will this investment make us more agile to respond to changing
+  market conditions?
+- How does the initiative improve our enterprise-wide analytical capabilities?
+- How will the investment foster greater innovation and growth opportunities?
+- What complementary changes need to be made in order to take full advantage of
+  new capabilities, such as developing new or enhanced skills; improving IT,
+  training and processes; or redesigning jobs?
+- *Does the right data exist?* If not, can we get it or create it? Is the data
+  timely, consistent, accurate and complete?
+- Is the technology reliable? Is it cost-effective? Is is scalable? Is this the
+  right approach or tool for the right job?
+#+end_quote
+
+**** Avoiding the potholes
+#+begin_quote
+First, some missteps are due primarily to ignorance. The most common errors of
+this kind are:
+- Focusing excessively on one dimension of analytical capability (e.g., too much
+  technology).
+- Collecting data without any plans to use it.
+- *Attempting to do everything at once.* <This might be relevant for the AI team>
+- Investing excessive resources on analytics that have minimal impact on the
+  business.
+- Investing too much or too little in any analytical capability, compared with
+  demand.
+- Choosing the wrong problem, not understanding the problem sufficiently, using
+  the wrong analytical technique or the wrong analytical software.
+- Automating decision-based applications without carefully monitoring outcomes
+  and external conditions to see whether assumptions need to be modified.
+#+end_quote
+
+*** Seven: Managing Analytical People
+*** Eight: The Architecture of Analytics and Big Data
+*** Nine: The Future of Analytical Competition

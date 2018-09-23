@@ -136,7 +136,7 @@
 ** Clustering
 ** Recommender systems
 ** Network analysis
-** WAIT Time series
+** Time series
    Better to read a good chapter on time series, and then do this chapter to
    figure out how stuff is done in Clojure (if at all, the Python data science
    ecosystem is so much more mature)

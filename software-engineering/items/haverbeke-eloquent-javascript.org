@@ -12,10 +12,221 @@ It is available on-line for free at https://eloquentjavascript.net/.
 ** Part 1: Language
 *** CANCELED Values, types and operators
 CLOSED: [2018-03-19 ma 12:53]
-*** SCAN Program structure
-*** Functions
-*** Data structures: objects and arrays
-*** Higher-order functions
+*** DONE Program structure
+CLOSED: [2018-07-11 wo 14:17]
+*** DONE Functions
+CLOSED: [2018-07-12 do 10:31]
+Function declarations are not part of the regular top-to-bottom flow of
+control. They are conceptually moved to the top of their scope and can be used
+by all the code in that scope. This is sometimes useful because it offers the
+freedom to order code in a way that seems meaningful, without worrying about
+having to define all functions before they are used. (From Declaration Notation).
+
+This is a function declaration, i.e., =function <identifier>(<params>) <body>=.
+#+BEGIN_SRC js :results format raw
+function future() {
+  return "You'll never have flying cars"
+}
+
+return future()
+#+END_SRC
+
+#+RESULTS:
+'You\'ll never have flying cars'
+
+#+BEGIN_SRC js :results format raw
+let journal = [];
+
+function addEntry(events, squirrel) {
+  journal.push({events, squirrel});
+}
+
+addEntry(["work", "touched tree", "pizza", "running",
+          "television"], false);
+addEntry(["work", "ice cream", "cauliflower", "lasagna",
+          "touched tree", "brushed teeth"], false);
+addEntry(["weekend", "cycling", "break", "peanuts",
+          "beer"], true);
+
+return journal
+
+#+END_SRC
+
+#+RESULTS:
+[ { events: [ 'work', 'touched tree', 'pizza', 'running', 'television' ],
+    squirrel: false },
+  { events: 
+     [ 'work',
+       'ice cream',
+       'cauliflower',
+       'lasagna',
+       'touched tree',
+       'brushed teeth' ],
+    squirrel: false },
+  { events: [ 'weekend', 'cycling', 'break', 'peanuts', 'beer' ],
+    squirrel: true } ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*** DONE [#B] Data structures: objects and arrays
+CLOSED: [2018-07-12 do 10:43]
+#+BEGIN_SRC js :results format raw
+let kim = "Kim";
+kim.age = 88
+return kim.age
+#+END_SRC
+
+#+RESULTS:
+undefined
+
+
+#+BEGIN_SRC js :results format pp handling silent
+let x = {};
+x.age = 89;
+return x.age
+#+END_SRC
+
+
+#+BEGIN_SRC js :results format pp handling replace
+function max(...numbers) {
+  let result = -Infinity;
+  for (let number of numbers) {
+    if (number > result) result = number;
+  }
+  return result;
+}
+
+return max(4, 1, 9, -2)
+#+END_SRC
+
+#+RESULTS:
+: 9
+
+
+#+BEGIN_SRC js :results format pp handling replace
+let {name, age} = {name: "Faraji", age: 23};
+return `Age ${age}, name ${name}`
+#+END_SRC
+
+#+RESULTS:
+: 'Age 23, name Faraji'
+
+#+BEGIN_SRC js :results format pp handling replace
+let obj = {squirrel: false, events: ["weekend"]};
+return JSON.stringify(obj)
+#+END_SRC
+
+#+RESULTS:
+: '{"squirrel":false,"events":["weekend"]}'
+
+
+#+BEGIN_SRC js :results format pp handling replace
+function range(start, end) {
+  result = []
+  for (i = start; i <= end; i++) {
+    result.push(i)
+  }
+  return result
+}
+
+return range(1, 10);
+#+END_SRC
+
+#+RESULTS:
+: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+*** CANCELED Higher-order functions
+CLOSED: [2018-07-12 do 10:44]
 *** The secret life of objects
+*** Modules
+#+BEGIN_SRC js :results format pp handling replace
+const x = 1;
+function evalAndReturn(code) {
+  eval(code);
+  return x;
+}
+
+console.log(evalAndReturn("var x = 2"));
+console.log(x);
+#+END_SRC
+
+#+RESULTS:
+: 2
+: 1
+: undefined
+
+*CommonJS* module system.
+We use *ECMAScript* modules.
+
+#+BEGIN_SRC js :results format pp handling replace :tangle /tmp/hello.js
+export function hello() {
+  return "Hello!"
+}
+#+END_SRC
+
+
+#+BEGIN_SRC sh
+ls -t -- /tmp/*.js /tmp/*.html
+#+END_SRC
+
+#+RESULTS:
+| /tmp/main.js    |
+| /tmp/hello.js   |
+| /tmp/index.html |
+
+
+#+BEGIN_SRC js :results format pp handling replace :tangle /tmp/main.js
+import { hello } from "hello";
+
+console.log(hello())
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC html :tangle /tmp/index.html
+<html>
+  <!--<script src="hello.js" />-->
+  <script src="main.js" />
+  <script>
+    import { hello } from "hello";
+    console.log(hello())
+  </script>
+</html>
+#+END_SRC
+
+
+
+
+
+
+
 ** Part 2: Browser
 ** Part 3: Node

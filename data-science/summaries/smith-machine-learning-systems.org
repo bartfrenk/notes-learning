@@ -1,0 +1,10 @@
+#+TITLE: Notes on Machine Learning Systems
+#+AUTHOR: Bart Frenk
+#+EMAIL: bart.frenk@gmail.com
+
+* Preamble
+This book: https://www.manning.com/books/machine-learning-systems
+Author's blog: https://medium.com/@jeffksmithjr
+
+* Notes
+** Fundamentals of reactive machine learning

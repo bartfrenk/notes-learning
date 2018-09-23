@@ -1,0 +1,57 @@
+#+TITLE: On Technical Debt in Machine Learning Systems
+#+AUTHOR: Bart Frenk
+#+EMAIL: bart.frenk@gmail.com
+#+DATE: <2018-09-18 di>
+
+* Preamble
+Summary of a number of articles and blog posts on technical debt in machine learning systems.
+* STARTED Create a summary
+The aim here is to write up learnings on technical debt specific to machine
+learning systems: what to avoid in what stages of a project?
+** Machine learning: The high interest rate credit card of technical debt
+Link to the [[https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43146.pdf][PDF]]. Article from Google employees from NIPS 2014.
+
+- Complex models erode boundaries ::
+- Data dependencies cost more than code dependencies ::
+- System level spaghetti ::
+- Dealing with changes in the external world ::
+
+** Blog post summarizing three articles
+Link to the [[https://towardsdatascience.com/technical-debt-in-machine-learning-8b0fae938657][post]].
+
+The author highlights:
+- Feedback loops :: System will adapt to the feedback, e.g. hide recommendations
+                    if the confidence level is too low. Low confidence
+                    recommendations are no longer clicked on.
+- Correction cascades :: Disconnect between the output of the model (which you
+     want to iterate on), and the actual output of the system.
+- Hobo features :: Features that are not really necessary.
+
+** Hidden technical debt in machine learning systems
+Link to the [[https://papers.nips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf][PDF]]. Article from Google employees from NIPS 2015. They seem to have
+changed their minds one a few things.
+
+One is the following. They no longer recommend rewriting the code in a different
+language. This to me also seems like a more sensible option.
+
+#+BEGIN_QUOTE
+An important strategy for combating glue-code is to wrap black-box packages into
+common API’s.  This allows supporting infrastructure to be more reusable and
+reduces the cost of changing packages. (p. 5).
+#+END_QUOTE
+
+** What is your ML test score
+Link to [[https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf][PDF]]. Again from Google with partially the same authors as the previous
+two articles. From NIPS 2016.
+
+List of ideas on how to test and monitor your machine learning system. Allows
+you to compute a score for your deployment. I don't think the score is that
+important for us, but the list may be useful to cherry pick for valuable ideas.
+
+Subdivided into the following categories:
+
+- Tests for feature and data :: Behaviour for machine learning systems not
+     specified directly in the code. Can we still test for patterns in the data?
+- Tests for model development :: Test the trained model: staleness, bias
+- Tests for ML infrastructure ::
+- Monitoring tests for ML ::
