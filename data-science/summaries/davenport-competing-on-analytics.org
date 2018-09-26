@@ -208,5 +208,5 @@ this kind are:
 #+end_quote
 
 *** Seven: Managing Analytical People
-*** Eight: The Architecture of Analytics and Big Data
+*** STARTED Eight: The Architecture of Analytics and Big Data
 *** Nine: The Future of Analytical Competition

@@ -2087,7 +2087,7 @@ FROM pg_available_extensions;
 | citext             |             1.3 |                   | data type for case-insensitive character strings                     |
 | seg                |             1.1 |                   | data type for representing line segments or floating-point intervals |
 
-** Troubleshooting PostgreSQL
+** TODO Troubleshooting PostgreSQL
 ** Migrating to PostgreSQL
 * Extras
   :PROPERTIES:

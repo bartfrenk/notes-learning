@@ -214,6 +214,12 @@ documentation. This is the book at [[https://www.bol.com/nl/p/practical-methods-
 **** WAIT Apache Spark 2.0 with Scala - Hands on with big data
      See [7].
      
+** Bayesian methods
+*** Bayesian methods for machine learning
+There is a course on Bayesian methods for machine learning that might be
+useful. It is on [[https://www.coursera.org/learn/bayesian-methods-in-machine-learning][Coursera]].
+
+
 * Projects
   :PROPERTIES:
   :visibility: children
