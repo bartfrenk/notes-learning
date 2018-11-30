@@ -1,0 +1,120 @@
+#+TITLE: Note on 'Agreement with Satoshi'
+#+AUTHOR: Bart Frenk
+#+DATE: <2018-11-30 Fri>
+
+* About
+Nicholas Stifter, Aljosho Judmayer, Phillip Schindler, Alexei Zamyatin, Edgar
+Weippl. *Agreement with Satoshi -- On the formalization of Nakamoto
+consensus* ([[https://eprint.iacr.org/2018/400.pdf][link]]).
+
+This paper is a mostly a literature review, and does not explain much by
+itself. Postponed for now.
+* Sections
+** A. Brief history of the Consensus Problem
+
+*** Notes
+
+| When | Articles and topics                                                        | Ref.  |
+|------+----------------------------------------------------------------------------+-------|
+| 1980 | Reaching agreement in the presence of faults                               | PSL80 |
+|      |                                                                            |       |
+| 1982 |                                                                            | LSP82 |
+|      | Seminal work on the Byzantine generals problem                             |       |
+| 1983 |                                                                            | BO83  |
+|      |                                                                            | Rab83 |
+|      | Randomized consensus algorithms                                            |       |
+| 1985 |                                                                            | FLP85 |
+|      | The FLP impossibility result                                               |       |
+| 1986 |                                                                            | CT96  |
+|      | Failure detection oracle abstraction to replace timeout assumptions        |       |
+| 1987 |                                                                            | DDS87 |
+| 1988 |                                                                            | DLS88 |
+|      | Inspired by the FLP result: research on minimal synchronicity assumptions, |       |
+|      | leading to the definition of different models of /partial synchrony/.      |       |
+| 1998 |                                                                            | Lam98 |
+|      | Paxos                                                                      |       |
+| 1999 | Practical Byzantine fault tolerance                                        | CL+99 |
+|      | Byzantine fault tolerant consensus algorithms could indeed be practical    |       |
+|      | under realistic system assumptions                                         |       |
+
+- Both PSL80 and LSP82 deal with the question of how a (fixed) group of
+  participants can reach agreement upon a value or a set of values, if
+  participants are allowed to deviate /arbitrarily/ from the prescribed
+  protocol. Under the assumption of a relatively strong system model, they were
+  able to show that strictly less than a third of the participants are allowed
+  to exhibit such arbitrary behaviour. ... These works played a key role in
+  stepping loose an entirely new field of research, centered around formalizing
+  and characterizing various consensus problems.
+- FLP impossibility result: Deterministic consensus becomes impossible in a
+  completely asynchronous system, even if only a single process is allowed to
+  fail in the /crash-stop/ model and communication between processes is
+  reliable. Two directions that circumvent the impossibility result:
+  1. Strengthen the synchronicity assumptions: partial synchrony (DDS87, DLS88).
+  2. Weaken the consensus criterium: randomized consensus algorithms (BO83, Rab83)
+- Ongoing research on Byzantine fault tolerance consensus (BFT): CKS00, CWA+09,
+  GKQV10, VCB+13. It remained a relatively isolated area. In part, this may be
+  due to the fact that consensus protocols are often discussed in the context of
+  state machine replication and achieving active replication for services, such
+  as databases. Here all replicas are under the control of a single entity.
+*** Takeaways
+**** Dimensions of distributed consensus
+- Failure model
+- Consensus criterium
+- Group membership (fixed versus dynamic)
+- System model (shared memory, message passing)
+*** Follow ups
+**** TODO Understand the following statement (PSL80 and LSP82)
+Under the assumption of a relatively strong system model, they were able to show
+that strictly less than a third of the participants are allowed to exhibit such
+arbitrary behaviour.
+**** DONE What is the crash-stop failure model
+CLOSED: [2018-11-30 Fri 11:28]
+Summary of a blog post about failure taxonomies ([[http://alvaro-videla.com/2013/12/failure-modes-in-distributed-systems.html][link]]). Also, slides to a course
+on dependable computer systems ([[https://ti.tuwien.ac.at/cps/teaching/courses/dependable_systems-ss08/dcs_slides/dcs-2007-p5.pdf][link]]).
+
+From general to specific:
+
+- *Byzantine or arbitrary failures* (this seems to be the most general mode)
+- *Authentication detectable byzantine failures* Like byzantine, or arbitrary
+  failures, but the server can not lie about information receive from other
+  servers.
+- *Performance failures* The server delivers correct results which may be too
+  late.
+- *Omission failures* Special class of performance failures in which results are
+  either correct or infinitely late.
+- *Crash failures* Special class of omission failures where a server does not
+  deliver any subsequent result if it has exhibited an omission failure once.
+- *Fail-stop failures* Like a crash failure, but other servers can detect that
+  the server has failed, and can read the last correct state.
+
+Hypothesis is that a *crash-stop* failure is what is referred to as a *crash*
+failure in the above list.
+**** TODO In light of the FLP impossibility result what is the model for PAXOS
+Which failure semantics are allowed? What is the the consensus criterium?
+**** TODO Overview of different failure detection oracles
+Start with [CT96].
+
+Different classes of failure detector oracles are formed, that open up the
+ability to formally define the minimal guarantees they need to provide to be
+able to solve a particular consensus algorithm.
+
+
+** B. Defining agreement problems
+- *Processes and connectivity*
+  - Processes as nodes in a communication graph
+  - Messaging models:
+    Oral messages:
+    1. Every message that is sent is delivered correctly
+    2. The receiver of a message knows who sent it
+    3. The absence of a message can be detected
+    Authenticated messages (oral message +):
+    1. Messages sent by a correct process cannot be forged, and any alteration 
+       of the contents of these messages can be detected.
+    2. Anyone can verify the authenticity of a correct process's signature. 
+- *Static and dynamic distributed systems*
+- *Synchrony assumptions* 
+
+* Footnotes
+
+
+

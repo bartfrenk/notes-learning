@@ -219,6 +219,9 @@ documentation. This is the book at [[https://www.bol.com/nl/p/practical-methods-
 There is a course on Bayesian methods for machine learning that might be
 useful. It is on [[https://www.coursera.org/learn/bayesian-methods-in-machine-learning][Coursera]].
 
+** Deployment
+*** TODO [#B] Look at Kubeflow
+Do the codelab: see Pocket tag =codelab=.
 
 * Projects
   :PROPERTIES:

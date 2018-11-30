@@ -121,7 +121,9 @@ CLOSED: [2018-04-03 Tue 00:13]
 ** DONE Linear models for classification
 CLOSED: [2018-04-11 Wed 22:37]
 ** Neural networks
-** TODO Kernel methods
+** STARTED Kernel methods
+Look at https://scikit-optimize.github.io/#skopt.gp_minimize for an example of
+an application of Gaussian processes to optimization.
 ** Sparse kernel machines
 ** DONE Graphical models
 CLOSED: [2018-04-03 Tue 00:13]

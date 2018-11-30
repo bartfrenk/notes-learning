@@ -1,0 +1,44 @@
+#+TITLE: Notes on the Google API design guide
+#+AUTHOR: Bart Frenk
+#+DATE: <2018-11-15 Thu>
+
+* Preamble
+The design guide is [[https://cloud.google.com/apis/design/][here]].
+
+Also the Zalando API design guide [[https://opensource.zalando.com/restful-api-guidelines/#json-guidelines][here]] is recommended by Sander Hoogendoorn.
+* Notes
+** Resource oriented design
+
+Take the following steps when designing resource-oriented APIs.
+
+
+1. Determine what types of resources an API provides.
+2. Determine the relationships between resources.
+3. Decide the resource name schemes based on types and relationships.
+4. Decide the resource schemas.
+5. Attach minimum set of methods to resources.
+
+
+** Resource names
+** Standard methods
+
+Standard Method 	            HTTP Mapping 	HTTP Request Body 	HTTP Response Body
+List 	 GET <collection URL> 	N/A 	        Resource* list
+Get 	 GET <resource URL> 	N/A 	        Resource*
+Create 	 POST <collection URL> 	Resource 	    Resource*
+Update 	 PUT or PATCH <resource URL> 	        Resource 	Resource*
+Delete 	 DELETE <resource URL> 	N/A 	google.protobuf.Empty**
+
+If the Update method only supports full resource update, it must use HTTP verb
+PUT. However, full update is highly discouraged because it has backwards
+compatibility issues when adding new resource fields.
+
+GET https://library.googleapis.com/v1/shelves/-/books?filter=xxx
+
+
+** Custom methods
+** Standard fields
+** Errors
+** Naming conventions
+** Design patterns
+** Documentation

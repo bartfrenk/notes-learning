@@ -1,0 +1,80 @@
+#+TITLE: Summary of a blog post
+#+AUTHOR: Bart Frenk
+#+DATE: <2018-10-09 di>
+
+* Preamble
+Notes on this [[https://blog.insightdatascience.com/an-introduction-to-the-data-product-management-landscape-ef930afe6de5][blog post]]. Suggested by Thom Hopmans (via Slack).
+* Notes
+What is required for a data product ecosystem, and how to prioritize?
+
+#+begin_quote
+Animal classification algorithms and Go-playing_agents dominate the AI hype
+cycle, but algorithms are just one part of the entire data product ecosystem. In
+most business settings, the models might actually account for the least amount
+of impact. A large supporting ecosystem must be in place in order for data to
+flow through the veins of your organization:
+
+1. Raw events and transactions need to be collected, stored and served
+2. Data needs to be processed, discovered and shared with relevant teams.
+3. Models need to be built, deployed and monitored in production.
+
+And all of these undertakings need to produce concrete business results. How
+should an organization prioritize among thousands of potential directions?
+#+end_quote
+
+
+On the formalization of data science roles:
+
+#+begin_quote
+In the early days of the data revolution, orthogonal data skills like software
+engineering, statistics and modeling were rolled under the same umbrella of data
+science. These skills are rapidly being formalized into separate roles, such as
+*data engineers*, *data scientists*, *research scientists* and *ML engineers*.
+#+end_quote
+
+Different types of product management:
+
+#+begin_quote
+Within product management, a similar trend is taking shape. Like their technical
+counterparts, we see the broad umbrella of Data PMs becoming further divided
+into sub-areas: *infrastructure*, *analytics*, *applied ML/AI*, *discovery and
+standardization*, and *platform*. These are not necessarily formal Data PM titles
+at the very moment. Rather, they reflect relatively distinct areas of data
+product work.
+#+end_quote
+
+On the various types of product management:
+
+** Infrastructure
+Main KPIs: data availability, scalability and reliability (e.g. Core)
+** Analytics
+Focus on how to turn such raw data inot actionable insights for decision makers
+like execs, PMs and ops team. (e.g. Data Team)
+
+Likely KPIs: number of queries run, reports generated, etc.
+** Applied ML/AI
+#+begin_quote
+Applied ML PMs think about how data can be leveraged to improve an existing
+product (e.g. analyze chat logs to automate customer service routing) or how to
+design an entirely new experience altogether using advanced AI (e.g. filters for
+photo-sharing apps). Ultimately, they all work on directly improving key metrics
+for a user-facing feature.
+#+end_quote
+
+(e.g. LemonPI)
+
+** Discovery and standardization
+#+begin_quote
+A data standardization and discovery PM is responsible for ensuring that the
+entire organization becomes aware of the data that exist and use them in a
+consistently defined manner.
+#+end_quote
+
+** Platform
+#+begin_quote
+These platforms aim to abstract away the need to manage data, deploy and monitor
+results, freeing data teams to focus instead on iterating around the models and
+the experimentations themselves.
+#+end_quote
+
+KPIs: models or experiments run on the platform, average time-to-market.

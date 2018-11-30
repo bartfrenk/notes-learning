@@ -1,0 +1,17 @@
+#+TITLE: Notes on Machine Learning in Production
+#+AUTHOR: Bart Frenk
+#+DATE: <2018-10-01 Mon>
+
+* Preamble
+Notes on a [[https://medium.com/contentsquare-engineering-blog/machine-learning-in-production-c53b43283ab1][blog post]] on Medium.
+* Contents
+Not a very useful blog post. He presents a number of approaches to the process
+of deploying trained models to production.
+- Add a server component to the training repo :: Obviously not so good.
+- Serialize to a language independent format :: Such as PMML
+     ([[https://en.wikipedia.org/wiki/Predictive_Model_Markup_Language][Wikipedia]]). Drawback is that the serialization format might not offer
+     everything you need, in terms of models or data transformations.
+- Serialize to and from Python :: The author recommends the dill library (which
+     extends the standard Python pickling library, to, among others, functions).
+The author opts for the third option.
+     

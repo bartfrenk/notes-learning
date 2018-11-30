@@ -1,0 +1,53 @@
+#+TITLE: Introduction to machine learning for coders
+#+AUTHOR: Bart Frenk
+#+DATE: <2018-09-28 Fri>
+
+* Preamble
+Notes for the *fast.ai* course *Introduction to machine learning for coders*.
+* Notes
+** DONE Introduction to random forests
+CLOSED: [2018-10-14 zo 00:17]
+The curse of dimensionality is not a problem in practice.
+The No Free Lunch Theorem is not relevant in practice.
+
+Expand the date columns into anything that is interesting. It is easy to
+automatically add the month, year, quarter, etc., but it might also be useful to
+add more domain-specific characteristics: is it a holiday?, did an important
+football match occur on that day, etc.
+
+Use the feather format for serialization and deserialization. Do =pip install
+feather-format=. Jeremy regularly stores computation results in a =tmp= folder.
+
+Default behaviour for replacing missing continuous values:
+1. Replace the missing value by the median
+2. Add an indicator column to flag that the original was missing
+
+Categorical variables are dealt with automatically by pandas, since it uses code
+-1 for those. Numericalize by replacing them with their code.
+
+In =RandomForestRegresson(n_jobs=-1)= creates a separate job for each CPU.
+
+** DONE Random forest deep dive
+CLOSED: [2018-10-14 zo 00:17]
+Out-of-bag: Computes the score for a specific sample point by averaging the
+prediction over all the trees in a random forest that were not trained on that
+specific sample.
+
+In general, Jeremy recommends to do exploratory training on a subset of the data
+(e.g., by picking a random subset to train each tree on, by means of the
+=set_rf_samples= hack).
+
+Validation set is a different time set.
+
+Parameters for random forests:
+- min_samples_leaf :: Stop training when the leaf node has this many
+     samples. Possibly values that Jeremy uses: 1, 3, 5, 10, 25.
+- max_features :: Only look at every possible level of a random subset of
+                  columns for each split. Fraction of the total number of
+                  columns. Jeremy uses: 0.5, log, sqrt. Setting this creates
+                  more variance in the individual trees in a random forest.
+
+Random forest tend to work on most datasets most of the time, with most choices
+of hyperparameters.
+** Performance, validation and model interpretation
+CLOSED: [2018-10-14 zo 00:17]
