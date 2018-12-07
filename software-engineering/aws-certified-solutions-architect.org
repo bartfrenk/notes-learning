@@ -12,7 +12,8 @@ CLOSED: [2018-11-04 Sun 21:36]
 CLOSED: [2018-11-04 Sun 21:36]
 ** DONE Identity Access Management (IAM)
 CLOSED: [2018-11-04 Sun 21:36]
-** STARTED AWS Object Storage and CDN - S3, Glacier and CloudFront
+** DONE AWS Object Storage and CDN - S3, Glacier and CloudFront
+CLOSED: [2018-12-07 Fri 13:08]
 *** 101
 
 *Miscellaneous*
@@ -108,7 +109,8 @@ cloud-based storage.
   - Stored volumes
   - Cached volumes
 - Tape gateway (VTL)
-*** Snowball
+*** DONE Snowball
+CLOSED: [2018-12-07 Fri 13:08]
 - Snowball: storage capacity
 - Snowball edge: storage capacity and compute
 - Snowmobile
@@ -118,17 +120,18 @@ cloud-based storage.
 - Snowball can:
   - import to S3
   - export from S3
-*** Transfer acceleration  
-*** Create a static website using S3
+*** DONE Transfer acceleration  
+CLOSED: [2018-12-07 Fri 13:08]
+*** DONE Create a static website using S3
+CLOSED: [2018-12-07 Fri 13:08]
 URL: <bucket-name>-website-<region>.amazonaws.com
 ** EC2 - The Backbone of AWS
 *** EC2 101
 Nice tip: Use magnetic storage for dev and test environments
 *** Security groups basics
 Any inbound rules also apply outbound
-
 ** Route53
-** Applicatin Services
+** Application Services
 ** The Real World - Creating a fault tolerant Word Press Site
 ** The Well Architected Framework
 ** Additional Exam Tips
