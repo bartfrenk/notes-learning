@@ -1,0 +1,15 @@
+#+TITLE: Notes on the Agile Fluency model
+#+AUTHOR: Bart Frenk
+#+DATE: <2019-02-18 Mon>
+
+* Preamble
+Notes taken from this [[https://martinfowler.com/articles/agileFluency.html][blog post]] on https://martinfowler.com.
+* Notes
+Four distint zones for Agile teams
+- focusing
+- delivering
+- optimizing
+- strengthening
+  
+Fluency here means: a habit of exhibiting the proficiency at all times, even
+when under pressure. Fluency is a trait of the team.

@@ -1,0 +1,369 @@
+#+TITLE: Notes on natural language processing
+#+AUTHOR: Bart Frenk
+#+DATE: <2019-01-25 Fri>
+
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \RequirePackage{fancyvrb}
+#+LATEX_HEADER: \DefineVerbatimEnvironment{verbatim}{Verbatim}{fontsize=\scriptsize}
+#+LATEX_HEADER: \usepackage{paralist}
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage{palatino}
+#+LATEX_HEADER: \usepackage{a4wide}
+#+LATEX_HEADER: \usepackage{euler}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \frenchspacing
+#+LATEX_HEADER: \sloppy
+#+LATEX_HEADER: \renewcommand{\em}[1]{\textbf{#1}}
+#+LATEX_HEADER: \newcommand{\E}[1]{\operatorname{\mathbb{E}}[#1]}
+#+LATEX_HEADER: \newcommand{\EE}{\mathbb{E}}
+#+LATEX_HEADER: \newtheorem{theorem}{Theorem}
+#+LATEX_HEADER: \setstretch{1.1}
+#+LATEX_HEADER: \let\itemize\compactitem
+#+LATEX_HEADER: \let\description\compactdesc
+#+LATEX_HEADER: \let\enumerate\compactenum
+#+LATEX_HEADER: \setlength{\parindent}{0em}
+#+LATEX_HEADER: \setlength{\parskip}{1em}
+#+LATEX_HEADER: \newcommand{\softmax}{\mathrm{softmax}}
+#+LATEX_HEADER: \newcommand{\RR}{\mathbb{R}}
+#+LATEX_HEADER: \newenvironment{exercise}{\textbf{Exercise.}}{}
+#+OPTIONS: toc:nil todo:nil
+
+
+* Stanford NLP with deep learning course
+** Preamble
+Page for the course: http://web.stanford.edu/class/cs224n/ (2019 edition)
+
+YouTube videos for the 2017 winter edition:
+https://www.youtube.com/playlist?list=PL3FW7Lu3i5Jsnh1rnUwq_TcylNr7EkRe6
+
+This is the archived page for the course for the 2017 edition:
+https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1174/syllabus.html The
+assignments are no longer accessible. However, they are available here:
+https://github.com/bartfrenk/CS224n-Natural-Language-Processing-with-Deep-Learning
+
+It is probably better to stick with the 2017 edition. It seems that in the 2019
+edition the class has switched to PyTorch.
+** Notes
+*** DONE Natural language processing with deep learning
+CLOSED: [2019-02-03 Sun 23:40]
+*** DONE Word Vector Representations: word2vec
+CLOSED: [2019-02-03 Sun 23:40]
+**** Notes
+
+Key words (sound similar but are different notions):
+1. Distributional
+2. Distributed representations
+
+Theories of meaning:
+1. Denotational: the meaning of a word is the set of objects it represents.
+2. Distributional: the meaning of a word is determined by the context in which
+   it appears (e.g. the use-meaning of a word).
+   
+Distributed representation: smearing the meaning over a large vector space,
+e.g. representing a word by its one-hot encoding.
+
+We are going to define a model that aims to predict between a center word w_t
+and context words in terms of word vectors:
+
+    p(context | w_t) = ...
+
+with loss function
+
+    J = 1 - p(w_{-t} | w_t),
+
+where the -t index indicates the words that are not at index t.
+
+/Bengio et al. A neural probabilistic language model (2003)./
+
+*word2vec*
+
+Consist of essentially two algorithms:
+1. skip-grams (SG)
+2. continuous bag of words (SBOW)
+
+Details:
+
+Hyperparameters:
+- radius m (size of the window of surrounding words)
+
+Objective function (not a derivative):
+
+    J'(\theta) = \prod_{t=1}^T \prod_{-m \leq j \leq m, j \neq 0} p(w_{t + j} |
+    w_t; \theta)
+
+and J(\theta) is the negative log-likelihood of J'(\theta). The parameters
+\theta are the vector representations of the words in the corpus.
+
+Each word has two vector representations,
+1. as a center word
+2. as a context (or outside) word
+   
+Let o be the index of the outside word, c the index of the center word (in the
+vocabulary). Then,
+
+    p(o|c) ~ exp(u_o^T v_c), e.g. softmax
+
+**** Summary
+
+Given a vocabulary $V$ for some language, and some notion of context for this
+language. The aim is to estimate the probability that $v$ appears in the context
+of $w$, for words $v, w \in V$.
+
+In =word2vec= the model for this probability 
+
+*** DONE GloVe: Global Vectors for Word Representation
+CLOSED: [2019-02-03 Sun 23:40]
+Optimization functions in general not convex, hence initialization matters.   
+
+*** DONE Dependency parsing
+CLOSED: [2019-02-03 Sun 23:40]
+Two types of ways of looking at syntactic structure of sentences:
+- Phrase-structure grammars: This is the linguistic name for a context-free
+  grammar. Part of the Chomsky hierarchy.
+- Dependency grammars: What word in a sentence is modified by another word?
+  There are databases of dependency annotated sentences online. Those are called
+  treebanks.
+
+The latter are now vastly more popular in natural language processing. It used
+to be the case that phrase-structure grammars were more popular.
+
+**** Transition-based dependency parser
+
+I thought this is a surprising, and interesting result.
+
+#+begin_theorem
+For each dependency structure of a sentence, there is a unique sequence of moves
+that results in the dependency structure.
+#+end_theorem
+
+It can be used to train a arc-standard, transistion-based dependency parser on a
+treebank.
+*** DONE TensorFlow
+CLOSED: [2019-02-03 Sun 23:41]
+**** TODO Spend some time with the word2vec implementation
+Eventual aim is to build fluency with Tensorflow.
+*** Recurrent neural networks and language models
+Let $c = (w_1, w_2, \ldots, w_T)$ be a sequence of words. The aim is to specify
+a generative model for such sequences. Denote the vocabulary by $V$ (it is
+sufficient to take $V$ equal to the distinct words in $c$).
+
+Fix an embedding dimension $d$ and an initial hidden state $h_0$. Then a
+generative model for word sequences is given as follows,
+
+\begin{eqnarray}
+h_t & = & Q h_{t - 1} + R x_t \\
+p_t & = & \softmax(S h_t)
+\end{eqnarray}
+
+**** Tri-training
+Creating labeled data by making use of two distinct parsers. If they agree add
+the label (dependency graph) the parsers agree on to the data set. Used for
+creating dependency trees for sentences to train Parsey McParseface on.
+
+Another interesting fact is that there are apparently 40 pretrained SyntaxNet
+dependency parsers, for multiple distinct languages.
+
+
+*** Machine translation and advanced recurrent LSTMs and GRUs
+*** Neural machine translation and models with attention
+[[https://youtu.be/IxQtK2SjWWM?list=PL3FW7Lu3i5Jsnh1rnUwq_TcylNr7EkRe6&t=2200][Here]] is a nice example of the effect on progress on Google Translate of neural
+machine translation.
+*** Gated recurrent units and further topics in NMT
+
+** Exercises
+*** DONE Assignment 1
+CLOSED: [2019-02-03 Sun 23:52]
+*** DONE Assignment 2
+CLOSED: [2019-02-03 Sun 23:52]
+*** Assignment 3
+*** Assignment 4
+
+
+* Additional topics
+** BERT
+Here is Google's Getting Started [[https://colab.research.google.com/github/tensorflow/tpu/blob/master/tools/colab/bert_finetuning_with_cloud_tpus.ipynb#scrollTo=tYkaAlJNfhul][CoLab notebook]].
+
+The repository: https://github.com/google-research/bert
+
+A post on how to use BERT:
+https://gluon-nlp.mxnet.io/examples/sentence_embedding/bert.html
+
+** Transfer learning
+Transductive transfer learning (e.g., same task, different domain, no labels in
+target domain), versus inductive transfer learning, e.g., word vectors, ImageNet.
+
+Recent papers on inductive transfer learning in NLP:
+- https://arxiv.org/pdf/1810.04805.pdf#cite.howard-ruder%3A2018 (BERT)
+- https://arxiv.org/pdf/1801.06146.pdf (Howard and Ruder)
+** Sentiment analysis
+A [[https://blog.paralleldots.com/data-science/breakthrough-research-papers-and-models-for-sentiment-analysis/][recent overview]] for methods successful in sentiment analysis. I found this
+while trying to answer the question whether recursive neural nets are
+useful. The first result in that area seems to be a [[https://nlp.stanford.edu/~socherr/EMNLP2013_RNTN.pdf][paper from Stanford]], by
+Manning, Socher, Ng, and other on sentiment classification using recursive
+neural nets.
+
+It seems that Transformer and Attention based approaches (such as BERT) do not
+feature in the overview.
+
+* Blog posts by Jay Alammar
+The sequence is:
+1. [[https://jalammar.github.io/visualizing-neural-machine-translation-mechanics-of-seq2seq-models-with-attention/][Visualizing a machine translation model]]
+2. [[https://jalammar.github.io/illustrated-transformer/][The illustrated transformer]]
+3. [[http://jalammar.github.io/illustrated-bert/][The illustrated BERT]]
+
+** Visualizing a machine translation model
+A /sequence-to-sequence/ model is a model that takes a sequence of items and
+outputs another sequence of items, e.g., a fuction $A^* \rightarrow B^*$. They
+are deep-learning models with a specific structure: the composition of an
+encoder $E$ and a decoder $D$.
+
+The encoder maps a sequence in $A^*$ to context space. The decoder maps the
+context space to $B^*$. The context space is usually just a finite dimensional
+vector space. The encoder and decoder are usual recurrent neural nets. In
+real-world machine translation applications the context space would have
+dimension 256, 512, or 1024.
+
+*** The encoder
+
+The structure of a recurrent neural net is simply an recursive composition of a
+function of the following form.
+
+#+BEGIN_SRC haskell :exports code
+data HiddenStateEnc
+
+data A -- The type of input tokens (words)
+
+step :: HiddenStateEnc -> A -> m HiddenStateEnc
+
+encode :: HiddenState -> [A] -> m HiddenStateEnc
+encode hidden [] = hidden 
+encode hidden (w:ws) = encoder (step init w) ws
+#+END_SRC
+
+Here =step= is some externally supplied function. Note that =encode= is really
+just a left fold over =step=. The =m= type constructor is a monad whose nature
+we have left unspecified. It should offer some way to access the weights of the
+neural network.
+
+In the simplest case (e.g., [[https://youtu.be/QuELiw8tbx8?list=PL3FW7Lu3i5Jsnh1rnUwq_TcylNr7EkRe6&t=1320][lecture 9]] of the course), step has the following
+form (with =f= some non-linearity, e.g., sigmoid, tanh, relu).
+
+#+BEGIN_SRC haskell
+step :: HiddenStateEnc -> A -> HiddenStateEnc
+step hidden word = f (weightsHH hidden + weightsHX word) 
+#+END_SRC
+
+For GRU the step function looks as follows. Note that =|*|= is custom notation
+for the elementwise product, or Hadamard product, of vectors.
+
+#+BEGIN_SRC haskell
+step hidden word = z |*| hidden + (1 - z) |*| hidden'
+  where
+    z = weightsZX word + weightsZH hidden
+    r = weightsRX word + weightsRH hidden
+    hidden' = tanh (weightsHX word + r |*| weightsHH hidden 
+#+END_SRC
+
+*** Sequence-to-sequence model in Haskell
+
+#+BEGIN_SRC haskell
+data Context
+
+data EncoderState
+
+data InputWord
+
+data OutputWord
+
+
+summarize :: [EncoderState] -> Context
+summarize = undefined
+
+consume :: EncoderState -> InputWord -> EncoderState
+consume = undefined
+
+-- |Encodes a sequence of input words into a context. This context may serve as
+-- the input to a decoder, and can be thought of as representing a summary of the
+-- sequence of input words.
+encoder :: EncoderState -> [InputWord] -> Context
+encoder init inputs = summarize (scanl consume init inputs)
+
+decoder :: Context -> [OutputWord]
+decoder ctx = undefined
+
+-- |Not sure how the context now figures in. However, in the attention-based
+-- case, instead of the global context, and output position specific context is
+-- given as an argument. This specific context is computes as a weighted sum of
+-- the hidden states of the encoder. It serves as a way to encode which input
+-- words have the most influence on the choice of output word in the next
+-- position, akin to the more classical concept of alignment.
+produce :: Context -> Maybe OutputWord -> DecoderState -> (OutputWord, DecoderState)
+produce ctx previous state = (softmax (weightsS state), f (weightsHH state))
+
+initialDecoderState :: Context -> DecoderState
+initialDecoderState = undefined
+
+translate :: EncoderState -> [InputWord] -> [OutputWord]
+translate init inputs = decoder $ encoder init inputs
+#+END_SRC
+
+*** The decoder
+
+With regards to alignment. There is a clear distinction with the classical case,
+since the way the annotations (or position-dependent contexts) are computed is
+trained together with the neural network. Note that the annotations are convex
+combinations of the hidden states of the encoder, with positive weights (i.e.,
+the weights form a probability distribution over the hidden states).
+
+For output word $j$ a higher weight for the $i$-th encoder state means that the
+$i$-th input word has more effect on the choice of output word as position $j$.
+
+** The illustrated transformer
+The blog post is [[https://jalammar.github.io/illustrated-transformer/][here]].
+
+Architecture that is easily parallelizable.
+
+Still the composition of an encoder and a decoder. The output of the encoder is
+a list of vectors, one for each word in the input sentence. Unlike word
+embeddings, this is not a simple map over the input sentence, due to the
+existence of so-called self-attention layers in the encoder.
+
+
+#+BEGIN_SRC haskell
+external :: a -> a
+external = undefined
+
+embed :: [a] -> [Vector Float]
+embed = external
+
+transformer n words = decoderStack n . encoderStack n (embed `fmap` words)
+
+encoderStack n vectors = iterate encoder input !! n
+
+-- |Maps a list of vectors to a list of vectors of the same length.
+encoder :: [Vector Float] -> [Vector Float]
+encoder = feedForward . selfAttention
+  where
+    -- Not sure whether the individual `feedForwardPerVector` networks have
+    -- shared weights.
+    feedForward vectors = feedForwardPerVector `fmap` vectors
+    -- The interactions between words a sentence happens in `selfAttention`.
+    selfAttention = undefined
+#+END_SRC
+
+The blog post refers to [[https://colab.research.google.com/github/tensorflow/tensor2tensor/blob/master/tensor2tensor/notebooks/hello_t2t.ipynb][this]] notebook, that is fairly interesting. 
+
+The paper containing the original transformer model [[https://arxiv.org/abs/1706.03762][Attention is all you need]].
+** The illustrated BERT
+This [[http://jalammar.github.io/illustrated-bert/][blog post]].
+
+
+* Online tools and APIs
+** Google NLP
+https://cloud.google.com/natural-language/. Parses phrases:
+1. Categories
+2. Sentiment
+3. Syntax (dependency parser)
+4. Entity recognition
+   
+It supports a number of languages (but not Dutch).
