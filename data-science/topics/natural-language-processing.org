@@ -28,7 +28,6 @@
 #+LATEX_HEADER: \newenvironment{exercise}{\textbf{Exercise.}}{}
 #+OPTIONS: toc:nil todo:nil
 
-
 * Stanford NLP with deep learning course
 ** Preamble
 Page for the course: http://web.stanford.edu/class/cs224n/ (2019 edition)
@@ -115,6 +114,10 @@ In =word2vec= the model for this probability
 CLOSED: [2019-02-03 Sun 23:40]
 Optimization functions in general not convex, hence initialization matters.   
 
+*** CANCELED Word window classification and neural networks
+CLOSED: [2019-03-03 Sun 00:46]
+*** CANCELED Backpropagation and project advice
+CLOSED: [2019-03-03 Sun 00:46]
 *** DONE Dependency parsing
 CLOSED: [2019-02-03 Sun 23:40]
 Two types of ways of looking at syntactic structure of sentences:
@@ -138,11 +141,13 @@ that results in the dependency structure.
 
 It can be used to train a arc-standard, transistion-based dependency parser on a
 treebank.
-*** DONE TensorFlow
+*** DONE Introduction to TensorFlow
 CLOSED: [2019-02-03 Sun 23:41]
-**** TODO Spend some time with the word2vec implementation
+**** CANCELED Spend some time with the word2vec implementation
+CLOSED: [2019-03-03 Sun 00:46]
 Eventual aim is to build fluency with Tensorflow.
-*** Recurrent neural networks and language models
+*** DONE Recurrent neural networks and language models
+CLOSED: [2019-03-03 Sun 00:47]
 Let $c = (w_1, w_2, \ldots, w_T)$ be a sequence of words. The aim is to specify
 a generative model for such sequences. Denote the vocabulary by $V$ (it is
 sufficient to take $V$ equal to the distinct words in $c$).
@@ -163,13 +168,28 @@ creating dependency trees for sentences to train Parsey McParseface on.
 Another interesting fact is that there are apparently 40 pretrained SyntaxNet
 dependency parsers, for multiple distinct languages.
 
-
-*** Machine translation and advanced recurrent LSTMs and GRUs
-*** Neural machine translation and models with attention
+*** DONE Machine translation and advanced recurrent LSTMs and GRUs
+CLOSED: [2019-03-03 Sun 00:47]
+*** CANCELED Review session: midterm review
+CLOSED: [2019-03-03 Sun 00:47]
+*** DONE Neural machine translation and models with attention
+CLOSED: [2019-03-03 Sun 00:48]
 [[https://youtu.be/IxQtK2SjWWM?list=PL3FW7Lu3i5Jsnh1rnUwq_TcylNr7EkRe6&t=2200][Here]] is a nice example of the effect on progress on Google Translate of neural
 machine translation.
-*** Gated recurrent units and further topics in NMT
+*** DONE Gated recurrent units and further topics in NMT
+CLOSED: [2019-03-03 Sun 00:48]
 
+*** CANCELED End-to-end models for speech processing
+CLOSED: [2019-03-03 Sun 00:48]
+*** CANCELED Convolutional neural networks
+CLOSED: [2019-03-03 Sun 00:48]
+*** DONE Tree recursive neural networks and constituency parsing 
+CLOSED: [2019-03-03 Sun 00:49]
+*** DONE Coreference resolution
+CLOSED: [2019-03-03 Sun 00:49]
+*** TODO Dynamic neural networks for question answering
+*** TODO Issues in NLP and possible architectures for NLP
+*** TODO Tackling the limits of deep learning for NLP
 ** Exercises
 *** DONE Assignment 1
 CLOSED: [2019-02-03 Sun 23:52]
@@ -204,6 +224,7 @@ neural nets.
 
 It seems that Transformer and Attention based approaches (such as BERT) do not
 feature in the overview.
+
 
 * Blog posts by Jay Alammar
 The sequence is:
@@ -367,3 +388,8 @@ https://cloud.google.com/natural-language/. Parses phrases:
 4. Entity recognition
    
 It supports a number of languages (but not Dutch).
+
+* Exercises
+** Implement a neural NER
+This seems interesting to do in TensorFlow (original assignment is in Java):
+https://nlp.stanford.edu/~socherr/pa4_ner.pdf
