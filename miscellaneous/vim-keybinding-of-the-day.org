@@ -1,7 +1,22 @@
-<2018-05-17 Thu>: % jumps to matching bracket
-<2018-06-01 Fri>: d2w deletes the next two words
-Use R to enter overwrite mode
-Use W to move a word forward
+#+TITLE: Vim keybindings
+#+AUTHOR: Bart Frenk
+#+DATE: <2019-08-05 ma>
+#+STARTUP: showall
 
-
-
+* Keybindings
+- <2018-05-17>: % jumps to matching bracket
+- <2018-06-01>: d2w deletes the next two words
+- Use R to enter overwrite mode
+- Use W to move a word forward
+- evil surround cs"' changes "Hello world!" to 'Hello world!"
+- shift-V selects full lines of text
+- ctrl-V enters visual block mode (use arrows to select block)
+- ysis" surrounds sentence with "s
+- ds" removes the quotes
+- --> surround mode: y to add, c to change, d to delete
+- W moves the entire word
+- ; repeats the previous character search (e.g., f)
+- mx sets mark 'x', 'x jumps to mark 'x'; lower-case marks are buffer-local,
+  upper case marks are global.
+- Ctrl-Tab cycles through Firefox tabs!
+- Use g r to refresh the magit buffer
