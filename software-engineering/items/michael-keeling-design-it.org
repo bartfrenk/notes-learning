@@ -1,0 +1,183 @@
+#+TITLE: Notes on Design It!
+#+AUTHOR: Bart Frenk
+#+DATE: <2019-09-02>
+
+
+* Preamble
+Micheal Keeling - Design It! From Programmer to Software Architect
+* Notes
+** Part I. Introducing Software Architecture
+*** 1. Become a Software Architect
+*** 2. Design Thinking Fundamentals
+The four principles of design thinking are:
+- Human Rule. All design is social in nature.
+- Ambiguity Rule. Preserve ambiguity.
+- Redesign Rule. All design is redesign.
+- Tangibility Rule. Make ideas tangible to facilitate communication.
+  
+The four design mindsets
+- Understand
+- Explore
+- Evaluate
+- Make
+  
+Iterate in think-do-check cycles. Each such iteration is usually associated with
+some design mindset.
+** Part II. Architecture Design Fundamentals
+*** 3. Devise a Design Strategy
+To harness to power of our guts, write down all the things that worry you about
+the software system. Next, prioritize the items on your list so that the things
+likely to cause the most trouble are highest on the list. Finally, pick one of
+the top things you're worried about and choose a design mindset to reduce the
+risk.
+
+There are two parts to every risk.
+1. The condition is a fact about the world that is currently true.
+2. The consequence is something bad that might happen in the future as a direct
+   result of the conditioning.
+   
+*Active design*: do so until the architecture is no longer the biggest source of
+risk in the system. Versus *passive design*.
+*** 4. Empathize with Stakeholders
+It is the architect's job to identify stakeholders and understand their needs.
+*** 5. Dig for Architecturally Significant Requirements
+They come in four categories:
+1. Constraints. These are unchangeable.
+2. Quality attributes, i.e. expectations for the system's operation.
+3. Influential functional requirements (i.e. ASRs).
+4. Other Influencers.
+*** 6. Choose an Architecture (Before It Chooses You)
+*** 7. Create a Foundation with Patterns
+*** 8. Manage Complexity with Meaningful Models
+Naming, domain-driven design.
+
+The seven stages of naming, from Belshee - Good Naming is a Process, Not A
+Single Step.
+1. Missing
+2. Nonsense.
+3. Honest.
+4. Honest and complete.
+5. Does the right thing.
+6. Intent
+7. Domain abstraction.
+*** 9. Host an Architecture Design Studio
+*** 10. Visualize Design Decisions
+*** 11. Describe the Architecture
+*** 12. Give the Architecture a Report Card
+*** 13. Empower the Architects on Your Team
+** Part III. The Architect's Toolbox
+Here priorities indicate which activities are immediately useful (and not too
+obvious).
+- #A :: Immediately useful
+- #B :: Apply in one form or another
+- #C :: Keep in mind
+*** 14. Activities to Understand the Problem
+**** Choose One Thing
+**** Empathy Map
+**** [#A] Goal-Question-Metric (GQM) Workshop
+**** Interview Stakeholders
+**** [#B] List Assumptions
+**** Quality Attribute Web
+**** Mini-Quality Attribute Workshop
+**** Point-of-View Mad Lib
+**** Response Measure Straw Man
+**** [#A] Stakeholder Map
+*** 15. Activities to Explore Potential Solutions
+**** [#B] Personify the Architecture
+**** [#A] Architecture Flipbook
+**** [#B] Component Responsibility Collaborator Cards
+**** [#C] Concept Map
+**** Divide and Conquer
+**** [#C] Event Storming
+**** Group Posters
+**** Round-Robin Design
+**** Whiteboard Jam
+*** 16. Activities to Make the Design Tangible
+**** [#B] Architecture Decision Record
+**** [#C] Architecture Haiku
+**** [#B] Context Diagram
+**** Greatest Hits Reading List
+**** TODO [#A] Inception Deck
+Do this for Optiwiser. Answer the following questions:
+1. Why are we here?
+2. What is the vision?
+3. What's the value?
+4. What's in scope?
+5. Who are the key stakeholders?
+6. What does the basic solution look like?
+7. What are the key risks (why might this project fail)?
+8. How much work? What are the costs?
+9. What are the expectations for trade-offs?
+10. When will it be ready?
+**** Modular Decomposition Diagram
+**** Paths Not Taken
+**** Prototype to Learn or Decide
+**** Sequence Diagram
+**** System Metaphor
+*** 17. Activities to Evaluate Design Options
+**** TODO [#A] Architecture Briefing
+It might be useful to do this for Optiwiser and then present it to the
+team. Keep in mind that one of the quality attributes of Optiwiser is
+buildability (we sacrifice other quality attributes to improve the speed at
+which it can be realized as something to be tested with)
+
+Outline:
+1. Elevator Pitch: what overall business problem are you solving?
+2. Overview and context
+3. Top quality attributes
+4. Relevant views
+5. Key design decisions with rationale
+6. Alternatives considered
+7. Current status: quality, work remaining, next steps
+8. Costs
+9. Top risks and other concerns
+10. Future plans
+    
+Note that this covers much the same ground as the questions in the inception
+deck.
+**** Code Review
+**** [#C] Decision Matrix
+**** [#C] Observe Behaviour
+**** TODO [#A] Question-Comment-Concern
+This might also be a useful format to discuss the architecture of Optiwiser.
+
+Draw a diagram of the proposed architecture and let people add questions,
+comments and concerns in the appropriate locations, as stickies. Use a different
+color sticky for each of the three types.
+**** Risk Storming
+**** [#C] Sanity Check
+**** Scenario Walkthrough
+**** [#C] Sketch and Compare
+This is something we already regularly do.
+* Further Reading
+- Bredemeyer, Malan - Less is more with minimalist architecture
+- Alexander - A Pattern Language: Towns, Buildings, Construction (this is the
+  famous catalogue of civil engineering solutions, from which the GOF book took
+  its inspiration).
+- Herbert Simon. The sciences of the artificial. In this book Simon coined the
+  term /bounded rationality/. The book itself is fairly dense, and 250 pages long. 
+- George Fairbanks - Just Enough Software Architecture: A Risk-Driven Approach.
+= Dale Carnegie. How to win friends and influence people. Classic book with
+  concrete guidance. Mentioned a few times in the book.
+- Hohpe, Woolf - Enterprise Integration Patterns.
+* Practical learnings
+** Create a design plan
+According the Devise a Design Strategy chapter this should include:
+1. Stopping conditions for design
+2. Required design artifacts listing
+3. Time line
+4. Top risks
+5. Notional architecture design
+** Make quality attributes concrete with scenarios
+Provides an unambigous description of a quality attribute. Consists of:
+- stimulus
+- source
+- artifact
+- response
+- response measure
+- environment context
+** Create an ASR workbook
+To document ASRs (architecturally significant requirements).
+** Think of every potential solution as an experiment to be validated
+** Iterate quickly to learn quickly
+Favor short, tight design iterations with concrete outcomes
