@@ -20,3 +20,11 @@
   upper case marks are global.
 - Ctrl-Tab cycles through Firefox tabs!
 - Use g r to refresh the magit buffer
+- <prefix> q kills the magit buffers (just q only buries them alive)
+- C-<up>, C-<down> jump between paragraphs of text
+- C-J inserts a new-line in a smart way
+- C-K deletes a line
+- *Clojure*: C-c C-m hh list all available clj-refactor refactorings, e.g.
+  - C-c C-m cn cleans up namespace form
+  - C-c C-m ef extracts a function
+- ysiw" surrounds word part with ", change w to W to surround full word

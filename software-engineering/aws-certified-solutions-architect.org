@@ -5,7 +5,7 @@
 
 * Preamble
 Notes on ACloudGuru's [[https://www.udemy.com/aws-certified-solutions-architect-associate/learn/v4/content][Udemy course]].
-* Sections
+* Sections 2018
 ** CANCELED Introduction To The Course
 CLOSED: [2018-11-04 Sun 21:36]
 ** CANCELED AWS - 10,000 Feet Overview
@@ -135,3 +135,17 @@ Any inbound rules also apply outbound
 ** The Real World - Creating a fault tolerant Word Press Site
 ** The Well Architected Framework
 ** Additional Exam Tips
+* Sections 2019
+** 4. Databases
+*** Relational databases
+RDS has two key features:
+- multi-AZ: using DNS - failover is automatic
+- read-replicas: no automatic failover
+*** Non-relational databases
+*** Amazon's solution to data warehousing
+*** ElastiCache
+Fully managed Redis and Memcached
+*** Remember the following points
+*** Backups
+- automated backups: point in time recovery
+- database snapshots: manually
