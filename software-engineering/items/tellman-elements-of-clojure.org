@@ -1,0 +1,231 @@
+#+TITLE: Notes on Elements of Clojure
+#+AUTHOR: Bart Frenk
+#+DATE: <2019-10-12>
+
+
+* About
+The book is published by LeanPub [[https://leanpub.com/elementsofclojure][here]].
+* Structure
+** Names
+** Idioms
+** Indirection
+** Composition
+* Terminology
+- Namespaces can be narrow or broad
+* Excerpts
+#+begin_quote
+For function parameters, the indirection hides the implementation of the *invoking* functions. #+end_quote
+
+#+begin_quote
+Code buried under layers of indirection will have a smaller, more determined
+audience. From that audience, we can expect familiarity with names used
+elsewhere in the code, and a willingness to understand unfamiliar
+concepts. Names at the topmost layer of the code will be read by novices and
+experts alike, and should be chosen accordingly.
+#+end_quote
+
+Avoid naming if possible:
+
+#+begin_quote
+Finding good names is difficult, so wherever possible we should avoid trying. If
+we're performing a series of transformations on data, we shouldn't name every
+intermediate result. Instead, we can compose the transformations together using
+->> or some other threading operator.
+#+end_quote
+
+Standard names:
+
+#+begin_quote
+There cannot be hard and fast guidelines for choosing a good name, since they
+have to be judged within their context, but where the context doesn't call for
+something special, there can be a reasonable collection of defaults. The
+defaults given here are not exhaustive and mostly come from common practices in
+the Clojure ecosystem.
+#+end_quote
+
+Use the standard names conventions to avoid introducing new namesk:
+
+#+begin_quote
+The naming conventions given here, like anonymous functions and threading
+operators, are a way to avoid introducing new names until absolutely necessary.
+#+end_quote
+
+Make functions do one of pushing, pulling or transforming:
+
+#+begin_quote
+Most functions should only push, pull, or transform data.
+#+end_quote
+
+It is okay to shadow Clojure core library names:
+
+#+begin_quote
+This means that shadowing Clojure functions like =get= is safe and useful, but
+we should take care to specify this at the top of our namespace.
+
+   (ns application.data.payload
+      (:refer-clojure :exclude [get]))
+
+This signals to our readers that =get= means something else in this
+namespace. We should also define our =get= at the bottom of the namespace.
+#+end_quote
+
+No verbs in function that only transform data:
+
+#+begin_quote
+If a function only transforms data, we should avoid verbs whenever possible. A
+function that calculates an MD5 hash defined in our payload namespace, should be
+called =md5=.
+#+end_quote
+
+Understanding software layer by layer:
+
+#+begin_quote
+Software is understood layer by layer. At each layer, readers will guess at the
+underlying intent. As they descend, they'll sometimes be proven wrong. Once they
+stop, they'll have only their intuition, and any counterexamples found along the
+way, to suggest what lies beneath.
+#+end_quote
+
+On surprises in software:
+
+#+begin_quote
+Each surpise should be meaningful, and any software which constantly surprises
+its readers is poorly written.
+#+end_quote
+
+Idioms and intent:
+
+#+begin_quote
+Idioms provide a mapping between code structure and intent. Consistently user,
+they allow readers to trust their own intuitions.
+#+end_quote
+
+#+begin_quote
+A common formal definition of abstraction comes from C.A.R. Hoare's paper Proof
+of Correctness of Data Representation, published in 1972. Hoare distinguishes
+between a data structure's concrete representation, which is its internal model,
+and its abstract representation, which is the interface it exposes.
+#+end_quote
+
+#+begin_quote
+*Inductive reasoning is, in effect, reasoning by analogy.* If two object occupy
+the same point within our model, we can observe one to draw conclusions about
+the other. If rocks and phones look the same within our model, and a rock falls
+to the ground when it's dropped, we can reasonably assume our phone will too.
+#+end_quote
+
+#+begin_quote
+Over-engineering is not a property of our software, but of how we intend to use it.
+#+end_quote
+
+#+begin_quote
+Every conversation about software can be made more productive by describing up
+front, our subjective understanding of its environment.
+#+end_quote
+
+#+begin_quote
+We wrap oracles around anything deemed too complex to explain. Oracles deliver
+our search results and news feeds.
+#+end_quote
+
+#+begin_quote
+Our job is not simply to understand how software is implemented but to
+understand the consequences of that implementation.
+#+end_quote
+
+#+begin_quote
+The pull phase acquires data from outside the process *and verifies that it is
+properly shaped and sized.*
+#+end_quote
+
+
+#+begin_quote
+The output of the transform phase is not just data, but rather a *descriptor* of
+the effects that the process should perform.
+#+end_quote
+
+#+begin_quote
+It can be helpful to keep the operational and functional phases in separate
+namespaces. By only allowing functional namespaces to reference other functional
+namespaces, we guard against the inward creep of operational concerns.
+#+end_quote
+
+This is essentially what is meant by an onion architecture.
+
+* Notes
+** Naming
+*** Standard names
+- If a value can be anything, we should call it =x=
+- If a value is a sequence of anything, we should call it =xs=
+- If it is a map of any key onto any value, it should be called =m=
+- If it is an arbitrary function, it should be called =f=
+- A self-reference in a protocol, =deftype=, or anonymous function should be
+  called =this=.
+- If a function takes a list of many arguments with the same datatype, the
+  parameters should be called =[a b c ... & rst]=
+- Arbitrary Clojure expression, =form=
+- If a macro takes many expression, =body=
+  
+- A map with well-defined datatypes for its keys and values should be called
+  =key->value=. (*NEW*)
+- A tuple of different datatypes should be called =a+b=.
+*** Narrow and consistent
+Names should be narrow, and consistent.
+** Idioms
+*** List of idioms
+- When using inequalities, prefer < and <=
+- If a function accumulates values, support every arity (if is used often
+  enough, and there is a natural nullary implementation)
+- Use option maps, not named parameters
+- No one should have to know you've used binding, like so:
+  
+#+BEGIN_SRC clojure
+(def ^:dynamic *turbo-mode?* true)
+
+(defn a
+  ([x] (b x))
+  ([x turbo-mode?]
+   (binding [*turbo-mode?* turbo-mode?] (b x))))
+
+(defn b [x] (c x))
+
+(defn c [x] (library/compute x *turbo-mode?*))
+#+END_SRC
+
+- If you have mutable state, use an atom
+- An implicit =do= block implies side effects
+- Use the narrowest possible data accessor
+- Use =leftn= only for mutual recursion
+  
+  #+begin_quote
+The fact that =leftn= avoidn this duplication doesn't make up for its structural
+irregularity.
+  #+end_quote
+
+- Java interrop should be obvious (don't use the =..= form)
+- Use =for= for Cartesian products <i.e., list comprehensions>  
+- =nil= should be the absence of only a few values
+  
+#+begin_quote
+To protect ourselves, we must interpret =nil= at regular intervals throughout
+our code.
+#+end_quote
+
+#+BEGIN_SRC clojure
+(-> solar-system :jupiter :callisto (:mass :mass-not-found))
+#+END_SRC
+
+The idiom of replacing =nil= by a keyword is useful.
+
+* Links
+- C.A.R. Hoare, Proof of Correctness of Data Representation (1972). Formal
+  definition of abstraction.
+- Kripke, Naming and necessity. To read for a take on modern philosophy of meaning.
+* Thoughts
+The section on pushing, pulling and transforming data reminds me of onion
+architecture, IO on the outside of an application, and similar concepts.
+
+The phrase "Over-engineering is not a property of our software, but of how we
+intend to use it." is useful.
+
+As is, "inductive reasoning is in effect, reasoning by analogy" (that is all it is).
