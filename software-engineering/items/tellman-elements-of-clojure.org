@@ -138,7 +138,6 @@ The pull phase acquires data from outside the process *and verifies that it is
 properly shaped and sized.*
 #+end_quote
 
-
 #+begin_quote
 The output of the transform phase is not just data, but rather a *descriptor* of
 the effects that the process should perform.
