@@ -1,0 +1,16 @@
+#+AUTHOR: Bart Frenk
+#+DATE: <2020-01-18>
+
+* Week 3 (max 5)
+** Create a plan before starting each working day
+Run =open-plan= to open the plan.org file.
+** Use C-c RET f e to create function from example in Clojure mode 
+** Use b/B and w/W to navigate a single line
+** Make use of marks and jumps to navigate file
+The combination m <key> sets a mark in normal mode, the combination ' <key>
+jumps to that mark.
+** Use g r to refresh the magit buffer
+* Soon
+** Use sesman-restart to restart the Clojure REPL
+Is there a better way to deal with new dependencies?
+* Later
