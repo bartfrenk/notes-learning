@@ -1,0 +1,48 @@
+#+PROPERTY: header-args :output-dir .scratch
+
+Needs `venv-workon` set to the correct version.
+
+#+BEGIN_SRC python :exports code
+import sys
+return sys.version
+#+END_SRC
+
+#+RESULTS:
+: 3.6.8 (default, May 25 2019, 12:59:24) 
+: [GCC 7.4.0]
+
+#+BEGIN_SRC python :exports code
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(0.001, 0.99, 100)
+# Expected value of the sample mean for stopping time inf {t | x_t = 1 }
+y = x * np.log(x) / (x - 1)
+plt.plot(x, y, color="blue")
+plt.plot(x, x, color="red")
+plt.show()
+#+END_SRC
+
+#+RESULTS:
+: None
+
+#+BEGIN_SRC gnuplot
+set xrange [0:1]
+h(x) = x
+g(x) = log(x)
+plot h(x), g(x)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC gnuplot
+f(x) = x
+plot f(x) title 'f'
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC gnuplot :file 0d10475411.png
+f(x) = x
+plot f(x)
+#+END_SRC

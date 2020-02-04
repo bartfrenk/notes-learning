@@ -1,16 +1,62 @@
 #+AUTHOR: Bart Frenk
 #+DATE: <2020-01-18>
 
-* Week 3 (max 5)
-** Create a plan before starting each working day
+* Week 5
+** Habits
+*** Create a plan before starting each working day
 Run =open-plan= to open the plan.org file.
-** Use C-c RET f e to create function from example in Clojure mode 
-** Use b/B and w/W to navigate a single line
-** Make use of marks and jumps to navigate file
+*** Make use of marks and jumps to navigate file
 The combination m <key> sets a mark in normal mode, the combination ' <key>
 jumps to that mark.
-** Use g r to refresh the magit buffer
+** Inspiration
+*** Point of view is worth 80 IQ points
+At PARC we had a slogan: "Point of view is worth 80 IQ points." It was based on
+a few things from the past like how smart you had to be in Roman times to
+multiply two numbers together; only geniuses did it. We haven't gotten any
+smarter, we've just changed our representation system. We think better generally
+by inventing better representations; that's something that we as computer
+scientists recognize as one of the main things that we try to do.
+
+-- Alan Kay
+* Week 3/4 (max 5)
+** Habits
+*** Create a plan before starting each working day
+Run =open-plan= to open the plan.org file.
+*** Use C-c RET f e to create function from example in Clojure mode 
+*** TODO Make use of marks and jumps to navigate file
+The combination m <key> sets a mark in normal mode, the combination ' <key>
+jumps to that mark.
+*** Use g r to refresh the magit buffer
+*** Use b/B and w/W to navigate a single line
+** Inspiration
+*** Forgotten our objectives
+During the journey we commonly forget its goal. Almost every profession is
+chosen as a means to an end but continued as an end in itself. Forgetting our
+objectives is the most frequent act of stupidity.
+
+-- Friedrich Nietzsche
+*** The purpose of abstraction
+The purpose of abstracting is not to be vague, but to
+create a new semantic level in which one can be absolutely precise.
+
+-- Edsgar W. Dijkstra
+*** A man who want a book to read
+There is a great deal of difference between an eager man who wants to read a
+book and a tired man who wants a book to read.
+
+-- CK Chesterton
 * Soon
-** Use sesman-restart to restart the Clojure REPL
+** Habits
+*** Use sesman-restart to restart the Clojure REPL
 Is there a better way to deal with new dependencies?
+** Inspiration
+*** Point of view is worth 80 IQ points
+At PARC we had a slogan: "Point of view is worth 80 IQ points." It was based on
+a few things from the past like how smart you had to be in Roman times to
+multiply two numbers together; only geniuses did it. We haven't gotten any
+smarter, we've just changed our representation system. We think better generally
+by inventing better representations; that's something that we as computer
+scientists recognize as one of the main things that we try to do.
+
+-- Alan Kay
 * Later

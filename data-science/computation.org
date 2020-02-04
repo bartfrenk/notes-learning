@@ -1,0 +1,9 @@
+#+BEGIN_SRC maxima :results output
+programmode: false;
+144*17
+#+END_SRC
+
+#+RESULTS:
+: incorrect syntax: gnuplot_close is not an infix operator
+: gnuplot_closeSpace
+:             ^
